@@ -70,9 +70,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param entity
      */
     @Override
-    public void createIncID(final TEntity entity) {
+    public void createIncId(final TEntity entity) {
         long _id = 0;
-        _id = this.createIncID();
+        _id = this.createIncId();
         assignmentEntityID(entity, _id);
     }
 
@@ -82,7 +82,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param entity
      */
     @Override
-    public void createObjectID(final TEntity entity) {
+    public void createObjectId(final TEntity entity) {
         ObjectId _id = new ObjectId();
         assignmentEntityID(entity, _id);
     }
@@ -92,8 +92,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public long createIncID() {
-        return createIncID(1);
+    public long createIncId() {
+        return createIncId(1);
     }
 
     /**
@@ -101,8 +101,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public long createIncID(final long inc) {
-        return createIncID(inc, 0);
+    public long createIncId(final long inc) {
+        return createIncId(inc, 0);
     }
 
     /**
@@ -111,7 +111,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public long createIncID(final long inc, final int iteration) {
+    public long createIncId(final long inc, final int iteration) {
         long id = 1;
         MongoCollection<BsonDocument> collection = getDatabase().getCollection(super._sequence.getSequenceName(), BsonDocument.class);
         String typeName = getCollectionName();
@@ -127,7 +127,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             //id = result[super._sequence.getIncrementID()].AsInt64;
             return id;
         } else if (iteration <= 1) {
-            return createIncID(inc, (iteration + 1));
+            return createIncId(inc, (iteration + 1));
         } else {
             throw new MongoException("Failed to get on the IncID");
         }
@@ -150,9 +150,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public void insert(final TEntity entity, final WriteConcern writeConcern) {
         if (isAutoIncrClass) {
-            createIncID(entity);
+            createIncId(entity);
         } else if (keyClazz.equals(BsonConstant.OBJECT_ID_CLASS) && ((Entity<ObjectId>) entity).getId() == null) {
-            createObjectID(entity);
+            createObjectId(entity);
         }
         super.getCollection(writeConcern).insertOne(entity);
     }
@@ -175,7 +175,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         if (isAutoIncrClass) {
             int count = entitys.size();
             //自增ID值
-            long id = createIncID(count);
+            long id = createIncId(count);
             id = id - count;
 
             for (TEntity entity : entitys) {
@@ -184,7 +184,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         } else if (keyClazz.equals(BsonConstant.OBJECT_ID_CLASS)) {
             for (TEntity entity : entitys) {
                 if (((Entity<ObjectId>) entity).getId() == null) {
-                    createObjectID(entity);
+                    createObjectId(entity);
                 }
             }
         }
@@ -206,7 +206,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         Bson update = new BsonDocument("$set", bsDoc);
         if (isUpsert && isAutoIncrClass) {
-            id = createIncID();
+            id = createIncId();
             update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
         }
 

@@ -53,8 +53,8 @@ public class MongoSequence {
      */
     public MongoSequence() {
 
-        this.sequenceName = "_Sequence";
+        this.sequenceName = "_sequence";
         this.collectionName = "_id";
-        this.incrementID = "IncrID";
+        this.incrementID = "incrId";
     }
 }

@@ -71,9 +71,9 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @param entity
      */
     @Override
-    public CompletableFuture createIncIDAsync(final TEntity entity) {
+    public CompletableFuture createIncIdAsync(final TEntity entity) {
         long _id = 0;
-        CompletableFuture<Long> future = this.createIncIDAsync();
+        CompletableFuture<Long> future = this.createIncIdAsync();
         return future.thenAccept((id) -> assignmentEntityID(entity, id));
     }
 
@@ -83,7 +83,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @param entity
      */
     @Override
-    public void createObjectID(final TEntity entity) {
+    public void createObjectId(final TEntity entity) {
         ObjectId _id = new ObjectId();
         assignmentEntityID(entity, _id);
     }
@@ -93,8 +93,8 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<Long> createIncIDAsync() {
-        return createIncIDAsync(1);
+    public CompletableFuture<Long> createIncIdAsync() {
+        return createIncIdAsync(1);
     }
 
     /**
@@ -102,7 +102,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<Long> createIncIDAsync(final long inc) {
+    public CompletableFuture<Long> createIncIdAsync(final long inc) {
 
         MongoCollection<BsonDocument> collection = getDatabase().getCollection(super._sequence.getSequenceName(), BsonDocument.class);
         String typeName = getCollectionName();
@@ -123,7 +123,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
                     id = result.getInt64(_sequence.getIncrementID()).longValue();
                     future.complete(id);
                 } else {
-                    future.completeExceptionally(new MongoException("Failed to get on the IncID"));
+                    future.completeExceptionally(new MongoException("Failed to get on the IncrementID"));
                 }
             }
         });
@@ -166,10 +166,10 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
         };
 
         if (isAutoIncrClass) {
-            createIncIDAsync(entity).thenRun(runnable);
+            createIncIdAsync(entity).thenRun(runnable);
         } else {
             if (keyClazz.equals(BsonConstant.OBJECT_ID_CLASS) && ((Entity<ObjectId>) entity).getId() == null) {
-                createObjectID(entity);
+                createObjectId(entity);
             }
             runnable.run();
         }
@@ -214,7 +214,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
         if (isAutoIncrClass) {
             int count = entitys.size();
 
-            createIncIDAsync(count).thenAccept((id) -> {
+            createIncIdAsync(count).thenAccept((id) -> {
                 //自增ID值
                 id = id - count;
                 for (TEntity entity : entitys) {
@@ -228,7 +228,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
             if (keyClazz.equals(BsonConstant.OBJECT_ID_CLASS)) {
                 for (TEntity entity : entitys) {
                     if (((Entity<ObjectId>) entity).getId() == null) {
-                        createObjectID(entity);
+                        createObjectId(entity);
                     }
                 }
             }
@@ -256,7 +256,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
 
         Bson update = new BsonDocument("$set", bsDoc);
         if (isUpsert && isAutoIncrClass) {
-            createIncIDAsync().thenAccept((id) -> {
+            createIncIdAsync().thenAccept((id) -> {
                 future.complete(Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id)));
             });
         } else {

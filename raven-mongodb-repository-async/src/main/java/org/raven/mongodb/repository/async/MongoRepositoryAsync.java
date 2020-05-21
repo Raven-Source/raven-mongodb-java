@@ -18,13 +18,13 @@ public interface MongoRepositoryAsync<TEntity, TKey>
     /**
      * @return
      */
-    CompletableFuture<Long> createIncIDAsync();
+    CompletableFuture<Long> createIncIdAsync();
 
     /**
      * @param inc
      * @return
      */
-    CompletableFuture<Long> createIncIDAsync(long inc);
+    CompletableFuture<Long> createIncIdAsync(long inc);
 
     //#region get
 
@@ -33,14 +33,14 @@ public interface MongoRepositoryAsync<TEntity, TKey>
      *
      * @param entity
      */
-    CompletableFuture createIncIDAsync(TEntity entity);
+    CompletableFuture createIncIdAsync(TEntity entity);
 
     /**
      * 创建ObjectID
      *
      * @param entity
      */
-    void createObjectID(TEntity entity);
+    void createObjectId(TEntity entity);
 
     /**
      * @param entity

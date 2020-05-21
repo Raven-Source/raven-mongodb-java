@@ -19,20 +19,20 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * @return
      */
-    long createIncID();
+    long createIncId();
 
     /**
      * @param inc
      * @return
      */
-    long createIncID(long inc);
+    long createIncId(long inc);
 
     /**
      * @param inc
      * @param iteration
      * @return
      */
-    long createIncID(long inc, int iteration);
+    long createIncId(long inc, int iteration);
 
     //#region get
 
@@ -41,14 +41,14 @@ public interface MongoRepository<TEntity, TKey>
      *
      * @param entity
      */
-    void createIncID(TEntity entity);
+    void createIncId(TEntity entity);
 
     /**
      * 创建ObjectID
      *
      * @param entity
      */
-    void createObjectID(TEntity entity);
+    void createObjectId(TEntity entity);
 
     /**
      * @param entity
