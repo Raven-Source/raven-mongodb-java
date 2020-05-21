@@ -28,9 +28,9 @@ public class PojoCodecRegistrys {
         PropertyCodecProvider propertyCodecProvider = new ValueTypePropertyCodecProvider(pojoCodecRegistry);
 
         CodecRegistry res = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-                                        fromProviders(PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
-                                                .register(propertyCodecProvider).build()
-                                        )
+            fromProviders(PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
+                .register(propertyCodecProvider).build()
+            )
         );
 
         return res;
