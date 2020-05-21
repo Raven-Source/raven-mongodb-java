@@ -47,18 +47,18 @@ public class MongoSession {
     /**
      * constructor
      *
-     * @param connString     数据库链接字符串
+     * @param uri            数据库链接uri
      * @param dbName         数据库名称
      * @param writeConcern   WriteConcern选项
      * @param isSlaveOK
      * @param readPreference
      */
-    public MongoSession(final String connString, final String dbName, final WriteConcern writeConcern, final Boolean isSlaveOK, final ReadPreference readPreference) {
-        //this(new MongoClient(connString), dbName, writeConcern, isSlaveOK, readPreference);
+    public MongoSession(final String uri, final String dbName, final WriteConcern writeConcern, final Boolean isSlaveOK, final ReadPreference readPreference) {
+
         this._writeConcern = writeConcern != null ? writeConcern : WriteConcern.UNACKNOWLEDGED;
         this._readPreference = readPreference != null ? readPreference : ReadPreference.secondaryPreferred();
 
-        MongoClientURI mongoClientURI = new MongoClientURI(connString);
+        MongoClientURI mongoClientURI = new MongoClientURI(uri);
         _mongoClient = new MongoClient(mongoClientURI);
 
         database = _mongoClient.getDatabase(dbName).withReadPreference(this._readPreference).withWriteConcern(this._writeConcern);

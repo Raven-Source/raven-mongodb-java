@@ -75,7 +75,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     /**
      * constructor
      *
-     * @param connString     connString
+     * @param uri            uri
      * @param dbName         dbName
      * @param collectionName collectionName
      * @param writeConcern   WriteConcern
@@ -84,10 +84,10 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @see WriteConcern
      * @see ReadPreference
      */
-    public AbstractMongoBaseRepository(final String connString, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+    public AbstractMongoBaseRepository(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
         this();
         this._sequence = sequence != null ? sequence : new MongoSequence();
-        this._mongoSession = new MongoSession(connString, dbName, writeConcern, false, readPreference);
+        this._mongoSession = new MongoSession(uri, dbName, writeConcern, false, readPreference);
         this.collectionName = collectionName;
         if (this.collectionName == null || this.collectionName.isEmpty()) {
             //String[] arr = entityClazz.getName().split("\\.");
@@ -98,11 +98,11 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     /**
      * constructor
      *
-     * @param connString connString
-     * @param dbName     dbName
+     * @param uri    uri
+     * @param dbName dbName
      */
-    public AbstractMongoBaseRepository(final String connString, final String dbName) {
-        this(connString, dbName, null, null, null, null);
+    public AbstractMongoBaseRepository(final String uri, final String dbName) {
+        this(uri, dbName, null, null, null, null);
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @see MongoRepositoryOptions
      */
     public AbstractMongoBaseRepository(final MongoRepositoryOptions options) {
-        this(options.getConnString(), options.getDbName(), options.getCollectionName(), options.getWriteConcern(), options.getReadPreference(), options.getSequence());
+        this(options.getUri(), options.getDbName(), options.getCollectionName(), options.getWriteConcern(), options.getReadPreference(), options.getSequence());
     }
 
     //#endregion

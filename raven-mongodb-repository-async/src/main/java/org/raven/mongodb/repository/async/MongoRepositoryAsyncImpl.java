@@ -24,33 +24,33 @@ import java.util.concurrent.CompletableFuture;
  * @since JDK1.8
  */
 public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
-        extends MongoReaderRepositoryAsyncImpl<TEntity, TKey>
-        implements MongoRepositoryAsync<TEntity, TKey> {
+    extends MongoReaderRepositoryAsyncImpl<TEntity, TKey>
+    implements MongoRepositoryAsync<TEntity, TKey> {
 
     //#region 构造函数
 
     /**
      * 构造函数
      *
-     * @param connString     数据库连接节点
+     * @param uri            数据库连接uri
      * @param dbName         数据库名称
      * @param collectionName 集合名称
      * @param writeConcern   WriteConcern
      * @param readPreference ReadPreference
      * @param sequence       Mongo自增长ID数据序列对象
      */
-    public MongoRepositoryAsyncImpl(final String connString, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        super(connString, dbName, collectionName, writeConcern, readPreference, sequence);
+    public MongoRepositoryAsyncImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
     }
 
     /**
      * 构造函数
      *
-     * @param connString 数据库连接节点
-     * @param dbName     数据库名称
+     * @param uri    数据库连接uri
+     * @param dbName 数据库名称
      */
-    public MongoRepositoryAsyncImpl(final String connString, final String dbName) {
-        super(connString, dbName);
+    public MongoRepositoryAsyncImpl(final String uri, final String dbName) {
+        super(uri, dbName);
     }
 
     /**
@@ -247,7 +247,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @throws MongoException
      */
     protected CompletableFuture<Bson> createUpdateBson(final TEntity updateEntity, final Boolean isUpsert)
-            throws MongoException {
+        throws MongoException {
 
         CompletableFuture<Bson> future = new CompletableFuture<>();
 
@@ -278,7 +278,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<UpdateResult> updateOneAsync(final Bson filter, final TEntity updateEntity)
-            throws MongoException {
+        throws MongoException {
         return this.updateOneAsync(filter, updateEntity, false, null);
     }
 
@@ -291,7 +291,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<UpdateResult> updateOneAsync(final Bson filter, final TEntity updateEntity, final Boolean isUpsert)
-            throws MongoException {
+        throws MongoException {
         return this.updateOneAsync(filter, updateEntity, isUpsert, null);
     }
 
@@ -306,7 +306,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<UpdateResult> updateOneAsync(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final WriteConcern writeConcern)
-            throws MongoException {
+        throws MongoException {
 
         CompletableFuture<UpdateResult> future = new CompletableFuture<>();
 
@@ -482,7 +482,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<TEntity> findOneAndUpdateAsync(final Bson filter, final TEntity entity)
-            throws MongoException {
+        throws MongoException {
         return this.findOneAndUpdateAsync(filter, entity, false, null);
     }
 
@@ -498,7 +498,7 @@ public class MongoRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<TEntity> findOneAndUpdateAsync(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort)
-            throws MongoException {
+        throws MongoException {
 
         CompletableFuture<TEntity> future = new CompletableFuture<>();
 

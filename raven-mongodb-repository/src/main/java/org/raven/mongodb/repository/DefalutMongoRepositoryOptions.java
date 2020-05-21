@@ -13,7 +13,7 @@ public class DefalutMongoRepositoryOptions implements MongoRepositoryOptions {
     /**
      * 数据库连接节点
      */
-    private String connString;
+    private String uri;
 
     /**
      * 数据库名称
@@ -41,12 +41,12 @@ public class DefalutMongoRepositoryOptions implements MongoRepositoryOptions {
     private MongoSequence sequence;
 
     @Override
-    public String getConnString() {
-        return connString;
+    public String getUri() {
+        return uri;
     }
 
-    public DefalutMongoRepositoryOptions setConnString(String connString) {
-        this.connString = connString;
+    public DefalutMongoRepositoryOptions setUri(String uri) {
+        this.uri = uri;
         return this;
     }
 
@@ -100,20 +100,21 @@ public class DefalutMongoRepositoryOptions implements MongoRepositoryOptions {
         return this;
     }
 
-    public DefalutMongoRepositoryOptions(){}
+    public DefalutMongoRepositoryOptions() {
+    }
 
     /**
      * constructor
      *
-     * @param connString     数据库连接节点(必须)
+     * @param uri            数据库连接节点(必须)
      * @param dbName         数据库连接节点(必须)
      * @param collectionName 数据库集合名称(非必须)
      * @param writeConcern   WriteConcern(非必须)
      * @param readPreference ReadPreference(非必须)
      * @param sequence       Mongo自增长ID数据序列对象(非必须)
      */
-    public DefalutMongoRepositoryOptions(final String connString, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        this.connString = connString;
+    public DefalutMongoRepositoryOptions(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+        this.uri = uri;
         this.dbName = dbName;
         this.collectionName = collectionName;
         this.writeConcern = writeConcern;

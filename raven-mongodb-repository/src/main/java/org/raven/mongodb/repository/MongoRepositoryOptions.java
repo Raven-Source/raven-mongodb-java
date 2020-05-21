@@ -14,7 +14,7 @@ public interface MongoRepositoryOptions {
      *
      * @return
      */
-    String getConnString();
+    String getUri();
 
     /**
      * DbName

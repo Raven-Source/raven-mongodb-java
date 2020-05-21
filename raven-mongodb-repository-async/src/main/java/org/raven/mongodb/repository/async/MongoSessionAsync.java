@@ -47,20 +47,20 @@ public class MongoSessionAsync {
     /**
      * 构造函数
      *
-     * @param connString     数据库链接字符串
+     * @param uri            数据库链接uri
      * @param dbName         数据库名称
      * @param writeConcern   WriteConcern选项
      * @param isSlaveOK
      * @param readPreference
      */
-    public MongoSessionAsync(final String connString, final String dbName, final WriteConcern writeConcern, final Boolean isSlaveOK, final ReadPreference readPreference) {
-        //this(new MongoClient(connString), dbName, writeConcern, isSlaveOK, readPreference);
+    public MongoSessionAsync(final String uri, final String dbName, final WriteConcern writeConcern, final Boolean isSlaveOK, final ReadPreference readPreference) {
+
         this._writeConcern = writeConcern != null ? writeConcern : WriteConcern.UNACKNOWLEDGED;
         this._readPreference = readPreference != null ? readPreference : ReadPreference.secondaryPreferred();
 
-        _mongoClient = MongoClients.create(connString);
+        _mongoClient = MongoClients.create(uri);
 
-        //MongoClientURI mongoClientURI = new MongoClientURI(connString);
+        //MongoClientURI mongoClientURI = new MongoClientURI(uri);
         //_mongoClient = new MongoClient(mongoClientURI);
 
         database = _mongoClient.getDatabase(dbName).withReadPreference(this._readPreference).withWriteConcern(this._writeConcern);

@@ -24,33 +24,33 @@ import java.util.concurrent.CompletableFuture;
  * @since JDK1.8
  */
 public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
-        extends AbstractMongoBaseRepositoryAsync<TEntity, TKey>
-        implements MongoReaderRepositoryAsync<TEntity, TKey> {
+    extends AbstractMongoBaseRepositoryAsync<TEntity, TKey>
+    implements MongoReaderRepositoryAsync<TEntity, TKey> {
 
     //#region 构造函数
 
     /**
      * 构造函数
      *
-     * @param connString     数据库连接节点
+     * @param uri            数据库连接uri
      * @param dbName         数据库名称
      * @param collectionName 集合名称
      * @param writeConcern   WriteConcern
      * @param readPreference ReadPreference
      * @param sequence       Mongo自增长ID数据序列对象
      */
-    public MongoReaderRepositoryAsyncImpl(final String connString, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        super(connString, dbName, collectionName, writeConcern, readPreference, sequence);
+    public MongoReaderRepositoryAsyncImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
     }
 
     /**
      * 构造函数
      *
-     * @param connString 数据库连接节点
-     * @param dbName     数据库名称
+     * @param uri    数据库连接uri
+     * @param dbName 数据库名称
      */
-    public MongoReaderRepositoryAsyncImpl(final String connString, final String dbName) {
-        super(connString, dbName);
+    public MongoReaderRepositoryAsyncImpl(final String uri, final String dbName) {
+        super(uri, dbName);
     }
 
     /**
@@ -100,7 +100,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<TEntity> getAsync(final TKey id, final List<String> includeFields
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
@@ -171,7 +171,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<TEntity> getAsync(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -261,7 +261,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort
-            , int limit, int skip) {
+        , int limit, int skip) {
         return this.getListAsync(filter, includeFields, sort, limit, skip, null, null);
     }
 
@@ -279,9 +279,9 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort
-            , int limit, int skip
-            , BsonValue hint
-            , ReadPreference readPreference) {
+        , int limit, int skip
+        , BsonValue hint
+        , ReadPreference readPreference) {
         CompletableFuture<ArrayList<TEntity>> future = new CompletableFuture<>();
         Bson _filter = filter;
         if (_filter == null) {
@@ -349,7 +349,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<Long> countAsync(final Bson filter, final int skip, final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -423,7 +423,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public CompletableFuture<Boolean> existsAsync(final Bson filter, final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {

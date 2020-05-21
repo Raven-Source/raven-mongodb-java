@@ -22,33 +22,33 @@ import java.util.List;
  * @since JDK1.8
  */
 public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends AbstractMongoBaseRepository<TEntity, TKey>
-        implements MongoReaderRepository<TEntity, TKey> {
+    extends AbstractMongoBaseRepository<TEntity, TKey>
+    implements MongoReaderRepository<TEntity, TKey> {
 
     //#region constructor
 
     /**
      * constructor
      *
-     * @param connString     数据库连接节点
+     * @param uri            数据库连接节点
      * @param dbName         数据库名称
      * @param collectionName 集合名称
      * @param writeConcern   WriteConcern
      * @param readPreference ReadPreference
      * @param sequence       Mongo自增长ID数据序列对象
      */
-    public MongoReaderRepositoryImpl(final String connString, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        super(connString, dbName, collectionName, writeConcern, readPreference, sequence);
+    public MongoReaderRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
     }
 
     /**
      * constructor
      *
-     * @param connString 数据库连接节点
-     * @param dbName     数据库名称
+     * @param uri    数据库连接节点
+     * @param dbName 数据库名称
      */
-    public MongoReaderRepositoryImpl(final String connString, final String dbName) {
-        super(connString, dbName);
+    public MongoReaderRepositoryImpl(final String uri, final String dbName) {
+        super(uri, dbName);
     }
 
     /**
@@ -98,7 +98,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final TKey id, final List<String> includeFields
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
@@ -162,7 +162,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -243,7 +243,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public ArrayList<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-            , final int limit, final int skip) {
+        , final int limit, final int skip) {
         return this.getList(filter, includeFields, sort, limit, skip, null, null);
     }
 
@@ -261,9 +261,9 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public ArrayList<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-            , final int limit, final int skip
-            , final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final int limit, final int skip
+        , final BsonValue hint
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -321,7 +321,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public long count(final Bson filter, final int skip, final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -372,7 +372,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public boolean exists(final Bson filter, final BsonValue hint
-            , final ReadPreference readPreference) {
+        , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {

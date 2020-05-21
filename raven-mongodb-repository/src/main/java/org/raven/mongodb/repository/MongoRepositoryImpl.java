@@ -22,8 +22,8 @@ import java.util.List;
  * @since JDK1.8
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends MongoReaderRepositoryImpl<TEntity, TKey>
-        implements MongoRepository<TEntity, TKey> {
+    extends MongoReaderRepositoryImpl<TEntity, TKey>
+    implements MongoRepository<TEntity, TKey> {
 
 
     //#region constructor
@@ -31,25 +31,25 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param connString     数据库连接节点
+     * @param uri            数据库连接节点
      * @param dbName         数据库名称
      * @param collectionName 集合名称
      * @param writeConcern   WriteConcern
      * @param readPreference ReadPreference
      * @param sequence       Mongo自增长ID数据序列对象
      */
-    public MongoRepositoryImpl(final String connString, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        super(connString, dbName, collectionName, writeConcern, readPreference, sequence);
+    public MongoRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
     }
 
     /**
      * constructor
      *
-     * @param connString 数据库连接节点
-     * @param dbName     数据库名称
+     * @param uri    数据库连接节点
+     * @param dbName 数据库名称
      */
-    public MongoRepositoryImpl(final String connString, final String dbName) {
-        super(connString, dbName);
+    public MongoRepositoryImpl(final String uri, final String dbName) {
+        super(uri, dbName);
     }
 
     /**
