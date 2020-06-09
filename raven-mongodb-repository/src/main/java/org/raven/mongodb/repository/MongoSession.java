@@ -55,7 +55,7 @@ public class MongoSession {
      */
     public MongoSession(final String uri, final String dbName, final WriteConcern writeConcern, final Boolean isSlaveOK, final ReadPreference readPreference) {
 
-        this._writeConcern = writeConcern != null ? writeConcern : WriteConcern.UNACKNOWLEDGED;
+        this._writeConcern = writeConcern != null ? writeConcern : WriteConcern.W1;
         this._readPreference = readPreference != null ? readPreference : ReadPreference.secondaryPreferred();
 
         MongoClientURI mongoClientURI = new MongoClientURI(uri);
