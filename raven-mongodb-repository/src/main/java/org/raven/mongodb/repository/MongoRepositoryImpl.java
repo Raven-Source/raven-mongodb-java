@@ -31,36 +31,56 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param uri            数据库连接节点
-     * @param dbName         数据库名称
-     * @param collectionName 集合名称
-     * @param writeConcern   WriteConcern
-     * @param readPreference ReadPreference
-     * @param sequence       Mongo自增长ID数据序列对象
+     * @param mongoSession
+     * @param collectionName
+     * @param sequence
      */
-    public MongoRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
+    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final MongoSequence sequence) {
+        super(mongoSession, collectionName, sequence);
     }
 
     /**
      * constructor
      *
-     * @param uri    数据库连接节点
-     * @param dbName 数据库名称
+     * @param mongoSession
      */
-    public MongoRepositoryImpl(final String uri, final String dbName) {
-        super(uri, dbName);
+    public MongoRepositoryImpl(final MongoSession mongoSession) {
+        super(mongoSession);
     }
 
-    /**
-     * constructor
-     *
-     * @param options
-     * @see MongoRepositoryOptions
-     */
-    public MongoRepositoryImpl(final MongoRepositoryOptions options) {
-        super(options);
-    }
+//    /**
+//     * constructor
+//     *
+//     * @param uri            数据库连接节点
+//     * @param dbName         数据库名称
+//     * @param collectionName 集合名称
+//     * @param writeConcern   WriteConcern
+//     * @param readPreference ReadPreference
+//     * @param sequence       Mongo自增长ID数据序列对象
+//     */
+//    public MongoRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+//        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
+//    }
+
+//    /**
+//     * constructor
+//     *
+//     * @param uri    数据库连接节点
+//     * @param dbName 数据库名称
+//     */
+//    public MongoRepositoryImpl(final String uri, final String dbName) {
+//        super(uri, dbName);
+//    }
+
+//    /**
+//     * constructor
+//     *
+//     * @param options
+//     * @see MongoRepositoryOptions
+//     */
+//    public MongoRepositoryImpl(final MongoRepositoryOptions options) {
+//        super(options);
+//    }
 
     //#endregion
 
@@ -113,17 +133,17 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public long createIncId(final long inc, final int iteration) {
         long id = 1;
-        MongoCollection<BsonDocument> collection = getDatabase().getCollection(super._sequence.getSequenceName(), BsonDocument.class);
+        MongoCollection<BsonDocument> collection = getDatabase().getCollection(super.sequence.getSequenceName(), BsonDocument.class);
         String typeName = getCollectionName();
 
-        Bson filter = Filters.eq(super._sequence.getCollectionName(), typeName);
-        Bson updater = Updates.inc(super._sequence.getIncrementID(), inc);
+        Bson filter = Filters.eq(super.sequence.getCollectionName(), typeName);
+        Bson updater = Updates.inc(super.sequence.getIncrementID(), inc);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
 
         BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
         if (result != null) {
-            id = result.getInt64(super._sequence.getIncrementID()).longValue();
+            id = result.getInt64(super.sequence.getIncrementID()).longValue();
             //id = result[super._sequence.getIncrementID()].AsInt64;
             return id;
         } else if (iteration <= 1) {

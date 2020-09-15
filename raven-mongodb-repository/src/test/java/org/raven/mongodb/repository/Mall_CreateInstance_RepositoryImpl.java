@@ -4,8 +4,7 @@ import com.mongodb.WriteConcern;
 
 public class Mall_CreateInstance_RepositoryImpl extends MongoRepositoryImpl<Mall, String> {
     private Mall_CreateInstance_RepositoryImpl() {
-        super("mongodb://127.0.0.1:27017/"
-            , "RepositoryTest2", null, WriteConcern.ACKNOWLEDGED, null, null);
+        super(MongoSessionInstance.mongoSession);
 
     }
 

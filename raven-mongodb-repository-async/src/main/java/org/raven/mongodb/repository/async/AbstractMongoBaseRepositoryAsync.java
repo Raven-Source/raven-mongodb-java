@@ -11,9 +11,10 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.BsonUtils;
 import org.raven.mongodb.repository.MongoRepositoryOptions;
 import org.raven.mongodb.repository.MongoSequence;
-import org.raven.mongodb.repository.codec.PojoCodecRegistrys;
+import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
 
 import java.lang.reflect.ParameterizedType;
@@ -72,7 +73,7 @@ public abstract class AbstractMongoBaseRepositoryAsync<TEntity extends Entity<TK
         keyClazz = (Class) params[1];
         isAutoIncrClass = BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClazz);
 
-        pojoCodecRegistry = PojoCodecRegistrys.CODEC_REGISTRY;
+        pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
     }
 
     /**
@@ -172,7 +173,7 @@ public abstract class AbstractMongoBaseRepositoryAsync<TEntity extends Entity<TK
      */
     protected BsonDocument toBsonDocument(final TEntity entity) {
 
-        return BsonConstant.convertToBsonDocument(entity, pojoCodecRegistry.get(entityClazz));
+        return BsonUtils.convertToBsonDocument(entity, pojoCodecRegistry.get(entityClazz));
     }
 
     /**
@@ -180,7 +181,7 @@ public abstract class AbstractMongoBaseRepositoryAsync<TEntity extends Entity<TK
      * @return Bson
      */
     protected Bson includeFields(final List<String> includeFields) {
-        return BsonConstant.includeFields(includeFields);
+        return BsonUtils.includeFields(includeFields);
     }
 
 
@@ -229,7 +230,7 @@ public abstract class AbstractMongoBaseRepositoryAsync<TEntity extends Entity<TK
      * @param id     id
      */
     protected void assignmentEntityID(final TEntity entity, final long id) {
-        BsonConstant.assignmentEntityID(keyClazz, entity, id);
+        BsonUtils.assignmentEntityID(keyClazz, entity, id);
     }
 
     /**
@@ -239,7 +240,7 @@ public abstract class AbstractMongoBaseRepositoryAsync<TEntity extends Entity<TK
      * @param id     id
      */
     protected void assignmentEntityID(final TEntity entity, final ObjectId id) {
-        BsonConstant.assignmentEntityID(entity, id);
+        BsonUtils.assignmentEntityID(entity, id);
 
     }
 

@@ -229,7 +229,7 @@ public class UserServiceTest {
         String id = "abc_123";//有
 
         Bson filter = Filters.or(Filters.eq("_id","abc_123"), Filters.eq("_id","def_456"));
-        ArrayList<User_StringID> usList1 = usRep.getList(filter);
+        List<User_StringID> usList1 = usRep.getList(filter);
         Assert.assertNotNull(usList1);
         Assert.assertTrue(usList1.size() >= 1);
 
@@ -238,7 +238,7 @@ public class UserServiceTest {
         includeFields.add("ClassMap");
         includeFields.add("Name");
         Bson sort = Sorts.descending("Name");
-        ArrayList<User_StringID> usList2 = usRep.getList(filter,includeFields,sort,100,1);
+        List<User_StringID> usList2 = usRep.getList(filter,includeFields,sort,100,1);
         Assert.assertNotNull(usList2);
         Assert.assertTrue(usList2.size() >= 0);
         Assert.assertNotNull(usList2.get(0).getName());

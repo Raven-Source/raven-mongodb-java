@@ -116,7 +116,7 @@ public interface MongoReaderRepositoryAsync<TEntity, TKey>
      * @param filter 查询条件
      * @return
      */
-    CompletableFuture<ArrayList<TEntity>> getListAsync(Bson filter);
+    CompletableFuture<List<TEntity>> getListAsync(Bson filter);
 
     /**
      * 根据条件获取获取列表
@@ -125,7 +125,7 @@ public interface MongoReaderRepositoryAsync<TEntity, TKey>
      * @param includeFields 查询字段
      * @return
      */
-    CompletableFuture<ArrayList<TEntity>> getListAsync(Bson filter, List<String> includeFields);
+    CompletableFuture<List<TEntity>> getListAsync(Bson filter, List<String> includeFields);
 
     /**
      * 根据条件获取获取列表
@@ -135,7 +135,7 @@ public interface MongoReaderRepositoryAsync<TEntity, TKey>
      * @param sort          排序
      * @return
      */
-    CompletableFuture<ArrayList<TEntity>> getListAsync(Bson filter, List<String> includeFields, Bson sort);
+    CompletableFuture<List<TEntity>> getListAsync(Bson filter, List<String> includeFields, Bson sort);
 
     /**
      * 根据条件获取获取列表
@@ -147,7 +147,7 @@ public interface MongoReaderRepositoryAsync<TEntity, TKey>
      * @param skip
      * @return
      */
-    CompletableFuture<ArrayList<TEntity>> getListAsync(Bson filter, List<String> includeFields, Bson sort
+    CompletableFuture<List<TEntity>> getListAsync(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip);
 
     /**
@@ -162,7 +162,7 @@ public interface MongoReaderRepositoryAsync<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    CompletableFuture<ArrayList<TEntity>> getListAsync(Bson filter, List<String> includeFields, Bson sort
+    CompletableFuture<List<TEntity>> getListAsync(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip
         , BsonValue hint
         , ReadPreference readPreference);
@@ -174,7 +174,7 @@ public interface MongoReaderRepositoryAsync<TEntity, TKey>
      * @param findOptions
      * @return
      */
-    CompletableFuture<ArrayList<TEntity>> getListAsync(FindOptions findOptions);
+    CompletableFuture<List<TEntity>> getListAsync(FindOptions findOptions);
 
     //#endregion
 

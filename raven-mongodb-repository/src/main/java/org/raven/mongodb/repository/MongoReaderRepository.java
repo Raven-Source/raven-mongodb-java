@@ -103,7 +103,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter 查询条件
      * @return
      */
-    ArrayList<TEntity> getList(Bson filter);
+    List<TEntity> getList(Bson filter);
 
     /**
      * 根据条件获取获取列表
@@ -112,7 +112,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param includeFields 查询字段
      * @return
      */
-    ArrayList<TEntity> getList(Bson filter, List<String> includeFields);
+    List<TEntity> getList(Bson filter, List<String> includeFields);
 
     /**
      * 根据条件获取获取列表
@@ -122,7 +122,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param sort          排序
      * @return
      */
-    ArrayList<TEntity> getList(Bson filter, List<String> includeFields, Bson sort);
+    List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort);
 
     /**
      * 根据条件获取获取列表
@@ -134,7 +134,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param skip
      * @return
      */
-    ArrayList<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
+    List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip);
 
     /**
@@ -149,7 +149,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    ArrayList<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
+    List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip
         , BsonValue hint
         , ReadPreference readPreference);
@@ -161,7 +161,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param findOptions
      * @return
      */
-    ArrayList<TEntity> getList(FindOptions findOptions);
+    List<TEntity> getList(FindOptions findOptions);
 
     //#endregion
 

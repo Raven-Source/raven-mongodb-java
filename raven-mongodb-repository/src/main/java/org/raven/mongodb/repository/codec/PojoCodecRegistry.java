@@ -9,12 +9,11 @@ import org.raven.mongodb.repository.conventions.CustomConventions;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-
 /**
  * @author yi.liang
  * @since JDK1.8
  */
-public class PojoCodecRegistrys {
+public class PojoCodecRegistry {
 
     public final static CodecRegistry CODEC_REGISTRY = registry();
 
@@ -28,9 +27,9 @@ public class PojoCodecRegistrys {
         PropertyCodecProvider propertyCodecProvider = new ValueTypePropertyCodecProvider(pojoCodecRegistry);
 
         CodecRegistry res = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-            fromProviders(PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
-                .register(propertyCodecProvider).build()
-            )
+                fromProviders(PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
+                        .register(propertyCodecProvider).build()
+                )
         );
 
         return res;

@@ -18,7 +18,7 @@ public final class CustomConventions {
     /**
      *
      */
-    public static final Convention PROPERTY_FORMAT_CONVENTION = new ConventioinPropertyFormatImpl();
+    public static final Convention PROPERTY_FORMAT_CONVENTION = new ConventionPropertyFormatImpl();
 
     /**
      *

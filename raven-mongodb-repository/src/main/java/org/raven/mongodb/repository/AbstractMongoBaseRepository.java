@@ -11,7 +11,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.repository.codec.PojoCodecRegistrys;
+import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
 
 import java.lang.reflect.ParameterizedType;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 @SuppressWarnings({"unchecked"})
 public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
-    implements MongoBaseRepository<TEntity> {
+        implements MongoBaseRepository<TEntity> {
     protected Class<TEntity> entityClazz;
     protected Class<TKey> keyClazz;
     protected Boolean isAutoIncrClass;
@@ -34,9 +34,11 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     /**
      * Mongo Auto Increment ID Collection
      */
-    protected MongoSequence _sequence;
+    protected MongoSequence sequence;
 
-    protected MongoSession _mongoSession;
+    protected MongoSession mongoSession;
+
+    protected MongoDatabase mongoDatabase;
 
     private String collectionName;
 
@@ -57,7 +59,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     @Override
     public MongoDatabase getDatabase() {
 
-        return _mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
+        return mongoDatabase;
     }
 
     //#region constructor
@@ -69,51 +71,64 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         keyClazz = (Class) params[1];
         isAutoIncrClass = BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClazz);
 
-        pojoCodecRegistry = PojoCodecRegistrys.CODEC_REGISTRY;
+        pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
     }
+
+//    public AbstractMongoBaseRepository(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+//        this();
+//        this._sequence = sequence != null ? sequence : new MongoSequence();
+//        this._mongoSession = new DefaultMongoSession(uri, dbName, writeConcern, false, readPreference);
+//        this.collectionName = collectionName;
+//        if (this.collectionName == null || this.collectionName.isEmpty()) {
+//            this.collectionName = entityClazz.getSimpleName();
+//        }
+//    }
 
     /**
      * constructor
      *
-     * @param uri            uri
-     * @param dbName         dbName
-     * @param collectionName collectionName
-     * @param writeConcern   WriteConcern
-     * @param readPreference ReadPreference
-     * @param sequence       Mongo Auto Increment ID Collection
-     * @see WriteConcern
-     * @see ReadPreference
+     * @param mongoSession
+     * @param collectionName
      */
-    public AbstractMongoBaseRepository(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+    public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName, final MongoSequence sequence) {
         this();
-        this._sequence = sequence != null ? sequence : new MongoSequence();
-        this._mongoSession = new MongoSession(uri, dbName, writeConcern, false, readPreference);
+        this.sequence = sequence != null ? sequence : new MongoSequence();
+        this.mongoSession = mongoSession;
         this.collectionName = collectionName;
         if (this.collectionName == null || this.collectionName.isEmpty()) {
-            //String[] arr = entityClazz.getName().split("\\.");
             this.collectionName = entityClazz.getSimpleName();
         }
+        this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
     }
 
     /**
      * constructor
      *
-     * @param uri    uri
-     * @param dbName dbName
+     * @param mongoSession
      */
-    public AbstractMongoBaseRepository(final String uri, final String dbName) {
-        this(uri, dbName, null, null, null, null);
+    public AbstractMongoBaseRepository(final MongoSession mongoSession) {
+        this(mongoSession, null, null);
     }
 
-    /**
-     * constructor
-     *
-     * @param options MongoRepositoryOptions
-     * @see MongoRepositoryOptions
-     */
-    public AbstractMongoBaseRepository(final MongoRepositoryOptions options) {
-        this(options.getUri(), options.getDbName(), options.getCollectionName(), options.getWriteConcern(), options.getReadPreference(), options.getSequence());
-    }
+//    /**
+//     * constructor
+//     *
+//     * @param uri    uri
+//     * @param dbName dbName
+//     */
+//    public AbstractMongoBaseRepository(final String uri, final String dbName) {
+//        this(uri, dbName, null, null, null, null);
+//    }
+
+//    /**
+//     * constructor
+//     *
+//     * @param options MongoRepositoryOptions
+//     * @see MongoRepositoryOptions
+//     */
+//    public AbstractMongoBaseRepository(final MongoRepositoryOptions options) {
+//        this(options.getUri(), options.getDbName(), options.getCollectionName(), options.getWriteConcern(), options.getReadPreference(), options.getSequence());
+//    }
 
     //#endregion
 
@@ -170,7 +185,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      */
     protected BsonDocument toBsonDocument(final TEntity entity) {
 
-        return BsonConstant.convertToBsonDocument(entity, pojoCodecRegistry.get(entityClazz));
+        return BsonUtils.convertToBsonDocument(entity, pojoCodecRegistry.get(entityClazz));
     }
 
     /**
@@ -178,7 +193,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @return Bson
      */
     protected Bson includeFields(final List<String> includeFields) {
-        return BsonConstant.includeFields(includeFields);
+        return BsonUtils.includeFields(includeFields);
     }
 
 
@@ -192,7 +207,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @return FindIterable
      */
     protected FindIterable<TEntity> findOptions(final FindIterable<TEntity> findIterable, final Bson projection, final Bson sort
-        , final int limit, final int skip, final BsonValue hint) {
+            , final int limit, final int skip, final BsonValue hint) {
 
         FindIterable<TEntity> filter = findIterable;
         if (projection != null) {
@@ -227,7 +242,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @param id     id
      */
     protected void assignmentEntityID(final TEntity entity, final long id) {
-        BsonConstant.assignmentEntityID(keyClazz, entity, id);
+        BsonUtils.assignmentEntityID(keyClazz, entity, id);
     }
 
     /**
@@ -237,7 +252,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @param id     id
      */
     protected void assignmentEntityID(final TEntity entity, final ObjectId id) {
-        BsonConstant.assignmentEntityID(entity, id);
+        BsonUtils.assignmentEntityID(entity, id);
 
     }
 

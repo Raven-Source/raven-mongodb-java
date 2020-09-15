@@ -7,7 +7,7 @@
     <groupId>io.github.raven-source</groupId>
     <artifactId>raven-mongodb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <modules>
         <module>raven-mongodb-repository</module>
         <module>raven-mongodb-repository-async</module>
@@ -16,7 +16,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>9</java.version>
         <encoding>UTF-8</encoding>
 
         <raven-commons.version>2.0.2-RELEASE</raven-commons.version>

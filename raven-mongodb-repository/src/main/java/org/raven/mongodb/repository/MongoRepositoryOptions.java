@@ -7,6 +7,7 @@ import com.mongodb.WriteConcern;
  * @author yi.liang
  * @since JDK1.8
  */
+@Deprecated
 public interface MongoRepositoryOptions {
 
     /**

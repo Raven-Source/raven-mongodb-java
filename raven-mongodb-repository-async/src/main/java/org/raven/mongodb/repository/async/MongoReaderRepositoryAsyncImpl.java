@@ -220,7 +220,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter) {
+    public CompletableFuture<List<TEntity>> getListAsync(final Bson filter) {
         return this.getListAsync(filter, null);
     }
 
@@ -232,7 +232,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter, final List<String> includeFields) {
+    public CompletableFuture<List<TEntity>> getListAsync(final Bson filter, final List<String> includeFields) {
         return this.getListAsync(filter, includeFields, null);
     }
 
@@ -245,7 +245,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort) {
+    public CompletableFuture<List<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort) {
         return this.getListAsync(filter, includeFields, sort, 0, 0);
     }
 
@@ -260,7 +260,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort
+    public CompletableFuture<List<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort
         , int limit, int skip) {
         return this.getListAsync(filter, includeFields, sort, limit, skip, null, null);
     }
@@ -278,11 +278,11 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<ArrayList<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort
+    public CompletableFuture<List<TEntity>> getListAsync(final Bson filter, final List<String> includeFields, final Bson sort
         , int limit, int skip
         , BsonValue hint
         , ReadPreference readPreference) {
-        CompletableFuture<ArrayList<TEntity>> future = new CompletableFuture<>();
+        CompletableFuture<List<TEntity>> future = new CompletableFuture<>();
         Bson _filter = filter;
         if (_filter == null) {
             _filter = new BsonDocument();
@@ -321,7 +321,7 @@ public class MongoReaderRepositoryAsyncImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public CompletableFuture<ArrayList<TEntity>> getListAsync(FindOptions findOptions) {
+    public CompletableFuture<List<TEntity>> getListAsync(FindOptions findOptions) {
         return this.getListAsync(findOptions.getFilter(), findOptions.getIncludeFields(), findOptions.getSort(), findOptions.getLimit(), findOptions.getSkip(), findOptions.getHint(), findOptions.getReadPreference());
     }
 

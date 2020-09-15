@@ -16,7 +16,7 @@ import java.lang.annotation.Annotation;
  * @author yi.liang
  * @since JDK1.8
  */
-final class ConventioinPropertyFormatImpl implements Convention {
+final class ConventionPropertyFormatImpl implements Convention {
 
     /**
      * @param classModelBuilder

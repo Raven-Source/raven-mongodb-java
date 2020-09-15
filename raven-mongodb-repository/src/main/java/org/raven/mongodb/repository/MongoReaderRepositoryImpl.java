@@ -22,44 +22,64 @@ import java.util.List;
  * @since JDK1.8
  */
 public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-    extends AbstractMongoBaseRepository<TEntity, TKey>
-    implements MongoReaderRepository<TEntity, TKey> {
+        extends AbstractMongoBaseRepository<TEntity, TKey>
+        implements MongoReaderRepository<TEntity, TKey> {
 
     //#region constructor
 
+//    /**
+//     * constructor
+//     *
+//     * @param uri            数据库连接节点
+//     * @param dbName         数据库名称
+//     * @param collectionName 集合名称
+//     * @param writeConcern   WriteConcern
+//     * @param readPreference ReadPreference
+//     * @param sequence       Mongo自增长ID数据序列对象
+//     */
+//    public MongoReaderRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
+//        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
+//    }
+
     /**
      * constructor
      *
-     * @param uri            数据库连接节点
-     * @param dbName         数据库名称
-     * @param collectionName 集合名称
-     * @param writeConcern   WriteConcern
-     * @param readPreference ReadPreference
-     * @param sequence       Mongo自增长ID数据序列对象
+     * @param mongoSession
+     * @param collectionName
+     * @param sequence
      */
-    public MongoReaderRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName, final MongoSequence sequence) {
+        super(mongoSession, collectionName, sequence);
     }
 
     /**
      * constructor
      *
-     * @param uri    数据库连接节点
-     * @param dbName 数据库名称
+     * @param mongoSession
      */
-    public MongoReaderRepositoryImpl(final String uri, final String dbName) {
-        super(uri, dbName);
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession) {
+        super(mongoSession);
     }
 
-    /**
-     * constructor
-     *
-     * @param options
-     * @see MongoRepositoryOptions
-     */
-    public MongoReaderRepositoryImpl(final MongoRepositoryOptions options) {
-        super(options);
-    }
+//    /**
+//     * constructor
+//     *
+//     * @param uri    数据库连接节点
+//     * @param dbName 数据库名称
+//     */
+//    public MongoReaderRepositoryImpl(final String uri, final String dbName) {
+//        super(uri, dbName);
+//    }
+
+//    /**
+//     * constructor
+//     *
+//     * @param options
+//     * @see MongoRepositoryOptions
+//     */
+//    public MongoReaderRepositoryImpl(final MongoRepositoryOptions options) {
+//        super(options);
+//    }
 
     //#endregion
 
@@ -98,7 +118,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final TKey id, final List<String> includeFields
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
@@ -162,7 +182,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -202,7 +222,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public ArrayList<TEntity> getList(final Bson filter) {
+    public List<TEntity> getList(final Bson filter) {
         return this.getList(filter, null);
     }
 
@@ -214,7 +234,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public ArrayList<TEntity> getList(final Bson filter, final List<String> includeFields) {
+    public List<TEntity> getList(final Bson filter, final List<String> includeFields) {
         return this.getList(filter, includeFields, null);
     }
 
@@ -227,7 +247,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public ArrayList<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort) {
+    public List<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort) {
         return this.getList(filter, includeFields, sort, 0, 0);
     }
 
@@ -242,8 +262,8 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public ArrayList<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-        , final int limit, final int skip) {
+    public List<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
+            , final int limit, final int skip) {
         return this.getList(filter, includeFields, sort, limit, skip, null, null);
     }
 
@@ -260,10 +280,10 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public ArrayList<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-        , final int limit, final int skip
-        , final BsonValue hint
-        , final ReadPreference readPreference) {
+    public List<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
+            , final int limit, final int skip
+            , final BsonValue hint
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -293,7 +313,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public ArrayList<TEntity> getList(final FindOptions findOptions) {
+    public List<TEntity> getList(final FindOptions findOptions) {
         return this.getList(findOptions.getFilter(), findOptions.getIncludeFields(), findOptions.getSort(), findOptions.getLimit(), findOptions.getSkip(), findOptions.getHint(), findOptions.getReadPreference());
     }
 
@@ -321,7 +341,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public long count(final Bson filter, final int skip, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -372,7 +392,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public boolean exists(final Bson filter, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
