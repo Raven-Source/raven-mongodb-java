@@ -24,7 +24,6 @@ import java.util.List;
  * @param <TEntity> TEntity
  * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 @SuppressWarnings({"unchecked"})
 public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
@@ -90,9 +89,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
     }
 
-    /**
-     * @param mongoSession
-     */
     public AbstractMongoBaseRepository(final MongoSession mongoSession) {
         this(mongoSession, null, null);
     }

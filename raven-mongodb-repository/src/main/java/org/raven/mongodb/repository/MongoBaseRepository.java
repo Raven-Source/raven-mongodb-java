@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 /**
  * @param <TEntity>
  * @author yi.liang
- * @since JDK11
  */
 public interface MongoBaseRepository<TEntity> {
 

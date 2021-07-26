@@ -14,7 +14,7 @@ import java.util.List;
  * @since JDK11
  */
 public interface MongoReaderRepository<TEntity, TKey>
-        extends MongoBaseRepository<TEntity> {
+    extends MongoBaseRepository<TEntity> {
 
     /**
      * 根据id获取实体
@@ -130,8 +130,8 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter        查询条件
      * @param includeFields 查询字段
      * @param sort          排序
-     * @param limit
-     * @param skip
+     * @param limit         limit
+     * @param skip          skip
      * @return
      */
     List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
@@ -143,8 +143,8 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter         查询条件
      * @param includeFields  查询字段
      * @param sort           排序
-     * @param limit
-     * @param skip
+     * @param limit          limit
+     * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
      * @return
@@ -158,8 +158,8 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 根据条件获取获取列表
      *
-     * @param findOptions
-     * @return
+     * @param findOptions FindOptions
+     * @return List
      */
     List<TEntity> getList(FindOptions findOptions);
 
@@ -177,7 +177,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * 数量
      *
      * @param filter         查询条件
-     * @param skip
+     * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
      * @return

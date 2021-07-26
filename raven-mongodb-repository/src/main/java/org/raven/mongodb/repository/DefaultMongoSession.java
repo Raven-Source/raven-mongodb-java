@@ -9,7 +9,6 @@ import lombok.Getter;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 public class DefaultMongoSession implements MongoSession {
 
@@ -31,7 +30,7 @@ public class DefaultMongoSession implements MongoSession {
     private ReadPreference readPreference;
 
     /**
-     * @return {@link com.mongodb.client.MongoDatabase}
+     * @return MongoDatabase {@link com.mongodb.client.MongoDatabase}
      */
     @Getter
     private MongoDatabase database;
@@ -41,8 +40,8 @@ public class DefaultMongoSession implements MongoSession {
      *
      * @param connectionString connectionString
      * @param dbName           dbName
-     * @param writeConcern     WriteConcern选项
-     * @param readPreference
+     * @param writeConcern     WriteConcern
+     * @param readPreference   ReadPreference
      */
     public DefaultMongoSession(String connectionString, String dbName, WriteConcern writeConcern, ReadPreference readPreference) {
 

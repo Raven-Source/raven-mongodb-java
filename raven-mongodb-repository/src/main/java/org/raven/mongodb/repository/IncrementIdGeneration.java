@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 
 /**
  * @author yi.liang
- * @since JDK11
  * date 2021.07.26 18:31
  */
 @SuppressWarnings({"unchecked"})
@@ -29,10 +28,6 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
 
     private Supplier<MongoDatabase> databaseSupplier;
 
-    /**
-     * @param mongoSequence
-     * @param keyClazz
-     */
     public IncrementIdGeneration(String collectionName
         , MongoSequence mongoSequence
         , Class<TKey> keyClazz
@@ -72,11 +67,6 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
         return "INCREMENT";
     }
 
-    /**
-     * @param count
-     * @param iteration
-     * @return
-     */
     public Long createIncId(final long count, final int iteration) {
 
         MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(mongoSequence.getSequenceName(), BsonDocument.class);

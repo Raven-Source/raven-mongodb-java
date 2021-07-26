@@ -10,21 +10,20 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 /**
+ * PojoCodecRegistry
+ *
  * @author yi.liang
- * @since JDK11
  * date 2021.07.25 22:01
  */
 public class PojoCodecRegistry {
 
     public final static CodecRegistry CODEC_REGISTRY = registry();
 
-    /**
-     * @return
-     */
     private static CodecRegistry registry() {
 
         CodecRegistry pojoCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
         //registry CodecProvider
+
         PropertyCodecProvider valueTypePropertyCodecProvider = new ValueTypePropertyCodecProvider(pojoCodecRegistry);
         PropertyCodecProvider stringTypePropertyCodecProvider = new StringTypePropertyCodecProvider(pojoCodecRegistry);
 
