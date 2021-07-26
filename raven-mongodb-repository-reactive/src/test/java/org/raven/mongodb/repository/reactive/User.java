@@ -1,4 +1,5 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.reactive;
+
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.raven.commons.data.AutoIncr;

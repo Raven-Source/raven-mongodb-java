@@ -1,18 +1,19 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
-import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.spi.IdGenerator;
+import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -33,10 +34,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession
      * @param collectionName
-     * @param sequence
+     * @param idGeneratorProvider
      */
-    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final MongoSequence sequence) {
-        super(mongoSession, collectionName, sequence);
+    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName
+        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+        super(mongoSession, collectionName, idGeneratorProvider);
     }
 
     /**
@@ -157,14 +159,14 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public void insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
 
-        Stream<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null);
-        long count = entityStream.count();
+        List<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        long count = entityStream.size();
 
         if (count > 0) {
             List<TKey> ids = idGenerator.generateIdBatch(count);
 
-            for (int i = 0; i < entitys.size(); i++) {
-                entitys.get(i).setId(ids.get(i));
+            for (int i = 0; i < count; i++) {
+                entityStream.get(i).setId(ids.get(i));
             }
         }
 

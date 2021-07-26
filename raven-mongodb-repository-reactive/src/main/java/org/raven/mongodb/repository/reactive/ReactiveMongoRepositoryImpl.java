@@ -16,6 +16,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -101,14 +102,14 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public Mono<Void> insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
         //
 
-        Stream<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null);
-        long count = entityStream.count();
+        List<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        long count = entityStream.size();
 
         if (count > 0) {
             return idGenerator.generateIdBatch(count).flatMap(ids -> {
 
-                for (int i = 0; i < entitys.size(); i++) {
-                    entitys.get(i).setId(ids.get(i));
+                for (int i = 0; i < count; i++) {
+                    entityStream.get(i).setId(ids.get(i));
                 }
                 return Mono.when(super.getCollection(writeConcern).insertMany(entitys));
 

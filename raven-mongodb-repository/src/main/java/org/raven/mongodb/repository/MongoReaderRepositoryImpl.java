@@ -3,12 +3,15 @@ package org.raven.mongodb.repository;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.spi.IdGenerator;
+import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,29 +30,17 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //#region constructor
 
-//    /**
-//     * constructor
-//     *
-//     * @param uri            数据库连接节点
-//     * @param dbName         数据库名称
-//     * @param collectionName 集合名称
-//     * @param writeConcern   WriteConcern
-//     * @param readPreference ReadPreference
-//     * @param sequence       Mongo自增长ID数据序列对象
-//     */
-//    public MongoReaderRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-//        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
-//    }
-
     /**
      * constructor
      *
      * @param mongoSession
      * @param collectionName
-     * @param sequence
+     * @param idGeneratorProvider
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName, final MongoSequence sequence) {
-        super(mongoSession, collectionName, sequence);
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName
+        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+
+        super(mongoSession, collectionName, idGeneratorProvider);
     }
 
     /**

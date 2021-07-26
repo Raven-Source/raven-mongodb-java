@@ -1,6 +1,5 @@
-package org.raven.mongodb.repository.stringID;
+package org.raven.mongodb.repository.withstringid;
 
-import com.mongodb.WriteConcern;
 import org.raven.mongodb.repository.MongoRepositoryImpl;
 import org.raven.mongodb.repository.MongoSessionInstance;
 
