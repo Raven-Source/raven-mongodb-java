@@ -14,7 +14,7 @@ import java.lang.annotation.Annotation;
 
 /**
  * @author yi.liang
- * @since JDK1.8
+ * @since JDK11
  */
 final class ConventionPropertyFormatImpl implements Convention {
 
@@ -32,14 +32,19 @@ final class ConventionPropertyFormatImpl implements Convention {
             }
         }
 
+//        classModelBuilder.idGenerator(IdGenerators.OBJECT_ID_GENERATOR);
+
         for (PropertyModelBuilder<?> propertyModelBuilder : classModelBuilder.getPropertyModelBuilders()) {
+//            propertyModelBuilder.propertySerialization(new CustomPropertySerialization<>());
             processPropertyAnnotations(classModelBuilder, propertyModelBuilder, formatType);
         }
     }
 
     /**
+     *
      * @param classModelBuilder
      * @param propertyModelBuilder
+     * @param formatType
      */
     private void processPropertyAnnotations(final ClassModelBuilder<?> classModelBuilder,
                                             final PropertyModelBuilder<?> propertyModelBuilder,

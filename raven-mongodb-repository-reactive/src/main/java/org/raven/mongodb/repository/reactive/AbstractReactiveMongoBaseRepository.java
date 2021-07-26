@@ -1,20 +1,21 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.reactivestreams.client.FindPublisher;
+import com.mongodb.reactivestreams.client.MongoCollection;
+import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.BsonUtils;
 import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
-import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,16 +28,15 @@ import java.util.List;
  * @since JDK11
  */
 @SuppressWarnings({"unchecked"})
-public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
-    implements MongoBaseRepository<TEntity> {
+public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
+    implements ReactiveMongoBaseRepository<TEntity> {
     protected Class<TEntity> entityClazz;
     protected Class<TKey> keyClazz;
-    protected Boolean isAutoIncrClass;
+    protected boolean isAutoIncrClass;
 
+    protected ReactiveIdGenerator<TKey> idGenerator;
 
-    protected IdGenerator<TKey> idGenerator;
-
-    protected MongoSession mongoSession;
+    protected ReactiveMongoSession mongoSession;
 
     protected MongoDatabase mongoDatabase;
 
@@ -59,12 +59,12 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     @Override
     public MongoDatabase getDatabase() {
 
-        return mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
+        return mongoDatabase;
     }
 
     //#region constructor
 
-    private AbstractMongoBaseRepository() {
+    private AbstractReactiveMongoBaseRepository() {
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         entityClazz = (Class) params[0];
@@ -74,10 +74,10 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
     }
 
-    public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName
-        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-        this();
+    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName
+        , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
+        this();
         this.idGenerator = idGeneratorProvider != null
             ? idGeneratorProvider.build(collectionName, entityClazz, keyClazz, this::getDatabase)
             : DefaultIdGeneratorProvider.Default.build(collectionName, entityClazz, keyClazz, this::getDatabase);
@@ -93,7 +93,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     /**
      * @param mongoSession
      */
-    public AbstractMongoBaseRepository(final MongoSession mongoSession) {
+    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession) {
         this(mongoSession, null, null);
     }
 
@@ -163,20 +163,19 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         return BsonUtils.includeFields(includeFields);
     }
 
-
     /**
-     * @param findIterable findIterable
-     * @param projection   projection
-     * @param sort         sort
-     * @param limit        limit
-     * @param skip         skip
-     * @param hint         hint
+     * @param findPublisher findPublisher
+     * @param projection    projection
+     * @param sort          sort
+     * @param limit         limit
+     * @param skip          skip
+     * @param hint          hint
      * @return FindIterable
      */
-    protected FindIterable<TEntity> findOptions(final FindIterable<TEntity> findIterable, final Bson projection, final Bson sort
+    protected FindPublisher<TEntity> findOptions(final FindPublisher<TEntity> findPublisher, final Bson projection, final Bson sort
         , final int limit, final int skip, final BsonValue hint) {
 
-        FindIterable<TEntity> filter = findIterable;
+        FindPublisher<TEntity> filter = findPublisher;
         if (projection != null) {
             filter = filter.projection(projection);
         }

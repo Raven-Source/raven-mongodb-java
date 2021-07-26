@@ -1,9 +1,10 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.WriteConcern;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.conversions.Bson;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -13,8 +14,8 @@ import java.util.List;
  * @author yi.liang
  * @since JDK11
  */
-public interface MongoRepository<TEntity, TKey>
-        extends MongoReaderRepository<TEntity, TKey> {
+public interface ReactiveMongoRepository<TEntity, TKey>
+    extends ReactiveMongoReaderRepository<TEntity, TKey> {
 
 //    /**
 //     * @return
@@ -53,24 +54,24 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * @param entity
      */
-    void insert(TEntity entity);
+    Mono<Void> insert(TEntity entity);
 
     /**
      * @param entity
      * @param writeConcern
      */
-    void insert(TEntity entity, WriteConcern writeConcern);
+    Mono<Void> insert(TEntity entity, WriteConcern writeConcern);
 
     /**
      * @param entitys
      */
-    void insertBatch(List<TEntity> entitys);
+    Mono<Void> insertBatch(List<TEntity> entitys);
 
     /**
      * @param entitys
      * @param writeConcern
      */
-    void insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
+    Mono<Void> insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
 
 
     /**
@@ -80,7 +81,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param updateEntity
      * @return
      */
-    UpdateResult updateOne(Bson filter, TEntity updateEntity);
+    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity);
 
     /**
      * 修改单条数据
@@ -90,7 +91,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param isUpsert
      * @return
      */
-    UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert);
+    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert);
 
     /**
      * 修改单条数据
@@ -101,7 +102,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern
      * @return
      */
-    UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, WriteConcern writeConcern);
+    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
@@ -110,7 +111,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param update
      * @return
      */
-    UpdateResult updateOne(Bson filter, Bson update);
+    Mono<UpdateResult> updateOne(Bson filter, Bson update);
 
     /**
      * 修改单条数据
@@ -120,7 +121,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param isUpsert
      * @return
      */
-    UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert);
+    Mono<UpdateResult> updateOne(Bson filter, Bson update, Boolean isUpsert);
 
     /**
      * 修改单条数据
@@ -131,7 +132,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern
      * @return
      */
-    UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert, WriteConcern writeConcern);
+    Mono<UpdateResult> updateOne(Bson filter, Bson update, Boolean isUpsert, WriteConcern writeConcern);
 
     /**
      * 修改多条数据
@@ -140,7 +141,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param update
      * @return
      */
-    UpdateResult updateMany(Bson filter, Bson update);
+    Mono<UpdateResult> updateMany(Bson filter, Bson update);
 
     /**
      * 修改多条数据
@@ -150,14 +151,14 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern
      * @return
      */
-    UpdateResult updateMany(Bson filter, Bson update, WriteConcern writeConcern);
+    Mono<UpdateResult> updateMany(Bson filter, Bson update, WriteConcern writeConcern);
 
     /**
      * @param filter
      * @param update
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, Bson update);
+    Mono<TEntity> findOneAndUpdate(Bson filter, Bson update);
 
     /**
      * @param filter
@@ -166,14 +167,14 @@ public interface MongoRepository<TEntity, TKey>
      * @param sort
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort);
+    Mono<TEntity> findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort);
 
     /**
      * @param filter
      * @param entity
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, TEntity entity);
+    Mono<TEntity> findOneAndUpdate(Bson filter, TEntity entity);
 
     /**
      * @param filter
@@ -182,58 +183,58 @@ public interface MongoRepository<TEntity, TKey>
      * @param sort
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort);
+    Mono<TEntity> findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort);
 
     /**
      * @param filter
      * @return
      */
-    TEntity findOneAndDelete(Bson filter);
+    Mono<TEntity> findOneAndDelete(Bson filter);
 
     /**
      * @param filter
      * @param sort
      * @return
      */
-    TEntity findOneAndDelete(Bson filter, Bson sort);
+    Mono<TEntity> findOneAndDelete(Bson filter, Bson sort);
 
     /**
      * @param id
      * @return
      */
-    DeleteResult deleteOne(TKey id);
+    Mono<DeleteResult> deleteOne(TKey id);
 
     /**
      * @param id
      * @param writeConcern
      * @return
      */
-    DeleteResult deleteOne(TKey id, WriteConcern writeConcern);
+    Mono<DeleteResult> deleteOne(TKey id, WriteConcern writeConcern);
 
     /**
      * @param filter
      * @return
      */
-    DeleteResult deleteOne(Bson filter);
-
-    /**
-     * @param filter
-     * @param writeConcern WriteConcern
-     * @return
-     */
-    DeleteResult deleteOne(Bson filter, WriteConcern writeConcern);
-
-    /**
-     * @param filter
-     * @return
-     */
-    DeleteResult deleteMany(Bson filter);
+    Mono<DeleteResult> deleteOne(Bson filter);
 
     /**
      * @param filter
      * @param writeConcern WriteConcern
      * @return
      */
-    DeleteResult deleteMany(Bson filter, WriteConcern writeConcern);
+    Mono<DeleteResult> deleteOne(Bson filter, WriteConcern writeConcern);
+
+    /**
+     * @param filter
+     * @return
+     */
+    Mono<DeleteResult> deleteMany(Bson filter);
+
+    /**
+     * @param filter
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    Mono<DeleteResult> deleteMany(Bson filter, WriteConcern writeConcern);
 
 }

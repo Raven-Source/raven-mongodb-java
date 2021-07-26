@@ -6,21 +6,24 @@
 
     <groupId>io.github.raven-source</groupId>
     <artifactId>raven-mongodb</artifactId>
+    <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
     <modules>
         <module>raven-mongodb-repository</module>
-        <module>raven-mongodb-repository-async</module>
+<!--        <module>raven-mongodb-repository-async</module>-->
+        <module>raven-mongodb-repository-core</module>
+        <module>raven-mongodb-repository-spi</module>
+        <module>raven-mongodb-repository-reactive</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>9</java.version>
+        <java.version>11</java.version>
         <encoding>UTF-8</encoding>
 
-        <raven-commons.version>2.0.2-RELEASE</raven-commons.version>
-        <mongodb-driver.version>3.12.4</mongodb-driver.version>
+        <raven-commons.version>3.0.0</raven-commons.version>
+        <mongodb-driver.version>4.2.3</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>
 

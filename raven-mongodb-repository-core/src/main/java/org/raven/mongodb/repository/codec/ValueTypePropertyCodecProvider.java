@@ -11,8 +11,9 @@ import org.bson.codecs.pojo.PropertyCodecProvider;
 import org.bson.codecs.pojo.PropertyCodecRegistry;
 import org.bson.codecs.pojo.TypeWithTypeParameters;
 import org.bson.types.Decimal128;
+import org.raven.commons.data.SerializableType;
+import org.raven.commons.data.SerializableTypeUtils;
 import org.raven.commons.data.ValueType;
-import org.raven.commons.data.ValueTypeUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,12 +21,12 @@ import java.math.BigInteger;
 
 /**
  * @author yi.liang
- * @since JDK1.8
+ * @since JDK11
  */
 public final class ValueTypePropertyCodecProvider implements PropertyCodecProvider {
 
     private final CodecRegistry codecRegistry;
-    private final static Class<ValueType> valueEnumTypeClass = ValueType.class;
+    private final static Class<ValueType> valueTypeClass = ValueType.class;
 
     /**
      * @param codecRegistry
@@ -45,11 +46,11 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
     @Override
     public <T> Codec<T> get(final TypeWithTypeParameters<T> type, final PropertyCodecRegistry propertyCodecRegistry) {
         Class<T> clazz = type.getType();
-        if (valueEnumTypeClass.isAssignableFrom(clazz)) {
+        if (valueTypeClass.isAssignableFrom(clazz)) {
             try {
                 return codecRegistry.get(clazz);
             } catch (CodecConfigurationException e) {
-                return (Codec<T>) new ValueTypePropertyCodecProvider.ValueTypeCodec(clazz);
+                return (Codec<T>) new ValueTypeCodec(clazz);
             }
         }
         return null;
@@ -61,16 +62,14 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
     private static class ValueTypeCodec<T extends ValueType> implements Codec<T> {
 
         private final Class<T> clazz;
-        private final Class<? extends Number> numberClazz;
-//        private HashMap<Integer, ValueType> valueMap;
+        private final Class genericType;
 
         /**
          * @param clazz
          */
         ValueTypeCodec(final Class<T> clazz) {
             this.clazz = clazz;
-            numberClazz = ValueTypeUtils.getGenericType(clazz);
-//            valueMap = ValueTypeUtils.getValueMap(clazz);
+            genericType = SerializableTypeUtils.getGenericType(clazz);
         }
 
         /**
@@ -122,26 +121,26 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
         @Override
         public T decode(final BsonReader reader, final DecoderContext decoderContext) {
 
-            if (numberClazz.equals(Integer.class)) {
-                return ValueTypeUtils.valueOf(clazz, reader.readInt32());
+            if (genericType.equals(Integer.class)) {
+                return SerializableTypeUtils.valueOf(clazz, reader.readInt32());
 
-            } else if (numberClazz.equals(Long.class)) {
-                return ValueTypeUtils.valueOf(clazz, reader.readInt64());
+            } else if (genericType.equals(Long.class)) {
+                return SerializableTypeUtils.valueOf(clazz, reader.readInt64());
 
-            } else if (numberClazz.equals(BigInteger.class)) {
-                return ValueTypeUtils.valueOf(clazz, reader.readInt64());
+            } else if (genericType.equals(BigInteger.class)) {
+                return SerializableTypeUtils.valueOf(clazz, reader.readInt64());
 
-            } else if (numberClazz.equals(Double.class)) {
-                return ValueTypeUtils.valueOf(clazz, reader.readDouble());
+            } else if (genericType.equals(Double.class)) {
+                return SerializableTypeUtils.valueOf(clazz, reader.readDouble());
 
-            } else if (numberClazz.equals(Float.class)) {
-                return ValueTypeUtils.valueOf(clazz, (float) reader.readDouble());
+            } else if (genericType.equals(Float.class)) {
+                return SerializableTypeUtils.valueOf(clazz, (float) reader.readDouble());
 
-            } else if (numberClazz.equals(BigDecimal.class)) {
-                return ValueTypeUtils.valueOf(clazz, reader.readDecimal128().bigDecimalValue());
+            } else if (genericType.equals(BigDecimal.class)) {
+                return SerializableTypeUtils.valueOf(clazz, reader.readDecimal128().bigDecimalValue());
 
             } else {
-                return ValueTypeUtils.valueOf(clazz, reader.readInt32());
+                return SerializableTypeUtils.valueOf(clazz, reader.readInt32());
             }
 
         }

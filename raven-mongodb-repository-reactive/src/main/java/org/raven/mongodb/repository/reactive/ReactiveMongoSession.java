@@ -1,0 +1,16 @@
+package org.raven.mongodb.repository.reactive;
+
+import com.mongodb.reactivestreams.client.MongoDatabase;
+
+/**
+ * @author yi.liang
+ * @since JDK11
+ * date 2021.07.26 17:06
+ */
+public interface ReactiveMongoSession {
+
+    /**
+     * @return {@link com.mongodb.reactivestreams.client.MongoDatabase}
+     */
+    MongoDatabase getDatabase();
+}

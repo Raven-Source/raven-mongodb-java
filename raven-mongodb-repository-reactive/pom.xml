@@ -12,7 +12,7 @@
     <description>raven mongodb repository</description>
     <url>https://github.com/Raven-Source/raven-mongodb-java</url>
 
-    <artifactId>raven-mongodb-repository</artifactId>
+    <artifactId>raven-mongodb-repository-reactive</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -25,7 +25,7 @@
 
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
+            <artifactId>mongodb-driver-reactivestreams</artifactId>
             <version>${mongodb-driver.version}</version>
             <scope>provided</scope>
         </dependency>

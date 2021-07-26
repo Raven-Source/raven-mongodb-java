@@ -1,7 +1,6 @@
 package org.raven.mongodb.repository;
 
 import com.mongodb.MongoException;
-import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
@@ -14,12 +13,13 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @param <TEntity>
  * @param <TKey>
  * @author yi.liang
- * @since JDK1.8
+ * @since JDK11
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     extends MongoReaderRepositoryImpl<TEntity, TKey>
@@ -48,110 +48,76 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         super(mongoSession);
     }
 
-//    /**
-//     * constructor
-//     *
-//     * @param uri            数据库连接节点
-//     * @param dbName         数据库名称
-//     * @param collectionName 集合名称
-//     * @param writeConcern   WriteConcern
-//     * @param readPreference ReadPreference
-//     * @param sequence       Mongo自增长ID数据序列对象
-//     */
-//    public MongoRepositoryImpl(final String uri, final String dbName, final String collectionName, final WriteConcern writeConcern, final ReadPreference readPreference, final MongoSequence sequence) {
-//        super(uri, dbName, collectionName, writeConcern, readPreference, sequence);
-//    }
-
-//    /**
-//     * constructor
-//     *
-//     * @param uri    数据库连接节点
-//     * @param dbName 数据库名称
-//     */
-//    public MongoRepositoryImpl(final String uri, final String dbName) {
-//        super(uri, dbName);
-//    }
-
-//    /**
-//     * constructor
-//     *
-//     * @param options
-//     * @see MongoRepositoryOptions
-//     */
-//    public MongoRepositoryImpl(final MongoRepositoryOptions options) {
-//        super(options);
-//    }
-
     //#endregion
 
-    /**
-     * 创建自增ID
-     *
-     * @param entity
-     */
-    @Override
-    public void createIncId(final TEntity entity) {
-        long _id = 0;
-        _id = this.createIncId();
-        assignmentEntityID(entity, _id);
-    }
-
-    /**
-     * 创建ObjectId
-     *
-     * @param entity
-     */
-    @Override
-    public void createObjectId(final TEntity entity) {
-        ObjectId _id = new ObjectId();
-        assignmentEntityID(entity, _id);
-    }
-
-
-    /**
-     * @return
-     */
-    @Override
-    public long createIncId() {
-        return createIncId(1);
-    }
-
-    /**
-     * @param inc
-     * @return
-     */
-    @Override
-    public long createIncId(final long inc) {
-        return createIncId(inc, 0);
-    }
-
-    /**
-     * @param inc
-     * @param iteration
-     * @return
-     */
-    @Override
-    public long createIncId(final long inc, final int iteration) {
-        long id = 1;
-        MongoCollection<BsonDocument> collection = getDatabase().getCollection(super.sequence.getSequenceName(), BsonDocument.class);
-        String typeName = getCollectionName();
-
-        Bson filter = Filters.eq(super.sequence.getCollectionName(), typeName);
-        Bson updater = Updates.inc(super.sequence.getIncrementID(), inc);
-        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-        options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
-
-        BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
-        if (result != null) {
-            id = result.getInt64(super.sequence.getIncrementID()).longValue();
-            //id = result[super._sequence.getIncrementID()].AsInt64;
-            return id;
-        } else if (iteration <= 1) {
-            return createIncId(inc, (iteration + 1));
-        } else {
-            throw new MongoException("Failed to get on the IncID");
-        }
-    }
+//    /**
+//     * 创建自增ID
+//     *
+//     * @param entity
+//     */
+//    @Override
+//    public void createIncId(final TEntity entity) {
+//        long _id = 0;
+//        _id = this.createIncId();
+//        assignmentEntityID(entity, _id);
+//    }
+//
+//    /**
+//     * 创建ObjectId
+//     *
+//     * @param entity
+//     */
+//    @Override
+//    public void createObjectId(final TEntity entity) {
+//        ObjectId _id = new ObjectId();
+//        assignmentEntityID(entity, _id);
+//    }
+//
+//
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public long createIncId() {
+//        return createIncId(1);
+//    }
+//
+//    /**
+//     * @param inc
+//     * @return
+//     */
+//    @Override
+//    public long createIncId(final long inc) {
+//        return createIncId(inc, 0);
+//    }
+//
+//    /**
+//     * @param inc
+//     * @param iteration
+//     * @return
+//     */
+//    @Override
+//    public long createIncId(final long inc, final int iteration) {
+//        long id = 1;
+//        MongoCollection<BsonDocument> collection = getDatabase().getCollection(super.sequence.getSequenceName(), BsonDocument.class);
+//        String typeName = getCollectionName();
+//
+//        Bson filter = Filters.eq(super.sequence.getCollectionName(), typeName);
+//        Bson updater = Updates.inc(super.sequence.getIncrementID(), inc);
+//        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+//        options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
+//
+//        BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
+//        if (result != null) {
+//            id = result.getInt64(super.sequence.getIncrementID()).longValue();
+//            //id = result[super._sequence.getIncrementID()].AsInt64;
+//            return id;
+//        } else if (iteration <= 1) {
+//            return createIncId(inc, (iteration + 1));
+//        } else {
+//            throw new MongoException("Failed to get on the IncID");
+//        }
+//    }
 
     //#region insert
 
@@ -169,10 +135,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public void insert(final TEntity entity, final WriteConcern writeConcern) {
-        if (isAutoIncrClass) {
-            createIncId(entity);
-        } else if (keyClazz.equals(BsonConstant.OBJECT_ID_CLASS) && ((Entity<ObjectId>) entity).getId() == null) {
-            createObjectId(entity);
+        if (entity.getId() == null) {
+            TKey id = idGenerator.generateId();
+            entity.setId(id);
         }
         super.getCollection(writeConcern).insertOne(entity);
     }
@@ -191,21 +156,15 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public void insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
-        //需要自增的实体
-        if (isAutoIncrClass) {
-            int count = entitys.size();
-            //自增ID值
-            long id = createIncId(count);
-            id = id - count;
 
-            for (TEntity entity : entitys) {
-                assignmentEntityID(entity, ++id);
-            }
-        } else if (keyClazz.equals(BsonConstant.OBJECT_ID_CLASS)) {
-            for (TEntity entity : entitys) {
-                if (((Entity<ObjectId>) entity).getId() == null) {
-                    createObjectId(entity);
-                }
+        Stream<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null);
+        long count = entityStream.count();
+
+        if (count > 0) {
+            List<TKey> ids = idGenerator.generateIdBatch(count);
+
+            for (int i = 0; i < entitys.size(); i++) {
+                entitys.get(i).setId(ids.get(i));
             }
         }
 
@@ -220,13 +179,13 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     protected Bson createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
-        long id = 0;
+
         BsonDocument bsDoc = super.toBsonDocument(updateEntity);
         bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
 
         Bson update = new BsonDocument("$set", bsDoc);
         if (isUpsert && isAutoIncrClass) {
-            id = createIncId();
+            TKey id = idGenerator.generateId();
             update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
         }
 

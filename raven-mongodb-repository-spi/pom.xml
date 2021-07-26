@@ -9,27 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>raven mongodb repository</description>
-    <url>https://github.com/Raven-Source/raven-mongodb-java</url>
-
-    <artifactId>raven-mongodb-repository</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>raven-mongodb-repository-spi</artifactId>
 
     <dependencies>
-
         <dependency>
-            <groupId>io.github.raven-source</groupId>
-            <artifactId>raven-mongodb-repository-core</artifactId>
-            <version>${raven-mongodb.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
-            <version>${mongodb-driver.version}</version>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
+
 
 </project>

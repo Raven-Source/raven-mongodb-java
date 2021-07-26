@@ -2,7 +2,7 @@ package org.raven.mongodb.repository;
 
 /**
  * @author yi.liang
- * @since JDK1.8
+ * @since JDK11
  */
 public class MongoSequence {
 

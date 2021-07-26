@@ -5,8 +5,7 @@ import org.raven.commons.data.AutoIncr;
 
 /**
  * @author yi.liang
- * @date 2018.11.06 19:25
- * @since JDK1.8
+ * @since JDK11
  */
 @SuppressWarnings({"unchecked"})
 public abstract class BsonConstant {

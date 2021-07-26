@@ -1,16 +1,16 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.reactivestreams.client.MongoCollection;
+import com.mongodb.reactivestreams.client.MongoDatabase;
 
 /**
  * @param <TEntity>
  * @author yi.liang
  * @since JDK11
  */
-public interface MongoBaseRepository<TEntity> {
+public interface ReactiveMongoBaseRepository<TEntity> {
 
     /**
      * @return MongoDatabase

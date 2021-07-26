@@ -1,10 +1,14 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.ReadPreference;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
+import org.raven.mongodb.repository.CountOptions;
+import org.raven.mongodb.repository.ExistsOptions;
+import org.raven.mongodb.repository.FindOptions;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,8 +17,8 @@ import java.util.List;
  * @author yi.liang
  * @since JDK11
  */
-public interface MongoReaderRepository<TEntity, TKey>
-        extends MongoBaseRepository<TEntity> {
+public interface ReactiveMongoReaderRepository<TEntity, TKey>
+        extends ReactiveMongoBaseRepository<TEntity> {
 
     /**
      * 根据id获取实体
@@ -22,7 +26,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param id
      * @return
      */
-    TEntity get(TKey id);
+    Mono<TEntity> get(TKey id);
 
     /**
      * 根据id获取实体
@@ -31,7 +35,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param includeFields 查询字段
      * @return
      */
-    TEntity get(TKey id, List<String> includeFields);
+    Mono<TEntity> get(TKey id, List<String> includeFields);
 
     /**
      * 根据id获取实体
@@ -41,7 +45,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    TEntity get(TKey id, List<String> includeFields
+    Mono<TEntity> get(TKey id, List<String> includeFields
         , ReadPreference readPreference);
 
 
@@ -51,7 +55,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter 查询条件
      * @return
      */
-    TEntity get(Bson filter);
+    Mono<TEntity> get(Bson filter);
 
     /**
      * 根据条件获取实体
@@ -60,7 +64,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param includeFields 查询字段
      * @return
      */
-    TEntity get(Bson filter, List<String> includeFields);
+    Mono<TEntity> get(Bson filter, List<String> includeFields);
 
     /**
      * 根据条件获取实体
@@ -70,7 +74,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param sort          排序
      * @return
      */
-    TEntity get(Bson filter, List<String> includeFields, Bson sort);
+    Mono<TEntity> get(Bson filter, List<String> includeFields, Bson sort);
 
     /**
      * 根据条件获取实体
@@ -82,7 +86,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    TEntity get(Bson filter, List<String> includeFields, Bson sort, BsonValue hint
+    Mono<TEntity> get(Bson filter, List<String> includeFields, Bson sort, BsonValue hint
         , ReadPreference readPreference);
 
     /**
@@ -91,7 +95,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param findOptions
      * @return
      */
-    TEntity get(FindOptions findOptions);
+    Mono<TEntity> get(FindOptions findOptions);
 
     //#endregion
 
@@ -103,7 +107,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter 查询条件
      * @return
      */
-    List<TEntity> getList(Bson filter);
+    Flux<TEntity> getList(Bson filter);
 
     /**
      * 根据条件获取获取列表
@@ -112,7 +116,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param includeFields 查询字段
      * @return
      */
-    List<TEntity> getList(Bson filter, List<String> includeFields);
+    Flux<TEntity> getList(Bson filter, List<String> includeFields);
 
     /**
      * 根据条件获取获取列表
@@ -122,7 +126,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param sort          排序
      * @return
      */
-    List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort);
+    Flux<TEntity> getList(Bson filter, List<String> includeFields, Bson sort);
 
     /**
      * 根据条件获取获取列表
@@ -134,7 +138,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param skip
      * @return
      */
-    List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
+    Flux<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip);
 
     /**
@@ -149,7 +153,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
+    Flux<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip
         , BsonValue hint
         , ReadPreference readPreference);
@@ -161,7 +165,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param findOptions
      * @return
      */
-    List<TEntity> getList(FindOptions findOptions);
+    Flux<TEntity> getList(FindOptions findOptions);
 
     //#endregion
 
@@ -171,7 +175,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter 查询条件
      * @return
      */
-    long count(Bson filter);
+    Mono<Long> count(Bson filter);
 
     /**
      * 数量
@@ -182,7 +186,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    long count(Bson filter, int skip, BsonValue hint
+    Mono<Long> count(Bson filter, int skip, BsonValue hint
         , ReadPreference readPreference);
 
 
@@ -192,7 +196,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param countOptions
      * @return
      */
-    long count(CountOptions countOptions);
+    Mono<Long> count(CountOptions countOptions);
 
     /**
      * 是否存在
@@ -200,7 +204,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter
      * @return
      */
-    boolean exists(Bson filter);
+    Mono<Boolean> exists(Bson filter);
 
     /**
      * 是否存在
@@ -210,7 +214,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference
      * @return
      */
-    boolean exists(Bson filter, BsonValue hint
+    Mono<Boolean> exists(Bson filter, BsonValue hint
         , ReadPreference readPreference);
 
     /**
@@ -219,5 +223,5 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param existsOptions
      * @return
      */
-    boolean exists(ExistsOptions existsOptions);
+    Mono<Boolean> exists(ExistsOptions existsOptions);
 }

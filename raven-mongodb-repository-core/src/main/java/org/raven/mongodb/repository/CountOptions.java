@@ -5,7 +5,7 @@ import org.bson.conversions.Bson;
 
 /**
  * @author yi.liang
- * @since JDK1.8
+ * @since JDK11
  */
 public class CountOptions extends com.mongodb.client.model.CountOptions {
     private Bson filter;

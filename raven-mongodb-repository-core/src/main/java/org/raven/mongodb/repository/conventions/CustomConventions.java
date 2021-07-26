@@ -11,7 +11,8 @@ import static org.bson.codecs.pojo.Conventions.CLASS_AND_PROPERTY_CONVENTION;
 
 /**
  * @author yi.liang
- * @since JDK1.8
+ * @since JDK11
+ * date 2021.07.25 20:01
  */
 public final class CustomConventions {
 
@@ -24,7 +25,7 @@ public final class CustomConventions {
      *
      */
     public static final List<Convention> DEFAULT_CONVENTIONS =
-            unmodifiableList(asList(CLASS_AND_PROPERTY_CONVENTION, ANNOTATION_CONVENTION, PROPERTY_FORMAT_CONVENTION));
+        unmodifiableList(asList(CLASS_AND_PROPERTY_CONVENTION, ANNOTATION_CONVENTION, PROPERTY_FORMAT_CONVENTION));
 
 
     /**
