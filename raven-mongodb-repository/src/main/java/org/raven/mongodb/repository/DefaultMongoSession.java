@@ -6,6 +6,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * @author yi.liang
@@ -43,7 +44,7 @@ public class DefaultMongoSession implements MongoSession {
      * @param writeConcern     WriteConcern
      * @param readPreference   ReadPreference
      */
-    public DefaultMongoSession(String connectionString, String dbName, WriteConcern writeConcern, ReadPreference readPreference) {
+    public DefaultMongoSession(@NonNull String connectionString, @NonNull String dbName, WriteConcern writeConcern, ReadPreference readPreference) {
 
         this.writeConcern = writeConcern != null ? writeConcern : WriteConcern.W1;
         this.readPreference = readPreference != null ? readPreference : ReadPreference.secondaryPreferred();

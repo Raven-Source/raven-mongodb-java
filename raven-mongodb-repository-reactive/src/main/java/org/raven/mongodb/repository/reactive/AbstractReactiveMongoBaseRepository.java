@@ -78,9 +78,6 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
         , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
         this();
-        this.idGenerator = idGeneratorProvider != null
-            ? idGeneratorProvider.build(collectionName, entityClazz, keyClazz, this::getDatabase)
-            : DefaultIdGeneratorProvider.Default.build(collectionName, entityClazz, keyClazz, this::getDatabase);
 
         this.mongoSession = mongoSession;
         this.collectionName = collectionName;
@@ -88,6 +85,10 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
             this.collectionName = entityClazz.getSimpleName();
         }
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
+
+        this.idGenerator = idGeneratorProvider != null
+            ? idGeneratorProvider.build(this.collectionName, entityClazz, keyClazz, this::getDatabase)
+            : DefaultIdGeneratorProvider.Default.build(this.collectionName, entityClazz, keyClazz, this::getDatabase);
     }
 
     /**

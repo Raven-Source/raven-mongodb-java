@@ -7,6 +7,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
+import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.spi.IdGenerator;
@@ -28,10 +29,10 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
 
     private Supplier<MongoDatabase> databaseSupplier;
 
-    public IncrementIdGeneration(String collectionName
-        , MongoSequence mongoSequence
-        , Class<TKey> keyClazz
-        , Supplier<MongoDatabase> databaseSupplier) {
+    public IncrementIdGeneration(@NonNull String collectionName
+        , @NonNull MongoSequence mongoSequence
+        , @NonNull Class<TKey> keyClazz
+        , @NonNull Supplier<MongoDatabase> databaseSupplier) {
 
         if (!keyClazz.equals(Integer.class) && !keyClazz.equals(Long.class) && keyClazz.equals(Short.class)) {
             throw new MongoException(String.format("The TKey %s, is Unsupported type", keyClazz.getName()));

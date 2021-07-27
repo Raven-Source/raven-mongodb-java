@@ -3,7 +3,6 @@ package org.raven.mongodb.repository;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import org.bson.types.ObjectId;
-import org.raven.commons.data.AutoIncr;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;

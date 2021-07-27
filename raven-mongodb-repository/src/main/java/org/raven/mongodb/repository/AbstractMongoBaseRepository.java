@@ -77,16 +77,16 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         this();
 
-        this.idGenerator = idGeneratorProvider != null
-            ? idGeneratorProvider.build(collectionName, entityClazz, keyClazz, this::getDatabase)
-            : DefaultIdGeneratorProvider.Default.build(collectionName, entityClazz, keyClazz, this::getDatabase);
-
         this.mongoSession = mongoSession;
         this.collectionName = collectionName;
         if (this.collectionName == null || this.collectionName.isEmpty()) {
             this.collectionName = entityClazz.getSimpleName();
         }
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
+
+        this.idGenerator = idGeneratorProvider != null
+            ? idGeneratorProvider.build(this.collectionName, entityClazz, keyClazz, this::getDatabase)
+            : DefaultIdGeneratorProvider.Default.build(this.collectionName, entityClazz, keyClazz, this::getDatabase);
     }
 
     public AbstractMongoBaseRepository(final MongoSession mongoSession) {
