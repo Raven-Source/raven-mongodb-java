@@ -7,6 +7,7 @@ import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.Getter;
 import lombok.NonNull;
+import org.raven.mongodb.repository.MongoOptions;
 
 /**
  * @author yi.liang
@@ -54,5 +55,14 @@ public class DefaultReactiveMongoSession implements ReactiveMongoSession {
         mongoClient = MongoClients.create(connectionString);
 
         database = mongoClient.getDatabase(dbName).withReadPreference(this.readPreference).withWriteConcern(this.writeConcern);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions mongoOptions
+     */
+    public DefaultReactiveMongoSession(MongoOptions mongoOptions) {
+        this(mongoOptions.getConnString(), mongoOptions.getDbName(), mongoOptions.getWriteConcern(), mongoOptions.getReadPreference());
     }
 }

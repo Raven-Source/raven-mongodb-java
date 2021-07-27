@@ -32,9 +32,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
-     * @param idGeneratorProvider
+     * @param mongoSession        mongoSession
+     * @param collectionName      collectionName
+     * @param idGeneratorProvider idGeneratorProvider
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName
         , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
@@ -44,10 +44,19 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
+     * @param mongoSession mongoSession
      */
     public MongoRepositoryImpl(final MongoSession mongoSession) {
         super(mongoSession);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions mongoOptions
+     */
+    public MongoRepositoryImpl(final MongoOptions mongoOptions) {
+        super(mongoOptions);
     }
 
     //#endregion

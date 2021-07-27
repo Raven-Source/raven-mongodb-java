@@ -8,7 +8,7 @@ import org.raven.commons.data.annotation.Contract;
 
 import java.util.Date;
 
-@Contract(formatType = MemberFormatType.PascalCase)
+@Contract(formatType = MemberFormatType.CamelCase)
 public final class User implements AutoIncr<Long>, Deletable {
     @BsonId()
     private Long id;

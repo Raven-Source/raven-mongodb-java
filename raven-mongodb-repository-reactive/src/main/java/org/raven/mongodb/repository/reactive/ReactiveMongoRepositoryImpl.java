@@ -9,6 +9,7 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.MongoOptions;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
@@ -52,6 +53,15 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession) {
         super(mongoSession);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions mongoOptions
+     */
+    public ReactiveMongoRepositoryImpl(final MongoOptions mongoOptions) {
+        super(mongoOptions);
     }
 
     //#endregion

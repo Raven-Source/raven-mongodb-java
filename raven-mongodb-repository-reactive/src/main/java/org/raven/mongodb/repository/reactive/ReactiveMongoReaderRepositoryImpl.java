@@ -36,9 +36,9 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
-     * @param idGeneratorProvider
+     * @param mongoSession mongoSession
+     * @param collectionName collectionName
+     * @param idGeneratorProvider idGeneratorProvider
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName
         , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
@@ -48,10 +48,19 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession
+     * @param mongoSession mongoSession
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession) {
         super(mongoSession);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions mongoOptions
+     */
+    public ReactiveMongoReaderRepositoryImpl(final MongoOptions mongoOptions) {
+        super(mongoOptions);
     }
 
     //#endregion
@@ -61,7 +70,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * 根据id获取实体
      *
-     * @param id
+     * @param id id
      * @return
      */
     @Override

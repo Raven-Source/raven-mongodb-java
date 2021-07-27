@@ -12,6 +12,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.BsonUtils;
+import org.raven.mongodb.repository.MongoOptions;
 import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
@@ -92,10 +93,21 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
     }
 
     /**
-     * @param mongoSession
+     * constructor
+     *
+     * @param mongoSession mongoSession
      */
     public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession) {
         this(mongoSession, null, null);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions mongoOptions
+     */
+    public AbstractReactiveMongoBaseRepository(final MongoOptions mongoOptions) {
+        this(new DefaultReactiveMongoSession(mongoOptions), mongoOptions.getCollectionName(), mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion

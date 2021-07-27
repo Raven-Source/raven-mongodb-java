@@ -54,4 +54,14 @@ public class DefaultMongoSession implements MongoSession {
 
         database = mongoClient.getDatabase(dbName).withReadPreference(this.readPreference).withWriteConcern(this.writeConcern);
     }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions mongoOptions
+     */
+    public DefaultMongoSession(MongoOptions mongoOptions) {
+        this(mongoOptions.getConnString(), mongoOptions.getDbName(), mongoOptions.getWriteConcern(), mongoOptions.getReadPreference());
+    }
+
 }
