@@ -2,6 +2,8 @@ package org.raven.mongodb.repository;
 
 import com.mongodb.WriteConcern;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.conversions.Bson;
 
@@ -53,24 +55,24 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * @param entity
      */
-    void insert(TEntity entity);
+    InsertOneResult insert(TEntity entity);
 
     /**
      * @param entity
      * @param writeConcern
      */
-    void insert(TEntity entity, WriteConcern writeConcern);
+    InsertOneResult insert(TEntity entity, WriteConcern writeConcern);
 
     /**
      * @param entitys
      */
-    void insertBatch(List<TEntity> entitys);
+    InsertManyResult insertBatch(List<TEntity> entitys);
 
     /**
      * @param entitys
      * @param writeConcern
      */
-    void insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
+    InsertManyResult insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
 
 
     /**

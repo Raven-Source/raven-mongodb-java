@@ -214,25 +214,4 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
 
     }
 
-    /**
-     * ID assignment
-     *
-     * @param entity entity
-     * @param id     id
-     */
-    protected void assignmentEntityID(final TEntity entity, final long id) {
-        BsonUtils.assignmentEntityID(keyClazz, entity, id);
-    }
-
-    /**
-     * ID assignment
-     *
-     * @param entity entity
-     * @param id     id
-     */
-    protected void assignmentEntityID(final TEntity entity, final ObjectId id) {
-        BsonUtils.assignmentEntityID(entity, id);
-
-    }
-
 }

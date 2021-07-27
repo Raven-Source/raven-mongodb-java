@@ -4,6 +4,8 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
@@ -14,7 +16,6 @@ import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @param <TEntity>
@@ -23,8 +24,8 @@ import java.util.stream.Stream;
  * @since JDK11
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-    extends MongoReaderRepositoryImpl<TEntity, TKey>
-    implements MongoRepository<TEntity, TKey> {
+        extends MongoReaderRepositoryImpl<TEntity, TKey>
+        implements MongoRepository<TEntity, TKey> {
 
 
     //#region constructor
@@ -37,7 +38,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param idGeneratorProvider idGeneratorProvider
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName
-        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, idGeneratorProvider);
     }
 
@@ -136,8 +137,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param entity
      */
     @Override
-    public void insert(final TEntity entity) {
-        this.insert(entity, null);
+    public InsertOneResult insert(final TEntity entity) {
+        return this.insert(entity, null);
     }
 
     /**
@@ -145,20 +146,20 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param writeConcern
      */
     @Override
-    public void insert(final TEntity entity, final WriteConcern writeConcern) {
+    public InsertOneResult insert(final TEntity entity, final WriteConcern writeConcern) {
         if (entity.getId() == null) {
             TKey id = idGenerator.generateId();
             entity.setId(id);
         }
-        super.getCollection(writeConcern).insertOne(entity);
+        return super.getCollection(writeConcern).insertOne(entity);
     }
 
     /**
      * @param entitys
      */
     @Override
-    public void insertBatch(final List<TEntity> entitys) {
-        this.insertBatch(entitys, null);
+    public InsertManyResult insertBatch(final List<TEntity> entitys) {
+        return this.insertBatch(entitys, null);
     }
 
     /**
@@ -166,7 +167,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param writeConcern
      */
     @Override
-    public void insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
+    public InsertManyResult insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
 
         List<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = entityStream.size();
@@ -179,7 +180,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             }
         }
 
-        super.getCollection(writeConcern).insertMany(entitys);
+        return super.getCollection(writeConcern).insertMany(entitys);
     }
 
     //#endregion

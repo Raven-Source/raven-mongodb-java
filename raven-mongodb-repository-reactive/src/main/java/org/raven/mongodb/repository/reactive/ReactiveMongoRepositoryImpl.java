@@ -4,6 +4,8 @@ import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.BsonDocument;
@@ -13,12 +15,10 @@ import org.raven.mongodb.repository.MongoOptions;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @param <TEntity>
@@ -27,8 +27,8 @@ import java.util.stream.Stream;
  * @since JDK11
  */
 public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-    extends ReactiveMongoReaderRepositoryImpl<TEntity, TKey>
-    implements ReactiveMongoRepository<TEntity, TKey> {
+        extends ReactiveMongoReaderRepositoryImpl<TEntity, TKey>
+        implements ReactiveMongoRepository<TEntity, TKey> {
 
 
     //#region constructor
@@ -41,7 +41,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param idGeneratorProvider
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName
-        , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+            , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
         super(mongoSession, collectionName, idGeneratorProvider);
     }
@@ -72,7 +72,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param entity
      */
     @Override
-    public Mono<Void> insert(final TEntity entity) {
+    public Mono<InsertOneResult> insert(final TEntity entity) {
         return this.insert(entity, null);
     }
 
@@ -81,26 +81,28 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param writeConcern
      */
     @Override
-    public Mono<Void> insert(final TEntity entity, final WriteConcern writeConcern) {
+    public Mono<InsertOneResult> insert(final TEntity entity, final WriteConcern writeConcern) {
 
+        Mono<TEntity> mono = Mono.just(entity);
         if (entity.getId() == null) {
 
-            return idGenerator.generateId().flatMap(x -> {
+            mono = idGenerator.generateId().map(x -> {
                 entity.setId(x);
-                return Mono.when(super.getCollection(writeConcern).insertOne(entity));
+                return entity;
+
             });
 
-        } else {
-            return Mono.when(super.getCollection(writeConcern).insertOne(entity));
         }
-
+        return mono.flatMap(e ->
+                Mono.from(super.getCollection(writeConcern).insertOne(e))
+        );
     }
 
     /**
      * @param entitys
      */
     @Override
-    public Mono<Void> insertBatch(final List<TEntity> entitys) {
+    public Mono<InsertManyResult> insertBatch(final List<TEntity> entitys) {
         return this.insertBatch(entitys, null);
     }
 
@@ -109,26 +111,29 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param writeConcern
      */
     @Override
-    public Mono<Void> insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
+    public Mono<InsertManyResult> insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
         //
+
+        Mono<List<TEntity>> mono = Mono.just(entitys);
 
         List<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = entityStream.size();
 
         if (count > 0) {
-            return idGenerator.generateIdBatch(count).flatMap(ids -> {
+
+            mono = idGenerator.generateIdBatch(count).map(ids -> {
 
                 for (int i = 0; i < count; i++) {
                     entityStream.get(i).setId(ids.get(i));
                 }
-                return Mono.when(super.getCollection(writeConcern).insertMany(entitys));
 
+                return entitys;
             });
 
-        } else {
-
-            return Mono.when(super.getCollection(writeConcern).insertMany(entitys));
         }
+        return mono.flatMap(es ->
+                Mono.from(super.getCollection(writeConcern).insertMany(es))
+        );
     }
 
     //#endregion
@@ -145,8 +150,8 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         Bson update = new BsonDocument("$set", bsDoc);
         if (isUpsert) {
-            return idGenerator.generateId().flatMap(id -> Mono.just(
-                Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id)))
+            return idGenerator.generateId().map(id ->
+                    Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id))
             );
         } else {
             return Mono.just(update);
@@ -198,7 +203,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         options.upsert(isUpsert);
 
         return createUpdateBson(updateEntity, isUpsert).flatMap(update -> Mono.from(
-            super.getCollection(writeConcern).updateOne(filter, update, options)
+                super.getCollection(writeConcern).updateOne(filter, update, options)
         ));
 
     }
@@ -244,7 +249,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         options.upsert(isUpsert);
 
         return Mono.from(
-            super.getCollection(writeConcern).updateOne(filter, update, options)
+                super.getCollection(writeConcern).updateOne(filter, update, options)
         );
     }
 
@@ -258,7 +263,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<UpdateResult> updateMany(final Bson filter, final Bson update) {
         return Mono.from(
-            super.getCollection().updateMany(filter, update)
+                super.getCollection().updateMany(filter, update)
         );
     }
 
@@ -273,7 +278,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<UpdateResult> updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
         return Mono.from(
-            super.getCollection(writeConcern).updateMany(filter, update)
+                super.getCollection(writeConcern).updateMany(filter, update)
         );
     }
 
@@ -347,7 +352,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         }
 
         return createUpdateBson(entity, isUpsert).flatMap(update -> Mono.from(
-            super.getCollection().findOneAndUpdate(filter, update, options))
+                super.getCollection().findOneAndUpdate(filter, update, options))
         );
 
     }

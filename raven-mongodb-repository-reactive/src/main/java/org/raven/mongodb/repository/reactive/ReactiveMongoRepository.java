@@ -2,6 +2,8 @@ package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.WriteConcern;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.conversions.Bson;
 import reactor.core.publisher.Mono;
@@ -15,7 +17,7 @@ import java.util.List;
  * @since JDK11
  */
 public interface ReactiveMongoRepository<TEntity, TKey>
-    extends ReactiveMongoReaderRepository<TEntity, TKey> {
+        extends ReactiveMongoReaderRepository<TEntity, TKey> {
 
 //    /**
 //     * @return
@@ -54,25 +56,24 @@ public interface ReactiveMongoRepository<TEntity, TKey>
     /**
      * @param entity
      */
-    Mono<Void> insert(TEntity entity);
+    Mono<InsertOneResult> insert(TEntity entity);
 
     /**
      * @param entity
      * @param writeConcern
      */
-    Mono<Void> insert(TEntity entity, WriteConcern writeConcern);
+    Mono<InsertOneResult> insert(TEntity entity, WriteConcern writeConcern);
 
     /**
      * @param entitys
      */
-    Mono<Void> insertBatch(List<TEntity> entitys);
+    Mono<InsertManyResult> insertBatch(List<TEntity> entitys);
 
     /**
      * @param entitys
      * @param writeConcern
      */
-    Mono<Void> insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
-
+    Mono<InsertManyResult> insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
