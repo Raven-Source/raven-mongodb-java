@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  * @author yi.liang
  * date 2021.07.26 18:37
  */
+@SuppressWarnings({"unchecked"})
 public class DefaultIdGeneratorProvider implements IdGeneratorProvider<IdGenerator<?>, MongoDatabase> {
 
     public static final DefaultIdGeneratorProvider Default = new DefaultIdGeneratorProvider();
