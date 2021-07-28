@@ -12,6 +12,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.BsonUtils;
+import org.raven.mongodb.repository.DocumentNamed;
 import org.raven.mongodb.repository.MongoOptions;
 import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
@@ -83,7 +84,7 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
         this.mongoSession = mongoSession;
         this.collectionName = collectionName;
         if (this.collectionName == null || this.collectionName.isEmpty()) {
-            this.collectionName = entityClazz.getSimpleName();
+            this.collectionName = DocumentNamed.getNamed(entityClazz);
         }
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
 

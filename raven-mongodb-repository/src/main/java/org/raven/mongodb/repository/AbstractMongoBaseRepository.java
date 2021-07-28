@@ -80,7 +80,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         this.mongoSession = mongoSession;
         this.collectionName = collectionName;
         if (this.collectionName == null || this.collectionName.isEmpty()) {
-            this.collectionName = entityClazz.getSimpleName();
+            this.collectionName = DocumentNamed.getNamed(entityClazz);
         }
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
 
