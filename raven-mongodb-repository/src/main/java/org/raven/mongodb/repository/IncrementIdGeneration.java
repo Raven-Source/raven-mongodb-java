@@ -73,18 +73,18 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
         MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(mongoSequence.getSequenceName(), BsonDocument.class);
 
         Bson filter = Filters.eq(mongoSequence.getCollectionName(), collectionName);
-        Bson updater = Updates.inc(mongoSequence.getIncrementID(), count);
+        Bson updater = Updates.inc(mongoSequence.getIncrement(), count);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
 
         BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
 
         if (result != null) {
-            return result.getInt64(mongoSequence.getIncrementID()).longValue();
+            return result.getInt64(mongoSequence.getIncrement()).longValue();
         } else if (iteration <= 1) {
             return createIncId(count, (iteration + 1));
         } else {
-            throw new MongoException("Failed to get on the IncID");
+            throw new MongoException("Failed to get on the incr");
         }
 
     }

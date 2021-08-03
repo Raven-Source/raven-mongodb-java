@@ -10,7 +10,7 @@ public class MongoSequence {
 
     private String collectionName;
 
-    private String incrementID;
+    private String increment;
 
     public String getSequenceName() {
         return sequenceName;
@@ -28,24 +28,24 @@ public class MongoSequence {
         this.collectionName = collectionName;
     }
 
-    public String getIncrementID() {
-        return incrementID;
+    public String getIncrement() {
+        return increment;
     }
 
-    public void setIncrementID(String incrementID) {
-        this.incrementID = incrementID;
+    public void setIncrement(String increment) {
+        this.increment = increment;
     }
 
 
     /**
      * @param sequence
      * @param collectionName
-     * @param incrementID
+     * @param increment
      */
-    public MongoSequence(final String sequence, final String collectionName, final String incrementID) {
+    public MongoSequence(final String sequence, final String collectionName, final String increment) {
         this.sequenceName = sequence;
         this.collectionName = collectionName;
-        this.incrementID = incrementID;
+        this.increment = increment;
     }
 
     /**
@@ -55,6 +55,6 @@ public class MongoSequence {
 
         this.sequenceName = "_sequence";
         this.collectionName = "_id";
-        this.incrementID = "incrId";
+        this.increment = "incr";
     }
 }

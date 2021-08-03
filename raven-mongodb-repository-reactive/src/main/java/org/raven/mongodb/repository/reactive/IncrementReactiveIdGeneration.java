@@ -15,7 +15,6 @@ import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -88,7 +87,7 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
         MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(mongoSequence.getSequenceName(), BsonDocument.class);
 
         Bson filter = Filters.eq(mongoSequence.getCollectionName(), collectionName);
-        Bson updater = Updates.inc(mongoSequence.getIncrementID(), count);
+        Bson updater = Updates.inc(mongoSequence.getIncrement(), count);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
 
@@ -97,7 +96,7 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
         return result.flatMap(x -> {
 
             if (x != null) {
-                Long id = x.getInt64(mongoSequence.getIncrementID()).longValue();
+                Long id = x.getInt64(mongoSequence.getIncrement()).longValue();
                 return Mono.just(id);
             } else if (iteration <= 1) {
                 return createIncId(count, (iteration + 1));
