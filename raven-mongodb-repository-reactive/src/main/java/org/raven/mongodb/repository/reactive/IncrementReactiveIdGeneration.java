@@ -12,6 +12,7 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.MongoSequence;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
+import org.raven.mongodb.repository.spi.Sequence;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -27,26 +28,26 @@ import java.util.function.Supplier;
 public class IncrementReactiveIdGeneration<TKey extends Number> implements ReactiveIdGenerator<TKey> {
 
     private final String collectionName;
-    private final MongoSequence mongoSequence;
+    private final Sequence sequence;
     private final Class<TKey> keyClazz;
 
     private Supplier<MongoDatabase> databaseSupplier;
 
     /**
-     * @param mongoSequence
+     * @param sequence
      * @param keyClazz
      */
     public IncrementReactiveIdGeneration(@NonNull String collectionName
-        , @NonNull MongoSequence mongoSequence
-        , @NonNull Class<TKey> keyClazz
-        , @NonNull Supplier<MongoDatabase> databaseSupplier) {
+            , @NonNull Sequence sequence
+            , @NonNull Class<TKey> keyClazz
+            , @NonNull Supplier<MongoDatabase> databaseSupplier) {
 
         if (!keyClazz.equals(Integer.class) && !keyClazz.equals(Long.class) && keyClazz.equals(Short.class)) {
             throw new MongoException(String.format("The TKey %s, is Unsupported type", keyClazz.getName()));
         }
 
         this.collectionName = collectionName;
-        this.mongoSequence = mongoSequence;
+        this.sequence = sequence;
         this.keyClazz = keyClazz;
 
         this.databaseSupplier = databaseSupplier;
@@ -84,10 +85,10 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
      */
     public Mono<Long> createIncId(final long count, final int iteration) {
 
-        MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(mongoSequence.getSequenceName(), BsonDocument.class);
+        MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(sequence.getSequenceName(), BsonDocument.class);
 
-        Bson filter = Filters.eq(mongoSequence.getCollectionName(), collectionName);
-        Bson updater = Updates.inc(mongoSequence.getIncrement(), count);
+        Bson filter = Filters.eq(sequence.getCollectionName(), collectionName);
+        Bson updater = Updates.inc(sequence.getIncrementName(), count);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
 
@@ -96,7 +97,7 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
         return result.flatMap(x -> {
 
             if (x != null) {
-                Long id = x.getInt64(mongoSequence.getIncrement()).longValue();
+                Long id = x.getInt64(sequence.getIncrementName()).longValue();
                 return Mono.just(id);
             } else if (iteration <= 1) {
                 return createIncId(count, (iteration + 1));

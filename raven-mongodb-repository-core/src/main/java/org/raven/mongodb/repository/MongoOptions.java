@@ -3,6 +3,7 @@ package org.raven.mongodb.repository;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.Sequence;
 
 /**
  * @author yi.liang
@@ -14,6 +15,10 @@ public interface MongoOptions {
     String getConnString();
 
     String getDbName();
+
+    default Sequence getSequence() {
+        return null;
+    }
 
     default String getCollectionName() {
         return null;

@@ -9,6 +9,6 @@ import java.util.function.Supplier;
  */
 public interface IdGeneratorProvider<T, TMongoDatabase> {
 
-    <TEntity, TKey> T build(String collectionName, Class<TEntity> entityClazz, Class<TKey> keyClazz, Supplier<TMongoDatabase> databaseSupplier);
+    <TEntity, TKey> T build(String collectionName, Sequence sequence, Class<TEntity> entityClazz, Class<TKey> keyClazz, Supplier<TMongoDatabase> databaseSupplier);
 
 }

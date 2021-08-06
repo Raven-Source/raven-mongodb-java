@@ -12,6 +12,7 @@ import org.raven.mongodb.repository.*;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.Sequence;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -28,21 +29,21 @@ import java.util.Objects;
  * @since JDK11
  */
 public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-    extends AbstractReactiveMongoBaseRepository<TEntity, TKey>
-    implements ReactiveMongoReaderRepository<TEntity, TKey> {
+        extends AbstractReactiveMongoBaseRepository<TEntity, TKey>
+        implements ReactiveMongoReaderRepository<TEntity, TKey> {
 
     //#region constructor
 
     /**
      * constructor
      *
-     * @param mongoSession mongoSession
-     * @param collectionName collectionName
+     * @param mongoSession        mongoSession
+     * @param collectionName      collectionName
      * @param idGeneratorProvider idGeneratorProvider
      */
-    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName
-        , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-        super(mongoSession, collectionName, idGeneratorProvider);
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
+            , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+        super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
 
     /**
@@ -100,7 +101,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<TEntity> get(final TKey id, final List<String> includeFields
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
@@ -163,7 +164,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<TEntity> get(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -244,7 +245,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Flux<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-        , final int limit, final int skip) {
+            , final int limit, final int skip) {
         return this.getList(filter, includeFields, sort, limit, skip, null, null);
     }
 
@@ -262,9 +263,9 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Flux<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-        , final int limit, final int skip
-        , final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final int limit, final int skip
+            , final BsonValue hint
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -317,7 +318,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<Long> count(final Bson filter, final int skip, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -328,7 +329,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
         option.skip(skip);
 
         return Mono.from(
-            super.getCollection(readPreference).countDocuments(_filter, option)
+                super.getCollection(readPreference).countDocuments(_filter, option)
         );
     }
 
@@ -347,7 +348,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
         }
 
         return Mono.from(
-            super.getCollection(countOptions.getReadPreference()).countDocuments(_filter, countOptions)
+                super.getCollection(countOptions.getReadPreference()).countDocuments(_filter, countOptions)
         );
     }
 
@@ -372,7 +373,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<Boolean> exists(final Bson filter, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -383,7 +384,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
         includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
 
         return Mono.from(
-            this.get(_filter, includeFields, null, hint, readPreference)
+                this.get(_filter, includeFields, null, hint, readPreference)
         ).map(Objects::nonNull);
     }
 

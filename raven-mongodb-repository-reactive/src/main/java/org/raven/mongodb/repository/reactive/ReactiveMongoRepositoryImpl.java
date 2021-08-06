@@ -15,6 +15,7 @@ import org.raven.mongodb.repository.MongoOptions;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.Sequence;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -40,10 +41,10 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName
      * @param idGeneratorProvider
      */
-    public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName
+    public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
-        super(mongoSession, collectionName, idGeneratorProvider);
+        super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
 
     /**

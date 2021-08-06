@@ -13,6 +13,7 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.Sequence;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,9 +38,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName      collectionName
      * @param idGeneratorProvider idGeneratorProvider
      */
-    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName
+    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-        super(mongoSession, collectionName, idGeneratorProvider);
+        super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
 
     /**

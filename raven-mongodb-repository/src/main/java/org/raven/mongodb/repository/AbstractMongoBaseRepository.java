@@ -15,6 +15,7 @@ import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.Sequence;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @SuppressWarnings({"unchecked"})
 public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
-    implements MongoBaseRepository<TEntity> {
+        implements MongoBaseRepository<TEntity> {
     protected Class<TEntity> entityClazz;
     protected Class<TKey> keyClazz;
     protected Boolean isAutoIncrClass;
@@ -73,8 +74,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
     }
 
-    public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName
-        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+    public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName, final Sequence sequence
+            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         this();
 
         this.mongoSession = mongoSession;
@@ -85,16 +86,16 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
 
         this.idGenerator = idGeneratorProvider != null
-            ? idGeneratorProvider.build(this.collectionName, entityClazz, keyClazz, this::getDatabase)
-            : DefaultIdGeneratorProvider.Default.build(this.collectionName, entityClazz, keyClazz, this::getDatabase);
+                ? idGeneratorProvider.build(this.collectionName, sequence, entityClazz, keyClazz, this::getDatabase)
+                : DefaultIdGeneratorProvider.Default.build(this.collectionName, sequence, entityClazz, keyClazz, this::getDatabase);
     }
 
     public AbstractMongoBaseRepository(final MongoSession mongoSession) {
-        this(mongoSession, null, null);
+        this(mongoSession, null, null, null);
     }
 
     public AbstractMongoBaseRepository(final MongoOptions mongoOptions) {
-        this(new DefaultMongoSession(mongoOptions), mongoOptions.getCollectionName(), mongoOptions.getIdGeneratorProvider());
+        this(new DefaultMongoSession(mongoOptions), mongoOptions.getCollectionName(), mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion
@@ -174,7 +175,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @return FindIterable
      */
     protected FindIterable<TEntity> findOptions(final FindIterable<TEntity> findIterable, final Bson projection, final Bson sort
-        , final int limit, final int skip, final BsonValue hint) {
+            , final int limit, final int skip, final BsonValue hint) {
 
         FindIterable<TEntity> filter = findIterable;
         if (projection != null) {

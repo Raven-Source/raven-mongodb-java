@@ -12,6 +12,7 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
+import org.raven.mongodb.repository.spi.Sequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,8 @@ import java.util.List;
  * @since JDK11
  */
 public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-    extends AbstractMongoBaseRepository<TEntity, TKey>
-    implements MongoReaderRepository<TEntity, TKey> {
+        extends AbstractMongoBaseRepository<TEntity, TKey>
+        implements MongoReaderRepository<TEntity, TKey> {
 
     //#region constructor
 
@@ -37,10 +38,10 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName      collectionName
      * @param idGeneratorProvider idGeneratorProvider
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName
-        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
+            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
-        super(mongoSession, collectionName, idGeneratorProvider);
+        super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
 
     /**
@@ -98,7 +99,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final TKey id, final List<String> includeFields
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
@@ -162,7 +163,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -243,7 +244,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public List<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-        , final int limit, final int skip) {
+            , final int limit, final int skip) {
         return this.getList(filter, includeFields, sort, limit, skip, null, null);
     }
 
@@ -261,9 +262,9 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public List<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-        , final int limit, final int skip
-        , final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final int limit, final int skip
+            , final BsonValue hint
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -321,7 +322,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public long count(final Bson filter, final int skip, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {
@@ -372,7 +373,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public boolean exists(final Bson filter, final BsonValue hint
-        , final ReadPreference readPreference) {
+            , final ReadPreference readPreference) {
 
         Bson _filter = filter;
         if (_filter == null) {

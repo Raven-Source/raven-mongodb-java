@@ -11,6 +11,7 @@ import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.spi.IdGenerator;
+import org.raven.mongodb.repository.spi.Sequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +25,13 @@ import java.util.function.Supplier;
 public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<TKey> {
 
     private final String collectionName;
-    private final MongoSequence mongoSequence;
+    private final Sequence sequence;
     private final Class<TKey> keyClazz;
 
     private Supplier<MongoDatabase> databaseSupplier;
 
     public IncrementIdGeneration(@NonNull String collectionName
-        , @NonNull MongoSequence mongoSequence
+        , @NonNull Sequence sequence
         , @NonNull Class<TKey> keyClazz
         , @NonNull Supplier<MongoDatabase> databaseSupplier) {
 
@@ -39,7 +40,7 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
         }
 
         this.collectionName = collectionName;
-        this.mongoSequence = mongoSequence;
+        this.sequence = sequence;
         this.keyClazz = keyClazz;
 
         this.databaseSupplier = databaseSupplier;
@@ -70,17 +71,17 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
 
     public Long createIncId(final long count, final int iteration) {
 
-        MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(mongoSequence.getSequenceName(), BsonDocument.class);
+        MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(sequence.getSequenceName(), BsonDocument.class);
 
-        Bson filter = Filters.eq(mongoSequence.getCollectionName(), collectionName);
-        Bson updater = Updates.inc(mongoSequence.getIncrement(), count);
+        Bson filter = Filters.eq(sequence.getCollectionName(), collectionName);
+        Bson updater = Updates.inc(sequence.getIncrementName(), count);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
 
         BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
 
         if (result != null) {
-            return result.getInt64(mongoSequence.getIncrement()).longValue();
+            return result.getInt64(sequence.getIncrementName()).longValue();
         } else if (iteration <= 1) {
             return createIncId(count, (iteration + 1));
         } else {
