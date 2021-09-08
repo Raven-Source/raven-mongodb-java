@@ -20,9 +20,9 @@ public interface MongoOptions {
         return null;
     }
 
-    default String getCollectionName() {
-        return null;
-    }
+//    default String getCollectionName() {
+//        return null;
+//    }
 
     default WriteConcern getWriteConcern() {
         return null;

@@ -62,8 +62,13 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoOptions mongoOptions
      */
     public ReactiveMongoRepositoryImpl(final MongoOptions mongoOptions) {
-        super(mongoOptions);
+        super(mongoOptions, null);
     }
+
+    public ReactiveMongoRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoOptions, collectionName);
+    }
+
 
     //#endregion
 

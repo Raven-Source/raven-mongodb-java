@@ -94,8 +94,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         this(mongoSession, null, null, null);
     }
 
-    public AbstractMongoBaseRepository(final MongoOptions mongoOptions) {
-        this(new DefaultMongoSession(mongoOptions), mongoOptions.getCollectionName(), mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    public AbstractMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
+        this(new DefaultMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion

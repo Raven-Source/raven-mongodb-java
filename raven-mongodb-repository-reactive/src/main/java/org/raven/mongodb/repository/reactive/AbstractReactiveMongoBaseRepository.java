@@ -108,8 +108,8 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
      *
      * @param mongoOptions mongoOptions
      */
-    public AbstractReactiveMongoBaseRepository(final MongoOptions mongoOptions) {
-        this(new DefaultReactiveMongoSession(mongoOptions), mongoOptions.getCollectionName(), mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    public AbstractReactiveMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
+        this(new DefaultReactiveMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion

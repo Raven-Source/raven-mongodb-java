@@ -14,6 +14,7 @@ import java.util.List;
  * @author yi.liang
  * @since JDK1.8
  */
+@SuppressWarnings("unchecked")
 public abstract class BsonUtils {
 
     /**

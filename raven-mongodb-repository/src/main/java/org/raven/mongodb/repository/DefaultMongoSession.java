@@ -16,6 +16,7 @@ public class DefaultMongoSession implements MongoSession {
     /**
      * MongoClient
      */
+    @Getter
     private MongoClient mongoClient;
 
     /**

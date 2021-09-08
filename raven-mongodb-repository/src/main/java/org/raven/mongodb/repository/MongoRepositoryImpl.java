@@ -58,7 +58,17 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoOptions mongoOptions
      */
     public MongoRepositoryImpl(final MongoOptions mongoOptions) {
-        super(mongoOptions);
+        super(mongoOptions, null);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoOptions
+     * @param collectionName
+     */
+    public MongoRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoOptions, collectionName);
     }
 
     //#endregion

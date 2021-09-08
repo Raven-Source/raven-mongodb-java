@@ -60,8 +60,8 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      *
      * @param mongoOptions mongoOptions
      */
-    public ReactiveMongoReaderRepositoryImpl(final MongoOptions mongoOptions) {
-        super(mongoOptions);
+    public ReactiveMongoReaderRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoOptions, collectionName);
     }
 
     //#endregion

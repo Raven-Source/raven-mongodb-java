@@ -1,8 +1,14 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import org.bson.codecs.pojo.ClassModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -15,8 +21,18 @@ public class MongoRepositoryTest {
     @Before
     public void init() {
 
+        ClassModel<User> classModel = PojoCodecRegistry.getClassModel(User.class);
+
+        System.out.println(classModel.getName());
+
         MongoBaseRepository<User> repos = new UserRepositoryImpl();
         repos.getDatabase().drop();
+
+        DefaultMongoSession defaultMongoSession = ((DefaultMongoSession) MongoSessionInstance.mongoSession);
+        Morphia morphia = new Morphia();
+        MongoClient mongo = new MongoClient("127.0.0.1", 27017);
+        Datastore datastore = morphia.createDatastore(mongo, "RepositoryTest");
+
     }
 
     @Test
@@ -42,7 +58,6 @@ public class MongoRepositoryTest {
 
         MongoRepository<Mall, String> mall_repos = new MallRepositoryImpl();
         mall_repos.insert(mall);
-
 
         //Assert.assertNotNull(mall.getId());
 

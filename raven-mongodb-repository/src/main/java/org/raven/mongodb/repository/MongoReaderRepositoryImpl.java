@@ -56,10 +56,11 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoOptions mongoOptions
+     * @param mongoOptions   mongoOptions
+     * @param collectionName collectionName
      */
-    public MongoReaderRepositoryImpl(final MongoOptions mongoOptions) {
-        super(mongoOptions);
+    public MongoReaderRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoOptions, collectionName);
     }
 
     //#endregion
