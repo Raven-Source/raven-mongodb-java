@@ -22,7 +22,7 @@
         <java.version>11</java.version>
         <encoding>UTF-8</encoding>
 
-        <raven-commons.version>3.0.0</raven-commons.version>
+        <raven-commons.version>3.1.0</raven-commons.version>
         <mongodb-driver.version>4.2.3</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>
