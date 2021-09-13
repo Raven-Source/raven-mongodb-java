@@ -3,6 +3,7 @@ package org.raven.mongodb.repository;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import org.bson.codecs.pojo.ClassModel;
+import org.bson.codecs.pojo.ClassModelUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class MongoRepositoryTest {
     @Before
     public void init() {
 
-        ClassModel<User> classModel = PojoCodecRegistry.getClassModel(User.class);
+        ClassModel<User> classModel = ClassModelUtils.getClassModel(User.class);
 
         System.out.println(classModel.getName());
 

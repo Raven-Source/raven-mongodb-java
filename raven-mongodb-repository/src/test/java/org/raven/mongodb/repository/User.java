@@ -1,4 +1,5 @@
 package org.raven.mongodb.repository;
+import lombok.experimental.FieldNameConstants;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.raven.commons.data.AutoIncr;
@@ -9,6 +10,7 @@ import org.raven.commons.data.annotation.Contract;
 import java.util.Date;
 
 @Contract(formatType = MemberFormatType.PascalCase)
+@FieldNameConstants
 public final class User implements AutoIncr<Long>, Deletable {
     @BsonId()
     private Long id;

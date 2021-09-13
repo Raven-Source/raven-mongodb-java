@@ -19,11 +19,18 @@ public class MongoReaderRepositoryTest {
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
         repos.getDatabase().drop();
 
+        Mall mall = null;
+
         ArrayList<User> list = new ArrayList<>();
         for (int i = 1; i <= size; i++) {
 
+            mall = new Mall();
+            mall.setId("m" + i);
+            mall.setName("大悦城");
+
             User user = new User();
             user.setName(UUID.randomUUID().toString());
+            user.setMall(mall);
             user.setAge(i * 10);
             list.add(user);
         }
@@ -73,8 +80,6 @@ public class MongoReaderRepositoryTest {
         for (long i = 1; i <= size; i++) {
             user = repos.get(i);
             Assert.assertNotNull(user);
-
-
 
             user = repos.get(Filters.eq("Name", user.getName()));
             Assert.assertNotNull(user);
