@@ -133,6 +133,8 @@ public class FilterBuilder<TEntity> {
         } else {
             if (operator == Operator.OR) {
                 return Filters.or(bsons);
+            } else if (operator == Operator.NOR) {
+                return Filters.nor(bsons);
             } else {
                 return Filters.and(bsons);
             }
