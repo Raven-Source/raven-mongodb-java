@@ -82,28 +82,34 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> or(final FilterBuilder<TEntity> filterBuilder) {
-        assert filterBuilder != null;
-        bsons.add(Filters.or(filterBuilder.bsons));
+    public <TItem> FilterBuilder<TEntity> or(final FilterBuilder<TEntity> that) {
+        assert that != null;
+
+        Bson bson = Filters.or(Filters.and(bsons), that.build());
+        bsons = new ArrayList<>();
+        bsons.add(bson);
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> and(final FilterBuilder<TEntity> filterBuilder) {
-        assert filterBuilder != null;
-        bsons.add(Filters.and(filterBuilder.bsons));
+    public <TItem> FilterBuilder<TEntity> and(final FilterBuilder<TEntity> that) {
+        assert that != null;
+        bsons.addAll(that.bsons);
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> not(final FilterBuilder<TEntity> filterBuilder) {
-        assert filterBuilder != null;
-        bsons.add(Filters.not(filterBuilder.build()));
+    public <TItem> FilterBuilder<TEntity> not(final FilterBuilder<TEntity> that) {
+        assert that != null;
+        bsons.add(Filters.not(that.build()));
         return this;
     }
 
 
-    public <TItem> FilterBuilder<TEntity> nor(final FilterBuilder<TEntity> filterBuilder) {
-        assert filterBuilder != null;
-        bsons.add(Filters.nor(filterBuilder.bsons));
+    public <TItem> FilterBuilder<TEntity> nor(final FilterBuilder<TEntity> that) {
+        assert that != null;
+
+        Bson bson = Filters.nor(Filters.and(bsons), that.build());
+        bsons = new ArrayList<>();
+        bsons.add(bson);
         return this;
     }
 
@@ -117,11 +123,19 @@ public class FilterBuilder<TEntity> {
     }
 
     public Bson build() {
+        return build(Operator.AND);
+    }
+
+
+    public Bson build(Operator operator) {
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {
-            return Filters.and(bsons);
+            if (operator == Operator.OR) {
+                return Filters.or(bsons);
+            } else {
+                return Filters.and(bsons);
+            }
         }
     }
-
 }
