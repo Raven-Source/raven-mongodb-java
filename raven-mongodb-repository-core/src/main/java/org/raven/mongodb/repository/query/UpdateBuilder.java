@@ -18,8 +18,8 @@ import java.util.function.Consumer;
  */
 public class UpdateBuilder<TEntity> {
 
-    private Class<TEntity> entityClass;
-    private List<Bson> bsons = new ArrayList<>();
+    private final Class<TEntity> entityClass;
+    private final List<Bson> bsons = new ArrayList<>();
 
     public UpdateBuilder(final Class<TEntity> entityClass) {
         this.entityClass = entityClass;
@@ -55,6 +55,7 @@ public class UpdateBuilder<TEntity> {
 
     public UpdateBuilder<TEntity> rename(final String fieldName, @Nullable final String newFieldName) {
 
+        assert newFieldName != null;
         bsons.add(Updates.rename(ClassModelUtils.getWriteName(entityClass, fieldName), ClassModelUtils.getWriteName(entityClass, newFieldName)));
         return this;
 
@@ -62,6 +63,7 @@ public class UpdateBuilder<TEntity> {
 
     public UpdateBuilder<TEntity> inc(final String fieldName, @Nullable final Number number) {
 
+        assert number != null;
         bsons.add(Updates.inc(ClassModelUtils.getWriteName(entityClass, fieldName), number));
         return this;
 
@@ -69,6 +71,7 @@ public class UpdateBuilder<TEntity> {
 
     public UpdateBuilder<TEntity> mul(final String fieldName, @Nullable final Number number) {
 
+        assert number != null;
         bsons.add(Updates.mul(ClassModelUtils.getWriteName(entityClass, fieldName), number));
         return this;
 

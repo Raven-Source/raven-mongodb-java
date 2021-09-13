@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  */
 public class FilterBuilder<TEntity> {
 
-    private Class<TEntity> entityClass;
+    private final Class<TEntity> entityClass;
     private List<Bson> bsons = new ArrayList<>();
 
     public FilterBuilder(final Class<TEntity> entityClass) {
@@ -58,7 +58,8 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> in(final String fieldName, final TItem... values) {
+    @SafeVarargs
+    public final <TItem> FilterBuilder<TEntity> in(final String fieldName, final TItem... values) {
         assert fieldName != null;
         bsons.add(Filters.in(ClassModelUtils.getWriteName(entityClass, fieldName), values));
         return this;
@@ -70,7 +71,8 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> nin(final String fieldName, final TItem... values) {
+    @SafeVarargs
+    public final <TItem> FilterBuilder<TEntity> nin(final String fieldName, final TItem... values) {
         assert fieldName != null;
         bsons.add(Filters.nin(ClassModelUtils.getWriteName(entityClass, fieldName), values));
         return this;
@@ -82,7 +84,7 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> or(final FilterBuilder<TEntity> that) {
+    public FilterBuilder<TEntity> or(final FilterBuilder<TEntity> that) {
         assert that != null;
 
         Bson bson = Filters.or(Filters.and(bsons), that.build());
@@ -91,20 +93,20 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> and(final FilterBuilder<TEntity> that) {
+    public FilterBuilder<TEntity> and(final FilterBuilder<TEntity> that) {
         assert that != null;
         bsons.addAll(that.bsons);
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> not(final FilterBuilder<TEntity> that) {
+    public FilterBuilder<TEntity> not(final FilterBuilder<TEntity> that) {
         assert that != null;
         bsons.add(Filters.not(that.build()));
         return this;
     }
 
 
-    public <TItem> FilterBuilder<TEntity> nor(final FilterBuilder<TEntity> that) {
+    public FilterBuilder<TEntity> nor(final FilterBuilder<TEntity> that) {
         assert that != null;
 
         Bson bson = Filters.nor(Filters.and(bsons), that.build());
@@ -113,7 +115,7 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public <TItem> FilterBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
+    public FilterBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
         if (supplier.getAsBoolean()) {
             filterBuilderConsumer.accept(this);
         }
