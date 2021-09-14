@@ -94,6 +94,9 @@ public class ClassModelUtils {
 
             } else {
                 resList.link(propertyName);
+                for (String name : propertyNames) {
+                    resList.link(name);
+                }
             }
         }
 
