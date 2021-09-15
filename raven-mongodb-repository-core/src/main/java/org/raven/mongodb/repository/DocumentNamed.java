@@ -1,7 +1,5 @@
 package org.raven.mongodb.repository;
 
-import org.raven.commons.data.MemberFormatType;
-import org.raven.commons.data.MemberFormatUtils;
 import org.raven.commons.data.annotation.Contract;
 import org.raven.commons.util.StringUtils;
 
