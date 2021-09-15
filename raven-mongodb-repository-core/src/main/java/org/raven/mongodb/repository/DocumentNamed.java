@@ -15,18 +15,18 @@ public abstract class DocumentNamed {
 
     public static String getNamed(Class<?> documentClass) {
 
-        MemberFormatType formatType = MemberFormatType.CamelCase;
+//        MemberFormatType formatType = MemberFormatType.CamelCase;
         String name = null;
         for (final Annotation annotation : documentClass.getAnnotations()) {
             if (annotation instanceof Contract) {
-                formatType = ((Contract) annotation).formatType();
+//                formatType = ((Contract) annotation).formatType();
                 name = ((Contract) annotation).value();
                 break;
             }
         }
 
         name = StringUtils.isBlank(name) ? documentClass.getSimpleName() : name;
-        name = MemberFormatUtils.namingFormat(name, formatType);
+//        name = MemberFormatUtils.namingFormat(name, formatType);
         return name;
     }
 }
