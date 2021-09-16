@@ -9,6 +9,7 @@ import org.raven.commons.data.MemberFormatUtils;
 import org.raven.commons.data.annotation.Contract;
 import org.raven.commons.data.annotation.Ignore;
 import org.raven.commons.data.annotation.Member;
+import org.raven.mongodb.repository.util.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 
@@ -25,12 +26,18 @@ final class ConventionPropertyFormatImpl implements Convention {
     public void apply(final ClassModelBuilder<?> classModelBuilder) {
 
         MemberFormatType formatType = MemberFormatType.CamelCase;
-        for (final Annotation annotation : classModelBuilder.getAnnotations()) {
-            if (annotation instanceof Contract) {
-                formatType = ((Contract) annotation).formatType();
-                break;
-            }
+
+        Contract contract = AnnotationUtils.findAnnotation(classModelBuilder.getType(), Contract.class);
+        if (contract != null) {
+            formatType = contract.formatType();
         }
+
+//        for (final Annotation annotation : classModelBuilder.getAnnotations()) {
+//            if (annotation instanceof Contract) {
+//                formatType = ((Contract) annotation).formatType();
+//                break;
+//            }
+//        }
 
 //        classModelBuilder.idGenerator(IdGenerators.OBJECT_ID_GENERATOR);
 
@@ -41,7 +48,6 @@ final class ConventionPropertyFormatImpl implements Convention {
     }
 
     /**
-     *
      * @param classModelBuilder
      * @param propertyModelBuilder
      * @param formatType
