@@ -1,22 +1,18 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
+import com.mongodb.client.model.Indexes;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class MongoRepositoryTest {
 
-    int size = 10;
+    private int size = 90;
 
     //@After
     @Before
@@ -28,11 +24,13 @@ public class MongoRepositoryTest {
 
         MongoBaseRepository<User> repos = new UserRepositoryImpl();
         repos.getDatabase().drop();
+        repos.getCollection().createIndex(Indexes.ascending("Mall._id"));
+        repos.getCollection().createIndex(Indexes.descending("CreateDate"));
 
-        DefaultMongoSession defaultMongoSession = ((DefaultMongoSession) MongoSessionInstance.mongoSession);
-        Morphia morphia = new Morphia();
-        MongoClient mongo = new MongoClient("127.0.0.1", 27017);
-        Datastore datastore = morphia.createDatastore(mongo, "RepositoryTest");
+//        DefaultMongoSession defaultMongoSession = ((DefaultMongoSession) MongoSessionInstance.mongoSession);
+//        Morphia morphia = new Morphia();
+//        MongoClient mongo = new MongoClient("127.0.0.1", 27017);
+//        Datastore datastore = morphia.createDatastore(mongo, "RepositoryTest");
 
     }
 
@@ -84,6 +82,10 @@ public class MongoRepositoryTest {
 
         long count = repos.count(CountOptions.Empty());
         Assert.assertEquals(count, size);
+
+    }
+
+    public void update(){
 
     }
 }

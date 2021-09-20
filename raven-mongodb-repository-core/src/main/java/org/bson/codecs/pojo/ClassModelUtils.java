@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author by yanfeng
  * date 2021/9/13 0:57
  */
-public class ClassModelUtils {
+public final class ClassModelUtils {
 
     private ClassModelUtils() {
     }

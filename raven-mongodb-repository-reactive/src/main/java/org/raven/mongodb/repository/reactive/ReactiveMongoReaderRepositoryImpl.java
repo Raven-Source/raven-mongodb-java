@@ -109,7 +109,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
         if (includeFields != null) {
             projection = super.includeFields(includeFields);
         }
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(filter, entityClazz);
+        FindPublisher<TEntity> result = super.getCollection(readPreference).find(filter, entityInformation.getEntityType());
         result = super.findOptions(result, projection, null, 1, 0, null);
 
         return Mono.from(result.first());
@@ -163,7 +163,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @return
      */
     @Override
-    public Mono<TEntity> get(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
+    public Mono<TEntity> get(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -176,7 +176,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
             projection = super.includeFields(includeFields);
         }
 
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityClazz);
+        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
         result = super.findOptions(result, projection, sort, 1, 0, hint);
 
         return Mono.from(result.first());
@@ -190,7 +190,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<TEntity> get(final FindOptions findOptions) {
-        return this.get(findOptions.getFilter(), findOptions.getIncludeFields(), findOptions.getSort(), findOptions.getHint(), findOptions.getReadPreference());
+        return this.get(findOptions.filter(), findOptions.includeFields(), findOptions.sort(), findOptions.hint(), findOptions.readPreference());
     }
 
     //#endregion
@@ -264,7 +264,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     @Override
     public Flux<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip
-            , final BsonValue hint
+            , final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -277,7 +277,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
             projection = super.includeFields(includeFields);
         }
 
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityClazz);
+        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
         result = super.findOptions(result, projection, sort, limit, skip, hint);
 
         return Flux.from(result);
@@ -291,7 +291,14 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Flux<TEntity> getList(final FindOptions findOptions) {
-        return this.getList(findOptions.getFilter(), findOptions.getIncludeFields(), findOptions.getSort(), findOptions.getLimit(), findOptions.getSkip(), findOptions.getHint(), findOptions.getReadPreference());
+        return this.getList(findOptions.filter(),
+                findOptions.includeFields(),
+                findOptions.sort(),
+                findOptions.limit(),
+                findOptions.skip(),
+                findOptions.hint(),
+                findOptions.readPreference()
+        );
     }
 
     //#endregion
@@ -325,11 +332,12 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
             _filter = new BsonDocument();
         }
 
-        CountOptions option = new CountOptions();
-        option.skip(skip);
+        CountOptions countOptions = new CountOptions();
+        countOptions.skip(skip);
+        countOptions.readPreference(readPreference);
 
         return Mono.from(
-                super.getCollection(readPreference).countDocuments(_filter, option)
+                count(countOptions)
         );
     }
 
@@ -342,13 +350,18 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     @Override
     public Mono<Long> count(final CountOptions countOptions) {
 
-        Bson _filter = countOptions.getFilter();
+        Bson _filter = countOptions.filter();
         if (_filter == null) {
             _filter = new BsonDocument();
         }
 
         return Mono.from(
-                super.getCollection(countOptions.getReadPreference()).countDocuments(_filter, countOptions)
+                super.getCollection(countOptions.readPreference()).countDocuments(_filter,
+                        new com.mongodb.client.model.CountOptions()
+                        .hint(countOptions.hint())
+                        .limit(countOptions.limit())
+                        .skip(countOptions.skip())
+                )
         );
     }
 
@@ -372,7 +385,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @return
      */
     @Override
-    public Mono<Boolean> exists(final Bson filter, final BsonValue hint
+    public Mono<Boolean> exists(final Bson filter, final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -396,7 +409,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<Boolean> exists(final ExistsOptions existsOptions) {
-        return this.exists(existsOptions.getFilter(), existsOptions.getHint(), existsOptions.getReadPreference());
+        return this.exists(existsOptions.filter(), existsOptions.hint(), existsOptions.readPreference());
     }
 
 }

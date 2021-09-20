@@ -28,7 +28,7 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
     private final Sequence sequence;
     private final Class<TKey> keyClazz;
 
-    private Supplier<MongoDatabase> databaseSupplier;
+    private final Supplier<MongoDatabase> databaseSupplier;
 
     public IncrementIdGeneration(@NonNull String collectionName
         , @NonNull Sequence sequence

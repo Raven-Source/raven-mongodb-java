@@ -1,6 +1,5 @@
 package org.raven.mongodb.repository.reactive;
 
-import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
@@ -151,7 +150,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     protected Mono<Bson> createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
 
-        BsonDocument bsDoc = super.toBsonDocument(updateEntity);
+        BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
         bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
 
         Bson update = new BsonDocument("$set", bsDoc);
@@ -205,11 +204,8 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final WriteConcern writeConcern) {
 
-        UpdateOptions options = new UpdateOptions();
-        options.upsert(isUpsert);
-
         return createUpdateBson(updateEntity, isUpsert).flatMap(update -> Mono.from(
-                super.getCollection(writeConcern).updateOne(filter, update, options)
+                this.updateOne(filter, update, isUpsert, writeConcern)
         ));
 
     }

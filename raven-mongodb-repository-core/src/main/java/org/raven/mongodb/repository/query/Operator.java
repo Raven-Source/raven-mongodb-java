@@ -1,7 +1,7 @@
 package org.raven.mongodb.repository.query;
 
 /**
- * @author by yanfeng
+ * @author yi.liang
  * date 2021/9/13 21:18
  */
 public enum Operator {

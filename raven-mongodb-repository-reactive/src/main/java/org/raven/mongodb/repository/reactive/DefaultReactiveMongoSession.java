@@ -18,25 +18,26 @@ public class DefaultReactiveMongoSession implements ReactiveMongoSession {
     /**
      * MongoClient
      */
-    private MongoClient mongoClient;
+    @Getter
+    private final MongoClient mongoClient;
 
     /**
      * MongoDB WriteConcern
      */
     @Getter
-    private WriteConcern writeConcern;
+    private final WriteConcern writeConcern;
 
     /**
      * MongoDB ReadPreference
      */
     @Getter
-    private ReadPreference readPreference;
+    private final ReadPreference readPreference;
 
     /**
      * @return {@link com.mongodb.reactivestreams.client.MongoDatabase}
      */
     @Getter
-    private MongoDatabase database;
+    private final MongoDatabase database;
 
     /**
      * constructor

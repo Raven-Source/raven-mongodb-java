@@ -1,7 +1,9 @@
 package org.raven.mongodb.repository;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Sorts;
+import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,13 +13,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class MongoReaderRepositoryTest {
-    private int size = 10;
+    private int size = 90;
+    MongoRepository<User, Long> repos = new UserRepositoryImpl();
 
     @Before
     public void init() throws Exception {
 
-        MongoRepository<User, Long> repos = new UserRepositoryImpl();
         repos.getDatabase().drop();
+        repos.getCollection().createIndex(Indexes.ascending("Mall._id"));
+        repos.getCollection().createIndex(Indexes.descending("CreateDate"));
 
         Mall mall = null;
 
@@ -25,7 +29,7 @@ public class MongoReaderRepositoryTest {
         for (int i = 1; i <= size; i++) {
 
             mall = new Mall();
-            mall.setId("m" + i);
+            mall.setId("m" + (i / 3));
             mall.setName("大悦城");
 
             User user = new User();
@@ -50,7 +54,6 @@ public class MongoReaderRepositoryTest {
 
         List<User> list = null;
 
-        MongoReaderRepository<User, Long> repos = new UserRepositoryImpl();
         list = repos.getList(FindOptions.Empty());
         Assert.assertNotEquals(list.size(), 0);
 
@@ -68,14 +71,19 @@ public class MongoReaderRepositoryTest {
         list = repos.getList(null, null, Sorts.descending("_id"), 1, 0);
         Assert.assertNotNull(list.get(0));
         Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0).getId().longValue(), 10);
+        Assert.assertEquals(list.get(0).getId().longValue(), size);
+
+        list = repos.getList(Filters.eq("Mall._id", "m3"), null
+                , Sorts.descending("CreateDate"), size, 0
+                , Indexes.descending("CreateDate"), null);
+
+        Assert.assertEquals(list.size(), size);
 
     }
 
     @Test
     public void get() {
 
-        MongoReaderRepository<User, Long> repos = new UserRepositoryImpl();
         User user = null;
         for (long i = 1; i <= size; i++) {
             user = repos.get(i);
@@ -94,6 +102,15 @@ public class MongoReaderRepositoryTest {
         User2 user2 = repos2.get(1L);
         Assert.assertNotNull(user2);
 
+    }
+
+    @Test
+    public void countTest() {
+        long count = repos.count((Bson) null);
+        Assert.assertEquals(count, size);
+
+        count = repos.count(new CountOptions().skip(5));
+        Assert.assertEquals(count, size - 5);
 
     }
 

@@ -2,17 +2,10 @@ package org.raven.mongodb.repository.codec;
 
 import com.mongodb.MongoClientSettings;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.codecs.pojo.PropertyCodecProvider;
 import org.raven.mongodb.repository.conventions.CustomConventions;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;

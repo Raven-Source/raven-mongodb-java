@@ -1,10 +1,8 @@
 package org.raven.mongodb.repository;
 
 import com.mongodb.ReadPreference;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +12,7 @@ import java.util.List;
  * @since JDK11
  */
 public interface MongoReaderRepository<TEntity, TKey>
-    extends MongoBaseRepository<TEntity> {
+        extends MongoBaseRepository<TEntity> {
 
     /**
      * 根据id获取实体
@@ -42,7 +40,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @return
      */
     TEntity get(TKey id, List<String> includeFields
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
 
     /**
@@ -82,8 +80,8 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    TEntity get(Bson filter, List<String> includeFields, Bson sort, BsonValue hint
-        , ReadPreference readPreference);
+    TEntity get(Bson filter, List<String> includeFields, Bson sort, Bson hint
+            , ReadPreference readPreference);
 
     /**
      * 根据条件获取实体
@@ -135,7 +133,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @return
      */
     List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
-        , int limit, int skip);
+            , int limit, int skip);
 
     /**
      * 根据条件获取获取列表
@@ -150,9 +148,9 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @return
      */
     List<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
-        , int limit, int skip
-        , BsonValue hint
-        , ReadPreference readPreference);
+            , int limit, int skip
+            , Bson hint
+            , ReadPreference readPreference);
 
 
     /**
@@ -177,13 +175,25 @@ public interface MongoReaderRepository<TEntity, TKey>
      * 数量
      *
      * @param filter         查询条件
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return
+     */
+    long count(Bson filter, Bson hint
+            , ReadPreference readPreference);
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param limit          limit
      * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
      * @return
      */
-    long count(Bson filter, int skip, BsonValue hint
-        , ReadPreference readPreference);
+    long count(Bson filter, int limit, int skip, Bson hint
+            , ReadPreference readPreference);
 
 
     /**
@@ -210,8 +220,8 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param readPreference
      * @return
      */
-    boolean exists(Bson filter, BsonValue hint
-        , ReadPreference readPreference);
+    boolean exists(Bson filter, Bson hint
+            , ReadPreference readPreference);
 
     /**
      * 是否存在

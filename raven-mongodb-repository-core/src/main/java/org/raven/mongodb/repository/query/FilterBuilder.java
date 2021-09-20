@@ -1,7 +1,6 @@
 package org.raven.mongodb.repository.query;
 
 import com.mongodb.client.model.Filters;
-import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
@@ -9,8 +8,10 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
+
 /**
- * @author by yanfeng
+ * @author yi.liang
  * date 2021/9/12 23:01
  */
 public class FilterBuilder<TEntity> {
@@ -24,63 +25,63 @@ public class FilterBuilder<TEntity> {
 
     public <TItem> FilterBuilder<TEntity> eq(final String fieldName, final TItem value) {
         assert fieldName != null;
-        bsons.add(Filters.eq(ClassModelUtils.getWriteName(entityClass, fieldName), value));
+        bsons.add(Filters.eq(getWriteName(entityClass, fieldName), value));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> ne(final String fieldName, final TItem value) {
         assert fieldName != null;
-        bsons.add(Filters.ne(ClassModelUtils.getWriteName(entityClass, fieldName), value));
+        bsons.add(Filters.ne(getWriteName(entityClass, fieldName), value));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> gt(final String fieldName, final TItem value) {
         assert fieldName != null;
-        bsons.add(Filters.gt(ClassModelUtils.getWriteName(entityClass, fieldName), value));
+        bsons.add(Filters.gt(getWriteName(entityClass, fieldName), value));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> gte(final String fieldName, final TItem value) {
         assert fieldName != null;
-        bsons.add(Filters.gte(ClassModelUtils.getWriteName(entityClass, fieldName), value));
+        bsons.add(Filters.gte(getWriteName(entityClass, fieldName), value));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> lt(final String fieldName, final TItem value) {
         assert fieldName != null;
-        bsons.add(Filters.lt(ClassModelUtils.getWriteName(entityClass, fieldName), value));
+        bsons.add(Filters.lt(getWriteName(entityClass, fieldName), value));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> lte(final String fieldName, final TItem value) {
         assert fieldName != null;
-        bsons.add(Filters.lte(ClassModelUtils.getWriteName(entityClass, fieldName), value));
+        bsons.add(Filters.lte(getWriteName(entityClass, fieldName), value));
         return this;
     }
 
     @SafeVarargs
     public final <TItem> FilterBuilder<TEntity> in(final String fieldName, final TItem... values) {
         assert fieldName != null;
-        bsons.add(Filters.in(ClassModelUtils.getWriteName(entityClass, fieldName), values));
+        bsons.add(Filters.in(getWriteName(entityClass, fieldName), values));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> in(final String fieldName, final Iterable<TItem> values) {
         assert fieldName != null;
-        bsons.add(Filters.in(ClassModelUtils.getWriteName(entityClass, fieldName), values));
+        bsons.add(Filters.in(getWriteName(entityClass, fieldName), values));
         return this;
     }
 
     @SafeVarargs
     public final <TItem> FilterBuilder<TEntity> nin(final String fieldName, final TItem... values) {
         assert fieldName != null;
-        bsons.add(Filters.nin(ClassModelUtils.getWriteName(entityClass, fieldName), values));
+        bsons.add(Filters.nin(getWriteName(entityClass, fieldName), values));
         return this;
     }
 
     public <TItem> FilterBuilder<TEntity> nin(final String fieldName, final Iterable<TItem> values) {
         assert fieldName != null;
-        bsons.add(Filters.nin(ClassModelUtils.getWriteName(entityClass, fieldName), values));
+        bsons.add(Filters.nin(getWriteName(entityClass, fieldName), values));
         return this;
     }
 

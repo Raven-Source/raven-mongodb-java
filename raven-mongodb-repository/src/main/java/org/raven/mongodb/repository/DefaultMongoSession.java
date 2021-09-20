@@ -17,25 +17,25 @@ public class DefaultMongoSession implements MongoSession {
      * MongoClient
      */
     @Getter
-    private MongoClient mongoClient;
+    private final MongoClient mongoClient;
 
     /**
      * MongoDB WriteConcern
      */
     @Getter
-    private WriteConcern writeConcern;
+    private final WriteConcern writeConcern;
 
     /**
      * MongoDB ReadPreference
      */
     @Getter
-    private ReadPreference readPreference;
+    private final ReadPreference readPreference;
 
     /**
      * @return MongoDatabase {@link com.mongodb.client.MongoDatabase}
      */
     @Getter
-    private MongoDatabase database;
+    private final MongoDatabase database;
 
     /**
      * constructor

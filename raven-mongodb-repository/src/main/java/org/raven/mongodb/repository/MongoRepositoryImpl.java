@@ -11,6 +11,7 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -196,26 +197,6 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //#endregion
 
-    /**
-     * @param updateEntity
-     * @param isUpsert
-     * @return
-     */
-    protected Bson createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
-
-        BsonDocument bsDoc = super.toBsonDocument(updateEntity);
-        bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
-
-        Bson update = new BsonDocument("$set", bsDoc);
-        if (isUpsert && isAutoIncrClass) {
-            TKey id = idGenerator.generateId();
-            update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
-        }
-
-        return update;
-
-    }
-
     //#region update
 
     /**
@@ -256,12 +237,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final WriteConcern writeConcern) {
 
-        UpdateOptions options = new UpdateOptions();
-        options.upsert(isUpsert);
-
         Bson update = createUpdateBson(updateEntity, isUpsert);
 
-        return super.getCollection(writeConcern).updateOne(filter, update, options);
+        return this.updateOne(filter, update, isUpsert, writeConcern);
     }
 
     /**
@@ -303,7 +281,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         UpdateOptions options = new UpdateOptions();
         options.upsert(isUpsert);
-        return super.getCollection(writeConcern).updateOne(filter, update, options);
+        return doUpdate(filter, update, options, writeConcern, UpdateType.ONE);
     }
 
     /**
@@ -328,7 +306,10 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public UpdateResult updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
-        return super.getCollection(writeConcern).updateMany(filter, update);
+
+        UpdateOptions options = new UpdateOptions();
+        options.upsert(false);
+        return doUpdate(filter, update, options, writeConcern, UpdateType.MANY);
     }
 
     //#endregion
@@ -500,5 +481,47 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //#endregion
 
+    //region protected
+
+    /**
+     * @param updateEntity
+     * @param isUpsert
+     * @return
+     */
+    protected Bson createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
+
+        BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
+        bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
+
+        Bson update = new BsonDocument("$set", bsDoc);
+        if (isUpsert && entityInformation.getIdGenerationType() == IdGenerationType.AUTO_INCR) {
+            TKey id = idGenerator.generateId();
+            update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
+        }
+
+        return update;
+
+    }
+
+    /**
+     * @param filter
+     * @param update
+     * @param options
+     * @param writeConcern
+     * @return
+     */
+    protected UpdateResult doUpdate(final Bson filter,
+                                    final Bson update,
+                                    final UpdateOptions options,
+                                    final WriteConcern writeConcern,
+                                    final UpdateType updateType) {
+        if (updateType == UpdateType.ONE) {
+            return super.getCollection(writeConcern).updateOne(filter, update, options);
+        } else {
+            return super.getCollection(writeConcern).updateMany(filter, update, options);
+        }
+    }
+
+    //endregion
 
 }

@@ -86,7 +86,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @param readPreference 访问设置
      * @return
      */
-    Mono<TEntity> get(Bson filter, List<String> includeFields, Bson sort, BsonValue hint
+    Mono<TEntity> get(Bson filter, List<String> includeFields, Bson sort, Bson hint
         , ReadPreference readPreference);
 
     /**
@@ -155,7 +155,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      */
     Flux<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
         , int limit, int skip
-        , BsonValue hint
+        , Bson hint
         , ReadPreference readPreference);
 
 
@@ -214,7 +214,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @param readPreference
      * @return
      */
-    Mono<Boolean> exists(Bson filter, BsonValue hint
+    Mono<Boolean> exists(Bson filter, Bson hint
         , ReadPreference readPreference);
 
     /**

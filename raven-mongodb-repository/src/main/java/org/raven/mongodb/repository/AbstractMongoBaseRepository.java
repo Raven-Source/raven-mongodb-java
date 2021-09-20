@@ -5,20 +5,12 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.BsonDocument;
-import org.bson.BsonValue;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.repository.codec.PojoCodecRegistry;
-import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -26,23 +18,15 @@ import java.util.List;
  * @param <TKey>    TKey
  * @author yi.liang
  */
-@SuppressWarnings({"unchecked"})
 public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
+        extends AbstractMongoRepository<TEntity, TKey>
         implements MongoBaseRepository<TEntity> {
-    protected Class<TEntity> entityClazz;
-    protected Class<TKey> keyClazz;
-    protected Boolean isAutoIncrClass;
-
 
     protected IdGenerator<TKey> idGenerator;
 
     protected MongoSession mongoSession;
 
     protected MongoDatabase mongoDatabase;
-
-    private String collectionName;
-
-    private CodecRegistry pojoCodecRegistry;
 
     /**
      * Collection Name
@@ -59,41 +43,38 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     @Override
     public MongoDatabase getDatabase() {
 
-        return mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
+        return mongoSession.getDatabase().withCodecRegistry(entityInformation.getCodecRegistry());
     }
 
     //#region constructor
 
-    private AbstractMongoBaseRepository() {
-        Type genType = getClass().getGenericSuperclass();
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        entityClazz = (Class) params[0];
-        keyClazz = (Class) params[1];
-        isAutoIncrClass = BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClazz);
-
-        pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
-    }
-
+    @SuppressWarnings({"unchecked"})
     public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-        this();
+        super(collectionName);
 
         this.mongoSession = mongoSession;
-        this.collectionName = collectionName;
-        if (this.collectionName == null || this.collectionName.isEmpty()) {
-            this.collectionName = DocumentNamed.getNamed(entityClazz);
-        }
-        this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(pojoCodecRegistry);
+        this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(entityInformation.getCodecRegistry());
 
-        this.idGenerator = idGeneratorProvider != null
-                ? idGeneratorProvider.build(this.collectionName, sequence, entityClazz, keyClazz, this::getDatabase)
-                : DefaultIdGeneratorProvider.Default.build(this.collectionName, sequence, entityClazz, keyClazz, this::getDatabase);
+        this.idGenerator = idGeneratorProvider != null ?
+                idGeneratorProvider.build(this.collectionName,
+                        sequence,
+                        entityInformation.getEntityType(),
+                        entityInformation.getIdType(),
+                        this::getDatabase) :
+                DefaultIdGeneratorProvider.Default.build(
+                        this.collectionName,
+                        sequence,
+                        entityInformation.getEntityType(),
+                        entityInformation.getIdType(),
+                        this::getDatabase);
     }
 
     public AbstractMongoBaseRepository(final MongoSession mongoSession) {
         this(mongoSession, null, null, null);
     }
 
+    @SuppressWarnings({"unchecked"})
     public AbstractMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
         this(new DefaultMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
@@ -110,7 +91,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      */
     @Override
     public MongoCollection<TEntity> getCollection() {
-        return getDatabase().getCollection(getCollectionName(), entityClazz);
+        return getDatabase().getCollection(getCollectionName(), entityInformation.getEntityType());
     }
 
     /**
@@ -148,15 +129,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     //#endregion
 
     /**
-     * @param entity entity
-     * @return BsonDocument
-     */
-    protected BsonDocument toBsonDocument(final TEntity entity) {
-
-        return BsonUtils.convertToBsonDocument(entity, pojoCodecRegistry.get(entityClazz));
-    }
-
-    /**
      * @param includeFields includeFields
      * @return Bson
      */
@@ -175,7 +147,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @return FindIterable
      */
     protected FindIterable<TEntity> findOptions(final FindIterable<TEntity> findIterable, final Bson projection, final Bson sort
-            , final int limit, final int skip, final BsonValue hint) {
+            , final int limit, final int skip, final Bson hint) {
 
         FindIterable<TEntity> filter = findIterable;
         if (projection != null) {
@@ -195,8 +167,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
 
         if (hint != null) {
-            Bson hintBson = new BsonDocument("$hint", hint);
-            filter = filter.hint(hintBson);
+//            Bson hintBson = new BsonDocument("$hint", hint.toBsonDocument());
+            filter = filter.hint(hint);
         }
 
         return filter;

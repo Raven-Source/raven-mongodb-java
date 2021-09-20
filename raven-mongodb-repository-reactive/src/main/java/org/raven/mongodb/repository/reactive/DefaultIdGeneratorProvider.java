@@ -3,7 +3,6 @@ package org.raven.mongodb.repository.reactive;
 import com.mongodb.MongoException;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.types.ObjectId;
-import org.raven.commons.data.AutoIncr;
 import org.raven.mongodb.repository.MongoSequence;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
@@ -23,6 +22,7 @@ public class DefaultIdGeneratorProvider implements IdGeneratorProvider<ReactiveI
     public static final DefaultIdGeneratorProvider Default = new DefaultIdGeneratorProvider();
 
     @Override
+    @SuppressWarnings({"unchecked"})
     public <TEntity, TKey> ReactiveIdGenerator<TKey> build(String collectionName, Sequence sequence, Class<TEntity> entityClazz, Class<TKey> keyClazz, Supplier<MongoDatabase> databaseSupplier) {
 
         if (BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClazz)) {

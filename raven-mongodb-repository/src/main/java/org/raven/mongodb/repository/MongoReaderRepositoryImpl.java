@@ -1,12 +1,10 @@
 package org.raven.mongodb.repository;
 
 import com.mongodb.ReadPreference;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.BsonDocument;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.contants.BsonConstant;
@@ -109,7 +107,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             projection = super.includeFields(includeFields);
         }
 
-        FindIterable<TEntity> result = super.getCollection(readPreference).find(filter, entityClazz);
+        FindIterable<TEntity> result = super.getCollection(readPreference).find(filter, entityInformation.getEntityType());
         result = super.findOptions(result, projection, null, 1, 0, null);
 
         return result.first();
@@ -163,7 +161,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public TEntity get(final Bson filter, final List<String> includeFields, final Bson sort, final BsonValue hint
+    public TEntity get(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -176,7 +174,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             projection = super.includeFields(includeFields);
         }
 
-        FindIterable<TEntity> result = super.getCollection(readPreference).find(_filter, entityClazz);
+        FindIterable<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
         result = super.findOptions(result, projection, sort, 1, 0, hint);
 
         return result.first();
@@ -190,7 +188,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity get(final FindOptions findOptions) {
-        return this.get(findOptions.getFilter(), findOptions.getIncludeFields(), findOptions.getSort(), findOptions.getHint(), findOptions.getReadPreference());
+        return this.get(findOptions.filter(), findOptions.includeFields(), findOptions.sort(), findOptions.hint(), findOptions.readPreference());
     }
 
     //#endregion
@@ -264,7 +262,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public List<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip
-            , final BsonValue hint
+            , final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -277,7 +275,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             projection = super.includeFields(includeFields);
         }
 
-        FindIterable<TEntity> result = super.getCollection(readPreference).find(_filter, entityClazz);
+        FindIterable<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
         result = super.findOptions(result, projection, sort, limit, skip, hint);
 
         ArrayList<TEntity> list = new ArrayList<TEntity>();
@@ -296,7 +294,15 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public List<TEntity> getList(final FindOptions findOptions) {
-        return this.getList(findOptions.getFilter(), findOptions.getIncludeFields(), findOptions.getSort(), findOptions.getLimit(), findOptions.getSkip(), findOptions.getHint(), findOptions.getReadPreference());
+        return this.getList(
+                findOptions.filter(),
+                findOptions.includeFields(),
+                findOptions.sort(),
+                findOptions.limit(),
+                findOptions.skip(),
+                findOptions.hint(),
+                findOptions.readPreference()
+        );
     }
 
     //#endregion
@@ -309,20 +315,19 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public long count(final Bson filter) {
-        return this.count(filter, 0, null, null);
+        return this.count(filter, null, null);
     }
 
     /**
      * 数量
      *
      * @param filter         查询条件
-     * @param skip
      * @param hint           hint索引
      * @param readPreference 访问设置
      * @return
      */
     @Override
-    public long count(final Bson filter, final int skip, final BsonValue hint
+    public long count(final Bson filter, final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -330,10 +335,34 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             _filter = new BsonDocument();
         }
 
-        CountOptions option = new CountOptions();
-        option.skip(skip);
+        return count(filter, 0, 0, hint, readPreference);
+    }
 
-        return super.getCollection(readPreference).countDocuments(_filter, option);
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param limit          limit
+     * @param skip           skip
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return
+     */
+    @Override
+    public long count(final Bson filter, int limit, int skip, final Bson hint
+            , final ReadPreference readPreference) {
+
+        Bson _filter = filter;
+        if (_filter == null) {
+            _filter = new BsonDocument();
+        }
+
+        return super.getCollection(readPreference).countDocuments(_filter,
+                new com.mongodb.client.model.CountOptions()
+                        .hint(hint)
+                        .limit(limit)
+                        .skip(skip)
+        );
     }
 
     /**
@@ -344,13 +373,14 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public long count(final CountOptions countOptions) {
+        return count(
+                countOptions.filter(),
+                countOptions.limit(),
+                countOptions.skip(),
+                countOptions.hint(),
+                countOptions.readPreference()
+        );
 
-        Bson _filter = countOptions.getFilter();
-        if (_filter == null) {
-            _filter = new BsonDocument();
-        }
-
-        return super.getCollection(countOptions.getReadPreference()).countDocuments(_filter, countOptions);
     }
 
     /**
@@ -373,7 +403,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public boolean exists(final Bson filter, final BsonValue hint
+    public boolean exists(final Bson filter, final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -395,7 +425,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public boolean exists(final ExistsOptions existsOptions) {
-        return this.exists(existsOptions.getFilter(), existsOptions.getHint(), existsOptions.getReadPreference());
+        return this.exists(existsOptions.filter(), existsOptions.hint(), existsOptions.readPreference());
     }
 
 }

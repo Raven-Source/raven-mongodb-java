@@ -2,9 +2,7 @@ package org.raven.mongodb.repository;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import org.junit.ComparisonFailure;
 import org.junit.Test;
-import org.raven.mongodb.repository.query.FilterBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class FindAndModifyTest {
     @Test
     public void test() throws Exception {
 
-        int seed = 100000;
+        int seed = 10;
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
         repos.get(1L);
