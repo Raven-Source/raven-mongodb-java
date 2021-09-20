@@ -74,75 +74,6 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //#endregion
 
-//    /**
-//     * 创建自增ID
-//     *
-//     * @param entity
-//     */
-//    @Override
-//    public void createIncId(final TEntity entity) {
-//        long _id = 0;
-//        _id = this.createIncId();
-//        assignmentEntityID(entity, _id);
-//    }
-//
-//    /**
-//     * 创建ObjectId
-//     *
-//     * @param entity
-//     */
-//    @Override
-//    public void createObjectId(final TEntity entity) {
-//        ObjectId _id = new ObjectId();
-//        assignmentEntityID(entity, _id);
-//    }
-//
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public long createIncId() {
-//        return createIncId(1);
-//    }
-//
-//    /**
-//     * @param inc
-//     * @return
-//     */
-//    @Override
-//    public long createIncId(final long inc) {
-//        return createIncId(inc, 0);
-//    }
-//
-//    /**
-//     * @param inc
-//     * @param iteration
-//     * @return
-//     */
-//    @Override
-//    public long createIncId(final long inc, final int iteration) {
-//        long id = 1;
-//        MongoCollection<BsonDocument> collection = getDatabase().getCollection(super.sequence.getSequenceName(), BsonDocument.class);
-//        String typeName = getCollectionName();
-//
-//        Bson filter = Filters.eq(super.sequence.getCollectionName(), typeName);
-//        Bson updater = Updates.inc(super.sequence.getIncrementID(), inc);
-//        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-//        options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
-//
-//        BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
-//        if (result != null) {
-//            id = result.getInt64(super.sequence.getIncrementID()).longValue();
-//            //id = result[super._sequence.getIncrementID()].AsInt64;
-//            return id;
-//        } else if (iteration <= 1) {
-//            return createIncId(inc, (iteration + 1));
-//        } else {
-//            throw new MongoException("Failed to get on the IncID");
-//        }
-//    }
-
     //#region insert
 
     /**
@@ -167,21 +98,21 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     /**
-     * @param entitys
+     * @param entities
      */
     @Override
-    public InsertManyResult insertBatch(final List<TEntity> entitys) {
-        return this.insertBatch(entitys, null);
+    public InsertManyResult insertBatch(final List<TEntity> entities) {
+        return this.insertBatch(entities, null);
     }
 
     /**
-     * @param entitys
+     * @param entities
      * @param writeConcern
      */
     @Override
-    public InsertManyResult insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
+    public InsertManyResult insertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
 
-        List<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = entityStream.size();
 
         if (count > 0) {
@@ -192,7 +123,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             }
         }
 
-        return super.getCollection(writeConcern).insertMany(entitys);
+        return super.getCollection(writeConcern).insertMany(entities);
     }
 
     //#endregion
@@ -246,12 +177,30 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * 修改单条数据
      *
      * @param filter
+     * @param updateEntity
+     * @param isUpsert
+     * @param hint
+     * @param writeConcern
+     * @return
+     */
+    @Override
+    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
+
+        Bson update = createUpdateBson(updateEntity, isUpsert);
+
+        return this.updateOne(filter, update, isUpsert, hint, writeConcern);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filter
      * @param update
      * @return
      */
     @Override
     public UpdateResult updateOne(final Bson filter, final Bson update) {
-        return this.updateOne(filter, update, false, null);
+        return this.updateOne(filter, update, false, (WriteConcern) null);
     }
 
     /**
@@ -264,7 +213,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert) {
-        return this.updateOne(filter, update, isUpsert, null);
+        return this.updateOne(filter, update, isUpsert, (WriteConcern) null);
     }
 
     /**
@@ -278,9 +227,25 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, final WriteConcern writeConcern) {
+        return this.updateOne(filter, update, isUpsert, (Bson) null, writeConcern);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filter
+     * @param update
+     * @param isUpsert
+     * @param writeConcern
+     * @return
+     */
+    @Override
+    public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.upsert(isUpsert);
+        options.hint(hint);
+
         return doUpdate(filter, update, options, writeConcern, UpdateType.ONE);
     }
 
@@ -293,7 +258,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public UpdateResult updateMany(final Bson filter, final Bson update) {
-        return super.getCollection().updateMany(filter, update);
+        return this.updateMany(filter, update, (WriteConcern) null);
     }
 
     /**
@@ -306,9 +271,24 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public UpdateResult updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
+        return this.updateMany(filter, update, (Bson) null, writeConcern);
+    }
+
+    /**
+     * 修改多条数据
+     *
+     * @param filter
+     * @param update
+     * @param hint
+     * @param writeConcern
+     * @return
+     */
+    @Override
+    public UpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.upsert(false);
+        options.hint(hint);
         return doUpdate(filter, update, options, writeConcern, UpdateType.MANY);
     }
 
@@ -347,7 +327,30 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             options.sort(sort);
         }
 
-        return super.getCollection().findOneAndUpdate(filter, update, options);
+        return this.findOneAndUpdate(filter, update, isUpsert, sort, null);
+    }
+
+    /**
+     * 找到并更新
+     *
+     * @param filter
+     * @param update
+     * @param isUpsert default false
+     * @param sort
+     * @param hint
+     * @return
+     */
+    @Override
+    public TEntity findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort, final Bson hint) {
+
+        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+        options.returnDocument(ReturnDocument.AFTER);
+        options.upsert(isUpsert);
+
+        options.sort(sort);
+        options.hint(hint);
+
+        return doFindOneAndUpdate(filter, update, options);
     }
 
     /**
@@ -373,17 +376,24 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort) {
+        return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
+    }
 
-        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-        options.returnDocument(ReturnDocument.AFTER);
-        options.upsert(isUpsert);
-        if (sort != null) {
-            options.sort(sort);
-        }
+    /**
+     * 找到并更新
+     *
+     * @param filter
+     * @param entity
+     * @param isUpsert default false
+     * @param sort
+     * @return
+     */
+    @Override
+    public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort, final Bson hint) {
 
         Bson update = createUpdateBson(entity, isUpsert);
 
-        return super.getCollection().findOneAndUpdate(filter, update, options);
+        return this.findOneAndUpdate(filter, update, isUpsert, sort, hint);
     }
 
     /**
@@ -394,7 +404,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity findOneAndDelete(final Bson filter) {
-        return super.getCollection().findOneAndDelete(filter);
+        return this.findOneAndDelete(filter, (Bson) null);
     }
 
     /**
@@ -406,13 +416,25 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public TEntity findOneAndDelete(final Bson filter, final Bson sort) {
+        return this.findOneAndDelete(filter, sort, (Bson) null);
+    }
+
+    /**
+     * 找到并删除
+     *
+     * @param filter
+     * @param sort
+     * @param hint
+     * @return
+     */
+    @Override
+    public TEntity findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
 
         FindOneAndDeleteOptions option = new FindOneAndDeleteOptions();
-        if (sort != null) {
-            option.sort(sort);
-        }
+        option.sort(sort);
+        option.hint(hint);
 
-        return super.getCollection().findOneAndDelete(filter, option);
+        return doFindOneAndDelete(filter, option);
     }
 
     //#endregion
@@ -425,8 +447,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public DeleteResult deleteOne(final TKey id) {
-        Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return super.getCollection().deleteOne(filter);
+        return this.deleteOne(id, (WriteConcern) null);
     }
 
     /**
@@ -437,7 +458,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public DeleteResult deleteOne(final TKey id, final WriteConcern writeConcern) {
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return super.getCollection(writeConcern).deleteOne(filter);
+        return this.deleteOne(filter, writeConcern);
     }
 
     /**
@@ -446,7 +467,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public DeleteResult deleteOne(final Bson filter) {
-        return super.getCollection().deleteOne(filter);
+        return this.deleteOne(filter, (WriteConcern) null);
     }
 
     /**
@@ -456,7 +477,21 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public DeleteResult deleteOne(final Bson filter, final WriteConcern writeConcern) {
-        return super.getCollection(writeConcern).deleteOne(filter);
+        return this.deleteOne(filter, (Bson) null, writeConcern);
+    }
+
+    /**
+     * @param filter
+     * @param hint
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    @Override
+    public DeleteResult deleteOne(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
+
+        DeleteOptions options = new DeleteOptions();
+        options.hint(hint);
+        return super.getCollection(writeConcern).deleteOne(filter, options);
     }
 
     /**
@@ -465,7 +500,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public DeleteResult deleteMany(final Bson filter) {
-        return super.getCollection().deleteMany(filter);
+        return this.deleteMany(filter, null);
     }
 
     /**
@@ -475,7 +510,20 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public DeleteResult deleteMany(final Bson filter, final WriteConcern writeConcern) {
-        return super.getCollection(writeConcern).deleteMany(filter);
+        return this.deleteMany(filter, (Bson) null, writeConcern);
+    }
+
+    /**
+     * @param filter
+     * @param hint
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    @Override
+    public DeleteResult deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
+        DeleteOptions options = new DeleteOptions();
+        options.hint(hint);
+        return super.getCollection(writeConcern).deleteMany(filter, options);
     }
 
 
@@ -504,11 +552,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     /**
-     * @param filter
-     * @param update
-     * @param options
-     * @param writeConcern
-     * @return
+     *
      */
     protected UpdateResult doUpdate(final Bson filter,
                                     final Bson update,
@@ -520,6 +564,22 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         } else {
             return super.getCollection(writeConcern).updateMany(filter, update, options);
         }
+    }
+
+    /**
+     *
+     */
+    protected TEntity doFindOneAndUpdate(final Bson filter, final Bson update, final FindOneAndUpdateOptions options) {
+
+        return super.getCollection().findOneAndUpdate(filter, update, options);
+    }
+
+    /**
+     *
+     */
+    protected TEntity doFindOneAndDelete(final Bson filter, final FindOneAndDeleteOptions option) {
+
+        return super.getCollection().findOneAndDelete(filter, option);
     }
 
     //endregion

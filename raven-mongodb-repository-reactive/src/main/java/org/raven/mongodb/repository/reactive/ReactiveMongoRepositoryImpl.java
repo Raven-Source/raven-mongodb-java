@@ -204,8 +204,25 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final WriteConcern writeConcern) {
 
+        return this.updateOne(filter, updateEntity, isUpsert, writeConcern);
+
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filter
+     * @param updateEntity
+     * @param isUpsert
+     * @param hint
+     * @param writeConcern
+     * @return
+     */
+    @Override
+    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
+
         return createUpdateBson(updateEntity, isUpsert).flatMap(update -> Mono.from(
-                this.updateOne(filter, update, isUpsert, writeConcern)
+                this.updateOne(filter, update, isUpsert, hint, writeConcern)
         ));
 
     }
@@ -246,9 +263,25 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final Boolean isUpsert, final WriteConcern writeConcern) {
+        return this.updateOne(filter, update, isUpsert, null, writeConcern);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filter
+     * @param update
+     * @param isUpsert
+     * @param hint
+     * @param writeConcern
+     * @return
+     */
+    @Override
+    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final Boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.upsert(isUpsert);
+        options.hint(hint);
 
         return Mono.from(
                 super.getCollection(writeConcern).updateOne(filter, update, options)
@@ -264,9 +297,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<UpdateResult> updateMany(final Bson filter, final Bson update) {
-        return Mono.from(
-                super.getCollection().updateMany(filter, update)
-        );
+        return this.updateMany(filter, update, null, null);
     }
 
     /**
@@ -279,8 +310,26 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<UpdateResult> updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
+        return this.updateMany(filter, update, null, writeConcern);
+    }
+
+    /**
+     * 修改多条数据
+     *
+     * @param filter
+     * @param update
+     * @param hint
+     * @param writeConcern
+     * @return
+     */
+    @Override
+    public Mono<UpdateResult> updateMany(final Bson filter, final Bson update, final Bson hint, final WriteConcern writeConcern) {
+
+        UpdateOptions options = new UpdateOptions();
+        options.hint(hint);
+
         return Mono.from(
-                super.getCollection(writeConcern).updateMany(filter, update)
+                super.getCollection(writeConcern).updateMany(filter, update, options)
         );
     }
 
@@ -311,13 +360,26 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort) {
+        return this.findOneAndUpdate(filter, update, isUpsert, sort, (Bson) null);
+    }
+
+    /**
+     * 找到并更新
+     *
+     * @param filter
+     * @param update
+     * @param isUpsert default false
+     * @param sort
+     * @return
+     */
+    @Override
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.returnDocument(ReturnDocument.AFTER);
         options.upsert(isUpsert);
-        if (sort != null) {
-            options.sort(sort);
-        }
+        options.sort(sort);
+        options.hint(hint);
 
         return Mono.from(super.getCollection().findOneAndUpdate(filter, update, options));
     }
@@ -345,13 +407,27 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort) {
+        return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
+
+    }
+
+    /**
+     * 找到并更新
+     *
+     * @param filter
+     * @param entity
+     * @param isUpsert default false
+     * @param sort
+     * @return
+     */
+    @Override
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.returnDocument(ReturnDocument.AFTER);
         options.upsert(isUpsert);
-        if (sort != null) {
-            options.sort(sort);
-        }
+        options.sort(sort);
+        options.hint(hint);
 
         return createUpdateBson(entity, isUpsert).flatMap(update -> Mono.from(
                 super.getCollection().findOneAndUpdate(filter, update, options))
@@ -379,11 +455,22 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<TEntity> findOneAndDelete(final Bson filter, final Bson sort) {
+        return this.findOneAndDelete(filter, sort, null);
+    }
+
+    /**
+     * 找到并删除
+     *
+     * @param filter
+     * @param sort
+     * @return
+     */
+    @Override
+    public Mono<TEntity> findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
 
         FindOneAndDeleteOptions option = new FindOneAndDeleteOptions();
-        if (sort != null) {
-            option.sort(sort);
-        }
+        option.sort(sort);
+        option.hint(hint);
 
         return Mono.from(super.getCollection().findOneAndDelete(filter, option));
     }
@@ -399,7 +486,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<DeleteResult> deleteOne(final TKey id) {
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return Mono.from(super.getCollection().deleteOne(filter));
+        return this.deleteOne(filter);
     }
 
     /**
@@ -410,7 +497,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<DeleteResult> deleteOne(final TKey id, final WriteConcern writeConcern) {
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return Mono.from(super.getCollection(writeConcern).deleteOne(filter));
+        return this.deleteOne(filter, writeConcern);
     }
 
     /**
@@ -419,7 +506,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<DeleteResult> deleteOne(final Bson filter) {
-        return Mono.from(super.getCollection().deleteOne(filter));
+        return this.deleteOne(filter, (Bson) null, (WriteConcern) null);
     }
 
     /**
@@ -429,7 +516,19 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<DeleteResult> deleteOne(final Bson filter, final WriteConcern writeConcern) {
-        return Mono.from(super.getCollection(writeConcern).deleteOne(filter));
+        return this.deleteOne(filter, (Bson) null, writeConcern);
+    }
+
+    /**
+     * @param filter
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    @Override
+    public Mono<DeleteResult> deleteOne(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
+        DeleteOptions options = new DeleteOptions();
+        options.hint(hint);
+        return Mono.from(super.getCollection(writeConcern).deleteOne(filter, options));
     }
 
     /**
@@ -438,7 +537,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<DeleteResult> deleteMany(final Bson filter) {
-        return Mono.from(super.getCollection().deleteMany(filter));
+        return this.deleteMany(filter, (Bson) null, null);
     }
 
     /**
@@ -448,7 +547,19 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public Mono<DeleteResult> deleteMany(final Bson filter, final WriteConcern writeConcern) {
-        return Mono.from(super.getCollection(writeConcern).deleteMany(filter));
+        return this.deleteMany(filter, (Bson) null, writeConcern);
+    }
+
+    /**
+     * @param filter
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    @Override
+    public Mono<DeleteResult> deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
+        DeleteOptions options = new DeleteOptions();
+        options.hint(hint);
+        return Mono.from(super.getCollection(writeConcern).deleteMany(filter, options));
     }
 
 

@@ -5,7 +5,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.BsonDocument;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.*;
@@ -311,20 +310,36 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<Long> count(final Bson filter) {
-        return this.count(filter, 0, null, null);
+        return this.count(filter, (Bson) null, (ReadPreference) null);
     }
 
     /**
      * 数量
      *
      * @param filter         查询条件
-     * @param skip
      * @param hint           hint索引
      * @param readPreference 访问设置
      * @return
      */
     @Override
-    public Mono<Long> count(final Bson filter, final int skip, final BsonValue hint
+    public Mono<Long> count(final Bson filter, final Bson hint
+            , final ReadPreference readPreference) {
+
+        return this.count(filter, 0, 0, hint, readPreference);
+    }
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param limit          limit
+     * @param skip           skip
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return
+     */
+    @Override
+    public Mono<Long> count(final Bson filter, int limit, int skip, final Bson hint
             , final ReadPreference readPreference) {
 
         Bson _filter = filter;
@@ -332,12 +347,13 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
             _filter = new BsonDocument();
         }
 
-        CountOptions countOptions = new CountOptions();
-        countOptions.skip(skip);
-        countOptions.readPreference(readPreference);
-
         return Mono.from(
-                count(countOptions)
+                super.getCollection(readPreference).countDocuments(_filter,
+                        new com.mongodb.client.model.CountOptions()
+                                .hint(hint)
+                                .limit(limit)
+                                .skip(skip)
+                )
         );
     }
 
@@ -349,19 +365,12 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<Long> count(final CountOptions countOptions) {
-
-        Bson _filter = countOptions.filter();
-        if (_filter == null) {
-            _filter = new BsonDocument();
-        }
-
-        return Mono.from(
-                super.getCollection(countOptions.readPreference()).countDocuments(_filter,
-                        new com.mongodb.client.model.CountOptions()
-                        .hint(countOptions.hint())
-                        .limit(countOptions.limit())
-                        .skip(countOptions.skip())
-                )
+        return count(
+                countOptions.filter(),
+                countOptions.limit(),
+                countOptions.skip(),
+                countOptions.hint(),
+                countOptions.readPreference()
         );
     }
 

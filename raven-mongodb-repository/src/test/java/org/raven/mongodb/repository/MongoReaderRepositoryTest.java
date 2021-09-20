@@ -3,6 +3,7 @@ package org.raven.mongodb.repository;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.result.InsertManyResult;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +40,7 @@ public class MongoReaderRepositoryTest {
             list.add(user);
         }
 
-        repos.insertBatch(list);
+        InsertManyResult result = repos.insertBatch(list);
     }
 
 //    @After

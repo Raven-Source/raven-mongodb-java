@@ -17,7 +17,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 根据id获取实体
      *
-     * @param id
+     * @param id TKey
      * @return
      */
     TEntity get(TKey id);
@@ -25,7 +25,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 根据id获取实体
      *
-     * @param id
+     * @param id            TKey
      * @param includeFields 查询字段
      * @return
      */
@@ -34,7 +34,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 根据id获取实体
      *
-     * @param id
+     * @param id             TKey
      * @param includeFields  查询字段
      * @param readPreference 访问设置
      * @return
@@ -86,7 +86,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 根据条件获取实体
      *
-     * @param findOptions
+     * @param findOptions FindOptions
      * @return
      */
     TEntity get(FindOptions findOptions);
@@ -199,7 +199,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 数量
      *
-     * @param countOptions
+     * @param countOptions CountOptions
      * @return
      */
     long count(CountOptions countOptions);
@@ -207,7 +207,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 是否存在
      *
-     * @param filter
+     * @param filter filter Bson
      * @return
      */
     boolean exists(Bson filter);
@@ -215,9 +215,9 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 是否存在
      *
-     * @param filter
-     * @param hint
-     * @param readPreference
+     * @param filter         filter Bson
+     * @param hint           hint Bson
+     * @param readPreference ReadPreference
      * @return
      */
     boolean exists(Bson filter, Bson hint
@@ -226,7 +226,7 @@ public interface MongoReaderRepository<TEntity, TKey>
     /**
      * 是否存在
      *
-     * @param existsOptions
+     * @param existsOptions ExistsOptions
      * @return
      */
     boolean exists(ExistsOptions existsOptions);

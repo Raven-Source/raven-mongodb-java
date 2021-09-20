@@ -1,7 +1,6 @@
 package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.ReadPreference;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.CountOptions;
 import org.raven.mongodb.repository.ExistsOptions;
@@ -46,7 +45,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Mono<TEntity> get(TKey id, List<String> includeFields
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
 
     /**
@@ -87,7 +86,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Mono<TEntity> get(Bson filter, List<String> includeFields, Bson sort, Bson hint
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
     /**
      * 根据条件获取实体
@@ -139,7 +138,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Flux<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
-        , int limit, int skip);
+            , int limit, int skip);
 
     /**
      * 根据条件获取获取列表
@@ -154,9 +153,9 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Flux<TEntity> getList(Bson filter, List<String> includeFields, Bson sort
-        , int limit, int skip
-        , Bson hint
-        , ReadPreference readPreference);
+            , int limit, int skip
+            , Bson hint
+            , ReadPreference readPreference);
 
 
     /**
@@ -181,13 +180,26 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * 数量
      *
      * @param filter         查询条件
-     * @param skip
      * @param hint           hint索引
      * @param readPreference 访问设置
      * @return
      */
-    Mono<Long> count(Bson filter, int skip, BsonValue hint
-        , ReadPreference readPreference);
+    Mono<Long> count(Bson filter, Bson hint
+            , ReadPreference readPreference);
+
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param limit          limit
+     * @param skip           skip
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return
+     */
+    Mono<Long> count(Bson filter, int limit, int skip, Bson hint
+            , ReadPreference readPreference);
 
 
     /**
@@ -215,7 +227,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Mono<Boolean> exists(Bson filter, Bson hint
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
     /**
      * 是否存在

@@ -330,11 +330,6 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public long count(final Bson filter, final Bson hint
             , final ReadPreference readPreference) {
 
-        Bson _filter = filter;
-        if (_filter == null) {
-            _filter = new BsonDocument();
-        }
-
         return count(filter, 0, 0, hint, readPreference);
     }
 
@@ -420,7 +415,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 是否存在
      *
-     * @param existsOptions
+     * @param existsOptions ExistsOptions
      * @return
      */
     @Override

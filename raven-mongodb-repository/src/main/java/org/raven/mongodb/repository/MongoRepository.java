@@ -53,33 +53,33 @@ public interface MongoRepository<TEntity, TKey>
 //    void createObjectId(TEntity entity);
 
     /**
-     * @param entity
+     * @param entity TEntity
      */
     InsertOneResult insert(TEntity entity);
 
     /**
-     * @param entity
-     * @param writeConcern
+     * @param entity       TEntity
+     * @param writeConcern WriteConcern
      */
     InsertOneResult insert(TEntity entity, WriteConcern writeConcern);
 
     /**
-     * @param entitys
+     * @param entities TEntity
      */
-    InsertManyResult insertBatch(List<TEntity> entitys);
+    InsertManyResult insertBatch(List<TEntity> entities);
 
     /**
-     * @param entitys
-     * @param writeConcern
+     * @param entities     TEntity
+     * @param writeConcern WriteConcern
      */
-    InsertManyResult insertBatch(List<TEntity> entitys, WriteConcern writeConcern);
+    InsertManyResult insertBatch(List<TEntity> entities, WriteConcern writeConcern);
 
 
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
+     * @param filter       filter Bson
+     * @param updateEntity TEntity
      * @return
      */
     UpdateResult updateOne(Bson filter, TEntity updateEntity);
@@ -87,9 +87,9 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
+     * @param filter       filter Bson
+     * @param updateEntity TEntity
+     * @param isUpsert     default false
      * @return
      */
     UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert);
@@ -97,10 +97,10 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param writeConcern
+     * @param filter       filter Bson
+     * @param updateEntity TEntity
+     * @param isUpsert     default false
+     * @param writeConcern WriteConcern
      * @return
      */
     UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, WriteConcern writeConcern);
@@ -108,8 +108,20 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
+     * @param filter       filter Bson
+     * @param updateEntity TEntity
+     * @param isUpsert     default false
+     * @param hint         hint Bson
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+
+    /**
+     * 修改单条数据
+     *
+     * @param filter filter Bson
+     * @param update update Bson
      * @return
      */
     UpdateResult updateOne(Bson filter, Bson update);
@@ -117,9 +129,9 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
-     * @param isUpsert
+     * @param filter   filter Bson
+     * @param update   update Bson
+     * @param isUpsert default false
      * @return
      */
     UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert);
@@ -127,19 +139,31 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @param writeConcern
+     * @param filter       filter Bson
+     * @param update       update Bson
+     * @param isUpsert     default false
+     * @param writeConcern WriteConcern
      * @return
      */
     UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert, WriteConcern writeConcern);
 
     /**
+     * 修改单条数据
+     *
+     * @param filter       filter Bson
+     * @param update       update Bson
+     * @param isUpsert     default false
+     * @param hint         hint Bson
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+
+    /**
      * 修改多条数据
      *
-     * @param filter
-     * @param update
+     * @param filter filter Bson
+     * @param update update Bson
      * @return
      */
     UpdateResult updateMany(Bson filter, Bson update);
@@ -147,95 +171,149 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 修改多条数据
      *
-     * @param filter
-     * @param update
-     * @param writeConcern
+     * @param filter       filter Bson
+     * @param update       update Bson
+     * @param writeConcern WriteConcern
      * @return
      */
     UpdateResult updateMany(Bson filter, Bson update, WriteConcern writeConcern);
 
     /**
-     * @param filter
-     * @param update
+     * 修改多条数据
+     *
+     * @param filter       filter Bson
+     * @param update       update Bson
+     * @param hint         hint Bson
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    UpdateResult updateMany(Bson filter, Bson update, Bson hint, WriteConcern writeConcern);
+
+    /**
+     * @param filter filter Bson
+     * @param update update Bson
      * @return
      */
     TEntity findOneAndUpdate(Bson filter, Bson update);
 
     /**
-     * @param filter
-     * @param update
+     * @param filter   filter Bson
+     * @param update   update Bson
      * @param isUpsert default false
-     * @param sort
+     * @param sort     sort Bson
      * @return
      */
     TEntity findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort);
 
     /**
-     * @param filter
-     * @param entity
+     * @param filter   filter Bson
+     * @param update   update Bson
+     * @param isUpsert default false
+     * @param sort     sort Bson
+     * @param hint     hint Bson
+     * @return
+     */
+    TEntity findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort, Bson hint);
+
+    /**
+     * @param filter filter Bson
+     * @param entity TEntity
      * @return
      */
     TEntity findOneAndUpdate(Bson filter, TEntity entity);
 
     /**
-     * @param filter
-     * @param entity
+     * @param filter   filter Bson
+     * @param entity   TEntity
      * @param isUpsert default false
-     * @param sort
+     * @param sort     sort Bson
      * @return
      */
     TEntity findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort);
 
     /**
-     * @param filter
+     * @param filter   filter Bson
+     * @param entity   TEntity
+     * @param isUpsert default false
+     * @param sort     sort Bson
+     * @param hint     hint Bson
+     * @return
+     */
+    TEntity findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort, Bson hint);
+
+    /**
+     * @param filter filter Bson
      * @return
      */
     TEntity findOneAndDelete(Bson filter);
 
     /**
-     * @param filter
-     * @param sort
+     * @param filter filter Bson
      * @return
      */
     TEntity findOneAndDelete(Bson filter, Bson sort);
 
     /**
-     * @param id
+     * @param filter filter Bson
+     * @param hint   hint Bson
+     * @return
+     */
+    TEntity findOneAndDelete(Bson filter, Bson sort, Bson hint);
+
+    /**
+     * @param id TKey
      * @return
      */
     DeleteResult deleteOne(TKey id);
 
     /**
-     * @param id
-     * @param writeConcern
+     * @param id           TKey
+     * @param writeConcern WriteConcern
      * @return
      */
     DeleteResult deleteOne(TKey id, WriteConcern writeConcern);
 
     /**
-     * @param filter
+     * @param filter filter Bson
      * @return
      */
     DeleteResult deleteOne(Bson filter);
 
     /**
-     * @param filter
+     * @param filter       filter Bson
      * @param writeConcern WriteConcern
      * @return
      */
     DeleteResult deleteOne(Bson filter, WriteConcern writeConcern);
 
     /**
-     * @param filter
+     * @param filter       filter Bson
+     * @param hint         hint Bson
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    DeleteResult deleteOne(Bson filter, final Bson hint, WriteConcern writeConcern);
+
+    /**
+     * @param filter filter Bson
      * @return
      */
     DeleteResult deleteMany(Bson filter);
 
     /**
-     * @param filter
+     * @param filter       filter Bson
      * @param writeConcern WriteConcern
      * @return
      */
     DeleteResult deleteMany(Bson filter, WriteConcern writeConcern);
+
+
+    /**
+     * @param filter       filter Bson
+     * @param hint         hint Bson
+     * @param writeConcern WriteConcern
+     * @return
+     */
+    DeleteResult deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern);
 
 }
