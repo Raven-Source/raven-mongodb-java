@@ -10,7 +10,11 @@ import org.raven.mongodb.repository.DocumentNamed;
 import org.raven.mongodb.repository.EntityInformation;
 import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.interceptors.EntityInterceptor;
 import org.raven.mongodb.repository.spi.IdGenerationType;
+import org.raven.mongodb.repository.util.EntityInterceptorUtils;
+
+import java.util.List;
 
 /**
  * @author by yanfeng
@@ -25,6 +29,8 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
 
     private IdGenerationType idGenerationType;
 
+    private final List<EntityInterceptor> interceptors;
+
     /**
      * Constructor
      *
@@ -37,6 +43,7 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
         this.pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
 
         this.classModel = ClassModelUtils.getClassModel(entityClass);
+        this.interceptors = EntityInterceptorUtils.getInterceptors(entityClass);
 
         if (BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClass)) {
             idGenerationType = IdGenerationType.AUTO_INCR;
@@ -54,6 +61,16 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
     @Override
     public CodecRegistry getCodecRegistry() {
         return pojoCodecRegistry;
+    }
+
+    @Override
+    public List<EntityInterceptor> getInterceptors() {
+        return interceptors;
+    }
+
+    @Override
+    public ClassModel<TEntity> getClassModel() {
+        return classModel;
     }
 
     @Override
@@ -75,4 +92,5 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
     public String getEntityName() {
         return DocumentNamed.getNamed(entityClass);
     }
+
 }

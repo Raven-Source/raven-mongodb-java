@@ -1,9 +1,6 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.ReadPreference;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.bson.conversions.Bson;
 
@@ -14,12 +11,11 @@ import java.util.List;
  * @since JDK11
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Accessors(fluent = true)
-public class FindOptions {
+public class FindOptions extends AbstractFindOptions {
 
-    private ReadPreference readPreference;
-    private Bson hint;
-    private Bson filter;
     private List<String> includeFields;
     private Bson sort;
     private int limit;

@@ -10,6 +10,7 @@ import org.bson.conversions.Bson;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author yi.liang
@@ -44,7 +45,8 @@ public final class BsonUtils {
     /**
      * Bson combine
      */
-    public static Bson combine(@NonNull final List<Bson> bsons) {
+    public static <T extends Bson> Bson combine(@NonNull final List<T> bsons) {
+
         BsonDocument document = new BsonDocument();
 
         for (Bson bson : bsons) {
@@ -52,14 +54,11 @@ public final class BsonUtils {
             if (bson == null)
                 continue;
 
-            BsonDocument bsonDocument;
-            if (bson instanceof BsonDocument) {
-                bsonDocument = (BsonDocument) bson;
+            BsonDocument bsonDocument = bson.toBsonDocument();
 
-                for (Map.Entry<String, BsonValue> stringBsonValueEntry : bsonDocument.entrySet()) {
-                    document.remove(stringBsonValueEntry.getKey());
-                    document.append(stringBsonValueEntry.getKey(), stringBsonValueEntry.getValue());
-                }
+            for (Map.Entry<String, BsonValue> stringBsonValueEntry : bsonDocument.entrySet()) {
+                document.remove(stringBsonValueEntry.getKey());
+                document.append(stringBsonValueEntry.getKey(), stringBsonValueEntry.getValue());
             }
         }
 

@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
  * @author yi.liang
  * date 2021/9/16 20:19
  */
-public abstract class AnnotationUtils {
+public class AnnotationUtils {
+    private AnnotationUtils() {
+    }
 
 
     public static <A extends Annotation> A findAnnotation(Method method, Class<A> annotationType) {
@@ -21,7 +23,7 @@ public abstract class AnnotationUtils {
                 Class<?> superclass = method.getDeclaringClass().getSuperclass();
                 Method superMethod = null;
                 try {
-                     superMethod = superclass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                    superMethod = superclass.getDeclaredMethod(method.getName(), method.getParameterTypes());
                 } catch (Exception ignored) {
                 }
 

@@ -1,20 +1,19 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.ReadPreference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.bson.conversions.Bson;
 
 /**
  * @author yi.liang
  * @since JDK11
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Accessors(fluent = true)
-public class ExistsOptions {
-    private ReadPreference readPreference;
-    private Bson hint;
-    private Bson filter;
+public class ExistsOptions extends AbstractFindOptions {
 
     public ExistsOptions() {
     }

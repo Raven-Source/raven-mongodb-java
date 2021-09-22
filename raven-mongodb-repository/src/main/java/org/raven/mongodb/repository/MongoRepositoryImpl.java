@@ -2,7 +2,11 @@ package org.raven.mongodb.repository;
 
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.*;
+import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndDeleteOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
@@ -10,6 +14,7 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.annotations.PostUpdate;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.IdGenerator;
@@ -245,8 +250,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         UpdateOptions options = new UpdateOptions();
         options.upsert(isUpsert);
         options.hint(hint);
+        options.writeConcern(writeConcern);
 
-        return doUpdate(filter, update, options, writeConcern, UpdateType.ONE);
+        return doUpdate(options, UpdateType.ONE);
     }
 
     /**
@@ -289,7 +295,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         UpdateOptions options = new UpdateOptions();
         options.upsert(false);
         options.hint(hint);
-        return doUpdate(filter, update, options, writeConcern, UpdateType.MANY);
+        options.writeConcern(writeConcern);
+
+        return doUpdate(options, UpdateType.MANY);
     }
 
     //#endregion
@@ -554,15 +562,24 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      *
      */
-    protected UpdateResult doUpdate(final Bson filter,
-                                    final Bson update,
-                                    final UpdateOptions options,
-                                    final WriteConcern writeConcern,
+    protected UpdateResult doUpdate(final UpdateOptions options,
                                     final UpdateType updateType) {
+
+        callGlobalInterceptors(PostUpdate.class, null, options);
+
         if (updateType == UpdateType.ONE) {
-            return super.getCollection(writeConcern).updateOne(filter, update, options);
+            return super.getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
+                    new com.mongodb.client.model.UpdateOptions()
+                            .hint(options.hint())
+                            .upsert(options.upsert())
+
+            );
         } else {
-            return super.getCollection(writeConcern).updateMany(filter, update, options);
+            return super.getCollection(options.writeConcern()).updateMany(options.filter(), options.update(),
+                    new com.mongodb.client.model.UpdateOptions()
+                            .hint(options.hint())
+                            .upsert(options.upsert())
+            );
         }
     }
 
@@ -571,7 +588,15 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     protected TEntity doFindOneAndUpdate(final Bson filter, final Bson update, final FindOneAndUpdateOptions options) {
 
-        return super.getCollection().findOneAndUpdate(filter, update, options);
+        callGlobalInterceptors(PostUpdate.class, null, options);
+
+        return super.getCollection().findOneAndUpdate(filter, update,
+                new com.mongodb.client.model.FindOneAndUpdateOptions()
+                        .returnDocument(options.returnDocument())
+                        .upsert(options.upsert())
+                        .hint(options.hint())
+                        .sort(options.sort())
+        );
     }
 
     /**

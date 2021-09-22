@@ -129,15 +129,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     //#endregion
 
     /**
-     * @param includeFields includeFields
-     * @return Bson
-     */
-    protected Bson includeFields(final List<String> includeFields) {
-        return BsonUtils.includeFields(includeFields);
-    }
-
-
-    /**
      * @param findIterable findIterable
      * @param projection   projection
      * @param sort         sort
