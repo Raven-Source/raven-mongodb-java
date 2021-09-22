@@ -9,10 +9,10 @@
     <version>2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>raven-mongodb-repository</module>
 <!--        <module>raven-mongodb-repository-async</module>-->
         <module>raven-mongodb-repository-core</module>
         <module>raven-mongodb-repository-spi</module>
+        <module>raven-mongodb-repository-sync</module>
         <module>raven-mongodb-repository-reactive</module>
     </modules>
 
@@ -22,7 +22,7 @@
         <java.version>11</java.version>
         <encoding>UTF-8</encoding>
 
-        <raven-commons.version>3.1.2-SNAPSHOT</raven-commons.version>
+        <raven-commons.version>3.1.2</raven-commons.version>
         <mongodb-driver.version>4.2.3</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>

@@ -16,7 +16,7 @@ import java.util.List;
  * @since JDK11
  */
 public interface MongoRepository<TEntity, TKey>
-        extends MongoReaderRepository<TEntity, TKey> {
+    extends MongoReaderRepository<TEntity, TKey> {
 
 //    /**
 //     * @return
@@ -160,6 +160,14 @@ public interface MongoRepository<TEntity, TKey>
     UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
 
     /**
+     * 修改单条数据
+     *
+     * @param options UpdateOptions
+     * @return
+     */
+    UpdateResult updateOne(final UpdateOptions options);
+
+    /**
      * 修改多条数据
      *
      * @param filter filter Bson
@@ -190,6 +198,14 @@ public interface MongoRepository<TEntity, TKey>
     UpdateResult updateMany(Bson filter, Bson update, Bson hint, WriteConcern writeConcern);
 
     /**
+     * 修改多条数据
+     *
+     * @param options UpdateOptions
+     * @return
+     */
+    UpdateResult updateMany(final UpdateOptions options);
+
+    /**
      * @param filter filter Bson
      * @param update update Bson
      * @return
@@ -214,6 +230,14 @@ public interface MongoRepository<TEntity, TKey>
      * @return
      */
     TEntity findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort, Bson hint);
+
+    /**
+     * 找到并更新
+     *
+     * @param options FindOneAndUpdateOptions
+     * @return
+     */
+    TEntity findOneAndUpdate(final FindOneAndUpdateOptions options);
 
     /**
      * @param filter filter Bson
@@ -261,6 +285,14 @@ public interface MongoRepository<TEntity, TKey>
     TEntity findOneAndDelete(Bson filter, Bson sort, Bson hint);
 
     /**
+     * 找到并删除
+     *
+     * @param option FindOneAndDeleteOptions
+     * @return
+     */
+    TEntity findOneAndDelete(final FindOneAndDeleteOptions option);
+
+    /**
      * @param id TKey
      * @return
      */
@@ -295,6 +327,12 @@ public interface MongoRepository<TEntity, TKey>
     DeleteResult deleteOne(Bson filter, final Bson hint, WriteConcern writeConcern);
 
     /**
+     * @param options DeleteOptions
+     * @return
+     */
+    DeleteResult deleteOne(final DeleteOptions options);
+
+    /**
      * @param filter filter Bson
      * @return
      */
@@ -315,5 +353,12 @@ public interface MongoRepository<TEntity, TKey>
      * @return
      */
     DeleteResult deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern);
+
+
+    /**
+     * @param options DeleteOptions
+     * @return
+     */
+    DeleteResult deleteMany(final DeleteOptions options);
 
 }

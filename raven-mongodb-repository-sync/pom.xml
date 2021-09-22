@@ -12,7 +12,7 @@
     <description>raven mongodb repository</description>
     <url>https://github.com/Raven-Source/raven-mongodb-java</url>
 
-    <artifactId>raven-mongodb-repository</artifactId>
+    <artifactId>raven-mongodb-repository-sync</artifactId>
     <packaging>jar</packaging>
     <properties>
         <raven-logger.version>1.1.0</raven-logger.version>

@@ -2,7 +2,6 @@ package org.raven.mongodb.repository;
 
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
@@ -30,8 +29,8 @@ import java.util.stream.Collectors;
  * @since JDK11
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends MongoReaderRepositoryImpl<TEntity, TKey>
-        implements MongoRepository<TEntity, TKey> {
+    extends MongoReaderRepositoryImpl<TEntity, TKey>
+    implements MongoRepository<TEntity, TKey> {
 
 
     //#region constructor
@@ -44,7 +43,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param idGeneratorProvider idGeneratorProvider
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
-            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
 
@@ -246,14 +245,19 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
-        UpdateOptions options = new UpdateOptions();
-        options.filter(filter);
-        options.update(update);
-        options.upsert(isUpsert);
-        options.hint(hint);
-        options.writeConcern(writeConcern);
+        return this.updateOne(filter, update, isUpsert, hint, writeConcern);
+    }
 
-        return doUpdate(options, UpdateType.ONE);
+    /**
+     * 修改单条数据
+     *
+     * @param options UpdateOptions
+     * @return
+     */
+    @Override
+    public UpdateResult updateOne(final UpdateOptions options) {
+
+        return this.doUpdate(options, UpdateType.ONE);
     }
 
     /**
@@ -293,14 +297,20 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public UpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final WriteConcern writeConcern) {
 
-        UpdateOptions options = new UpdateOptions();
-        options.filter(filter);
-        options.update(update);
-        options.upsert(false);
-        options.hint(hint);
-        options.writeConcern(writeConcern);
+        return this.updateMany(filter, update, hint, writeConcern);
+    }
 
-        return doUpdate(options, UpdateType.MANY);
+    /**
+     * 修改多条数据
+     *
+     * @param options
+     * @return
+     */
+    @Override
+    public UpdateResult updateMany(final UpdateOptions options) {
+
+        options.upsert(false);
+        return this.doUpdate(options, UpdateType.MANY);
     }
 
     //#endregion
@@ -356,7 +366,20 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         options.sort(sort);
         options.hint(hint);
 
-        return doFindOneAndUpdate(filter, update, options);
+        return this.findOneAndUpdate(options);
+    }
+
+    /**
+     * 找到并更新
+     *
+     * @param options FindOneAndUpdateOptions
+     * @return
+     */
+    @Override
+    public TEntity findOneAndUpdate(final FindOneAndUpdateOptions options) {
+        options.returnDocument(ReturnDocument.AFTER);
+
+        return this.doFindOneAndUpdate(options.filter(), options.update(), options);
     }
 
     /**
@@ -441,7 +464,19 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         option.sort(sort);
         option.hint(hint);
 
-        return doFindOneAndDelete(filter, option);
+        return this.findOneAndDelete(option);
+    }
+
+    /**
+     * 找到并删除
+     *
+     * @param option FindOneAndDeleteOptions
+     * @return
+     */
+    @Override
+    public TEntity findOneAndDelete(final FindOneAndDeleteOptions option) {
+
+        return doFindOneAndDelete(option.filter(), option);
     }
 
     //#endregion
@@ -498,7 +533,22 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         DeleteOptions options = new DeleteOptions();
         options.hint(hint);
-        return super.getCollection(writeConcern).deleteOne(filter, options);
+        options.filter(filter);
+        options.writeConcern(writeConcern);
+
+        return this.deleteOne(options);
+    }
+
+    /**
+     * @param options DeleteOptions
+     * @return
+     */
+    @Override
+    public DeleteResult deleteOne(final DeleteOptions options) {
+        return super.getCollection(options.writeConcern()).deleteOne(options.filter(),
+            new com.mongodb.client.model.DeleteOptions()
+                .hint(options.hint())
+        );
     }
 
     /**
@@ -528,9 +578,25 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public DeleteResult deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
+
         DeleteOptions options = new DeleteOptions();
         options.hint(hint);
-        return super.getCollection(writeConcern).deleteMany(filter, options);
+        options.filter(filter);
+        options.writeConcern(writeConcern);
+
+        return this.deleteMany(options);
+    }
+
+    /**
+     * @param options DeleteOptions
+     * @return
+     */
+    @Override
+    public DeleteResult deleteMany(final DeleteOptions options) {
+        return super.getCollection(options.writeConcern()).deleteMany(options.filter(),
+            new com.mongodb.client.model.DeleteOptions()
+                .hint(options.hint())
+        );
     }
 
 
@@ -572,16 +638,16 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         if (updateType == UpdateType.ONE) {
             return super.getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
-                    new com.mongodb.client.model.UpdateOptions()
-                            .hint(options.hint())
-                            .upsert(options.upsert())
+                new com.mongodb.client.model.UpdateOptions()
+                    .hint(options.hint())
+                    .upsert(options.upsert())
 
             );
         } else {
             return super.getCollection(options.writeConcern()).updateMany(options.filter(), options.update(),
-                    new com.mongodb.client.model.UpdateOptions()
-                            .hint(options.hint())
-                            .upsert(options.upsert())
+                new com.mongodb.client.model.UpdateOptions()
+                    .hint(options.hint())
+                    .upsert(options.upsert())
             );
         }
     }
@@ -598,11 +664,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         callGlobalInterceptors(PostUpdate.class, null, options);
 
         return super.getCollection().findOneAndUpdate(filter, update,
-                new com.mongodb.client.model.FindOneAndUpdateOptions()
-                        .returnDocument(options.returnDocument())
-                        .upsert(options.upsert())
-                        .hint(options.hint())
-                        .sort(options.sort())
+            new com.mongodb.client.model.FindOneAndUpdateOptions()
+                .returnDocument(options.returnDocument())
+                .upsert(options.upsert())
+                .hint(options.hint())
+                .sort(options.sort())
         );
     }
 
@@ -616,9 +682,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         }
 
         return super.getCollection().findOneAndDelete(filter,
-                new com.mongodb.client.model.FindOneAndDeleteOptions()
-                        .hint(options.hint())
-                        .sort(options.sort())
+            new com.mongodb.client.model.FindOneAndDeleteOptions()
+                .hint(options.hint())
+                .sort(options.sort())
         );
     }
 
