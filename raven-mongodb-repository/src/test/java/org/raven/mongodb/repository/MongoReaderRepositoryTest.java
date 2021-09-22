@@ -78,7 +78,7 @@ public class MongoReaderRepositoryTest {
                 , Sorts.descending("CreateDate"), size, 0
                 , Indexes.descending("CreateDate"), null);
 
-        Assert.assertEquals(list.size(), size);
+        Assert.assertEquals(list.size(), 3);
 
     }
 

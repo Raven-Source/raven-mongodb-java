@@ -4,7 +4,6 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.FindOneAndDeleteOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
@@ -248,6 +247,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
+        options.filter(filter);
+        options.update(update);
         options.upsert(isUpsert);
         options.hint(hint);
         options.writeConcern(writeConcern);
@@ -293,6 +294,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public UpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
+        options.filter(filter);
+        options.update(update);
         options.upsert(false);
         options.hint(hint);
         options.writeConcern(writeConcern);
@@ -328,13 +331,6 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public TEntity findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort) {
 
-        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-        options.returnDocument(ReturnDocument.AFTER);
-        options.upsert(isUpsert);
-        if (sort != null) {
-            options.sort(sort);
-        }
-
         return this.findOneAndUpdate(filter, update, isUpsert, sort, null);
     }
 
@@ -352,6 +348,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public TEntity findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+        options.filter(filter);
+        options.update(update);
         options.returnDocument(ReturnDocument.AFTER);
         options.upsert(isUpsert);
 
@@ -439,6 +437,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public TEntity findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
 
         FindOneAndDeleteOptions option = new FindOneAndDeleteOptions();
+        option.filter(filter);
         option.sort(sort);
         option.hint(hint);
 
@@ -565,6 +564,10 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     protected UpdateResult doUpdate(final UpdateOptions options,
                                     final UpdateType updateType) {
 
+        if (options.filter() == null) {
+            options.filter(new BsonDocument());
+        }
+
         callGlobalInterceptors(PostUpdate.class, null, options);
 
         if (updateType == UpdateType.ONE) {
@@ -588,6 +591,10 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     protected TEntity doFindOneAndUpdate(final Bson filter, final Bson update, final FindOneAndUpdateOptions options) {
 
+        if (options.filter() == null) {
+            options.filter(new BsonDocument());
+        }
+
         callGlobalInterceptors(PostUpdate.class, null, options);
 
         return super.getCollection().findOneAndUpdate(filter, update,
@@ -602,9 +609,17 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      *
      */
-    protected TEntity doFindOneAndDelete(final Bson filter, final FindOneAndDeleteOptions option) {
+    protected TEntity doFindOneAndDelete(final Bson filter, final FindOneAndDeleteOptions options) {
 
-        return super.getCollection().findOneAndDelete(filter, option);
+        if (options.filter() == null) {
+            options.filter(new BsonDocument());
+        }
+
+        return super.getCollection().findOneAndDelete(filter,
+                new com.mongodb.client.model.FindOneAndDeleteOptions()
+                        .hint(options.hint())
+                        .sort(options.sort())
+        );
     }
 
     //endregion
