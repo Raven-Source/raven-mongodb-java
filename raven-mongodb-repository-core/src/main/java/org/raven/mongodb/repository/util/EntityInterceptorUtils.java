@@ -4,9 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,12 +21,13 @@ public class EntityInterceptorUtils {
 
     public static List<EntityInterceptor> getInterceptors(Class<?> entityClass) {
 
-        List<EntityInterceptor> entityInterceptors = new LinkedList<>();
+        Set<EntityInterceptor> entityInterceptors = new HashSet<>();
 
-        EntityListeners entityListeners = AnnotationUtils.findAnnotation(entityClass, EntityListeners.class);
-        if (entityListeners != null) {
-            Class<? extends EntityInterceptor>[] classes = entityListeners.value();
+        List<EntityListeners> entityListeners = AnnotationUtils.findAllInheritanceAnnotation(entityClass, EntityListeners.class);
 
+        for (EntityListeners entityListener : entityListeners) {
+
+            Class<? extends EntityInterceptor>[] classes = entityListener.value();
             for (Class<? extends EntityInterceptor> clazz : classes) {
 
                 EntityInterceptor entityInterceptor = entityInterceptorCached.get(clazz);
@@ -44,10 +43,9 @@ public class EntityInterceptorUtils {
 
                 entityInterceptors.add(entityInterceptor);
             }
-
         }
 
-        return entityInterceptors;
+        return new ArrayList<>(entityInterceptors);
     }
 
 }

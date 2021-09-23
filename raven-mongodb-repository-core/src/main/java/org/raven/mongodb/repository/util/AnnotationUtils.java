@@ -2,6 +2,11 @@ package org.raven.mongodb.repository.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author yi.liang
@@ -44,6 +49,28 @@ public class AnnotationUtils {
                 return superclass != null && superclass != Object.class ? findAnnotation(superclass, annotationType) : null;
             }
         }
+    }
+
+    public static <A extends Annotation> List<A> findAllInheritanceAnnotation(Class<?> clazz, Class<A> annotationType) {
+
+        List<A> annotations = new ArrayList<>();
+
+        Function<Class<?>, A> supplier = (c) -> c.getDeclaredAnnotation(annotationType);
+
+        if (annotationType != null) {
+
+            while (clazz != null && clazz != Object.class) {
+
+                A annotation = supplier.apply(clazz);
+                if (annotation != null) {
+                    annotations.add(annotation);
+                }
+
+                clazz = clazz.getSuperclass();
+            }
+        }
+
+        return annotations;
     }
 
 

@@ -12,6 +12,7 @@ import org.raven.commons.data.Versioned;
 import org.raven.commons.data.annotation.Contract;
 import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
+import org.raven.mongodb.repository.interceptors.EntityInterceptor;
 import org.raven.mongodb.repository.interceptors.VersionedEntityInterceptor;
 
 import java.util.Date;
@@ -20,28 +21,13 @@ import java.util.Date;
 @FieldNameConstants
 @Getter
 @Setter
-@EntityListeners({DeletableInterceptor.class, VersionedEntityInterceptor.class})
-public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
-    @BsonId()
-    private Long id;
+@EntityListeners({UserExtend.TestInterceptor.class, VersionedEntityInterceptor.class})
+public class UserExtend extends User {
+    String remark;
 
-    private String name;
+    public static class TestInterceptor implements EntityInterceptor {
 
-    private int age;
-
-    private Long version = 0L;
-
-    @BsonIgnore
-    private Status status;
-
-    private boolean del;
-
-    private Date createDate;
-
-    private Mall mall;
-
-    public User() {
-        status = Status.Normal;
-        createDate = new Date();
     }
 }
+
+
