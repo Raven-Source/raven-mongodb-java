@@ -8,6 +8,7 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.annotations.PostUpdate;
+import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
@@ -407,7 +408,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             projection = BsonUtils.includeFields(options.includeFields());
         }
 
-        callGlobalInterceptors(PostUpdate.class, null, options);
+        callGlobalInterceptors(PreFind.class, null, options);
 
         FindIterable<TEntity> result = super.getCollection(options.readPreference()).find(options.filter(), entityInformation.getEntityType());
         result = super.findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
@@ -421,7 +422,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             options.filter(new BsonDocument());
         }
 
-        callGlobalInterceptors(PostUpdate.class, null, options);
+        callGlobalInterceptors(PreFind.class, null, options);
 
         return super.getCollection(options.readPreference()).countDocuments(options.filter(),
                 new com.mongodb.client.model.CountOptions()

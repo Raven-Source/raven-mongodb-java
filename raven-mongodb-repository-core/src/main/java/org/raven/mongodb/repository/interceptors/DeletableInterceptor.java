@@ -7,6 +7,7 @@ import org.bson.conversions.Bson;
 import org.raven.commons.data.Deletable;
 import org.raven.mongodb.repository.AbstractFindOptions;
 import org.raven.mongodb.repository.EntityInformation;
+import org.raven.mongodb.repository.UpdateOptions;
 
 /**
  * @author by yanfeng
@@ -20,22 +21,42 @@ public class DeletableInterceptor implements EntityInterceptor {
 
         if (Deletable.class.isAssignableFrom(entityInformation.getEntityType())) {
 
-            PropertyModel<?> propertyModel = entityInformation.getClassModel().getPropertyModel(Deletable.DEL);
-
-            Bson filter = options.filter();
-            BsonDocument bsonDocument;
-            if (filter == null) {
-                bsonDocument = new BsonDocument();
-            } else {
-                bsonDocument = filter.toBsonDocument();
-            }
-
-            if (!bsonDocument.containsKey(propertyModel.getName())) {
-                filter = Filters.and(filter, Filters.eq(propertyModel.getWriteName(), false));
-                options.filter(filter);
-            }
+            Bson filter = filterProcess(options.filter(), entityInformation);
+            options.filter(filter);
 
         }
 
+    }
+
+    @Override
+    public void postUpdate(UpdateOptions options, EntityInformation<?, ?> entityInformation) {
+
+        if (Deletable.class.isAssignableFrom(entityInformation.getEntityType())) {
+
+            Bson filter = filterProcess(options.filter(), entityInformation);
+            options.filter(filter);
+
+        }
+    }
+
+    /**
+     *
+     */
+    private Bson filterProcess(final Bson filter, final EntityInformation<?, ?> entityInformation) {
+
+        PropertyModel<?> propertyModel = entityInformation.getClassModel().getPropertyModel(Deletable.DEL);
+
+        BsonDocument bsonDocument;
+        if (filter == null) {
+            bsonDocument = new BsonDocument();
+        } else {
+            bsonDocument = filter.toBsonDocument();
+        }
+
+        if (!bsonDocument.containsKey(propertyModel.getName())) {
+            return Filters.and(filter, Filters.eq(propertyModel.getWriteName(), false));
+        } else {
+            return filter;
+        }
     }
 }

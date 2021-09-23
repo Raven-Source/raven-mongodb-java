@@ -4,6 +4,7 @@ import org.raven.commons.data.MemberFormatType;
 import org.raven.commons.data.MemberFormatUtils;
 import org.raven.commons.data.annotation.Contract;
 import org.raven.commons.util.StringUtils;
+import org.raven.mongodb.repository.util.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 
@@ -17,12 +18,11 @@ public abstract class DocumentNamed {
 
         MemberFormatType formatType = MemberFormatType.CamelCase;
         String name = null;
-        for (final Annotation annotation : documentClass.getAnnotations()) {
-            if (annotation instanceof Contract) {
-                formatType = ((Contract) annotation).formatType();
-                name = ((Contract) annotation).value();
-                break;
-            }
+
+        Contract contract = AnnotationUtils.findAnnotation(documentClass, Contract.class);
+        if (contract != null) {
+            formatType = contract.formatType();
+            name = contract.value();
         }
 
         name = StringUtils.isBlank(name) ? MemberFormatUtils.namingFormat(documentClass.getSimpleName(), formatType) : name;

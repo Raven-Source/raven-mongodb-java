@@ -9,6 +9,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
+import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
@@ -29,8 +30,8 @@ import java.util.stream.Collectors;
  * @since JDK11
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-    extends MongoReaderRepositoryImpl<TEntity, TKey>
-    implements MongoRepository<TEntity, TKey> {
+        extends MongoReaderRepositoryImpl<TEntity, TKey>
+        implements MongoRepository<TEntity, TKey> {
 
 
     //#region constructor
@@ -43,7 +44,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param idGeneratorProvider idGeneratorProvider
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
-        , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
 
@@ -559,8 +560,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public DeleteResult deleteOne(final DeleteOptions options) {
         return super.getCollection(options.writeConcern()).deleteOne(options.filter(),
-            new com.mongodb.client.model.DeleteOptions()
-                .hint(options.hint())
+                new com.mongodb.client.model.DeleteOptions()
+                        .hint(options.hint())
         );
     }
 
@@ -607,8 +608,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public DeleteResult deleteMany(final DeleteOptions options) {
         return super.getCollection(options.writeConcern()).deleteMany(options.filter(),
-            new com.mongodb.client.model.DeleteOptions()
-                .hint(options.hint())
+                new com.mongodb.client.model.DeleteOptions()
+                        .hint(options.hint())
         );
     }
 
@@ -640,7 +641,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      *
      */
-    protected UpdateResult doUpdate(final UpdateOptions options,
+    protected UpdateResult doUpdate(@NonNull final UpdateOptions options,
                                     final UpdateType updateType) {
 
         if (options.filter() == null) {
@@ -651,16 +652,16 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         if (updateType == UpdateType.ONE) {
             return super.getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
-                new com.mongodb.client.model.UpdateOptions()
-                    .hint(options.hint())
-                    .upsert(options.upsert())
+                    new com.mongodb.client.model.UpdateOptions()
+                            .hint(options.hint())
+                            .upsert(options.upsert())
 
             );
         } else {
             return super.getCollection(options.writeConcern()).updateMany(options.filter(), options.update(),
-                new com.mongodb.client.model.UpdateOptions()
-                    .hint(options.hint())
-                    .upsert(options.upsert())
+                    new com.mongodb.client.model.UpdateOptions()
+                            .hint(options.hint())
+                            .upsert(options.upsert())
             );
         }
     }
@@ -668,7 +669,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      *
      */
-    protected TEntity doFindOneAndUpdate(final Bson filter, final Bson update, final FindOneAndUpdateOptions options) {
+    protected TEntity doFindOneAndUpdate(@NonNull final Bson filter, @NonNull final Bson update, final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
             options.filter(new BsonDocument());
@@ -677,27 +678,27 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         callGlobalInterceptors(PostUpdate.class, null, options);
 
         return super.getCollection().findOneAndUpdate(filter, update,
-            new com.mongodb.client.model.FindOneAndUpdateOptions()
-                .returnDocument(options.returnDocument())
-                .upsert(options.upsert())
-                .hint(options.hint())
-                .sort(options.sort())
+                new com.mongodb.client.model.FindOneAndUpdateOptions()
+                        .returnDocument(options.returnDocument())
+                        .upsert(options.upsert())
+                        .hint(options.hint())
+                        .sort(options.sort())
         );
     }
 
     /**
      *
      */
-    protected TEntity doFindOneAndDelete(final Bson filter, final FindOneAndDeleteOptions options) {
+    protected TEntity doFindOneAndDelete(@NonNull final Bson filter, @NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(new BsonDocument());
         }
 
         return super.getCollection().findOneAndDelete(filter,
-            new com.mongodb.client.model.FindOneAndDeleteOptions()
-                .hint(options.hint())
-                .sort(options.sort())
+                new com.mongodb.client.model.FindOneAndDeleteOptions()
+                        .hint(options.hint())
+                        .sort(options.sort())
         );
     }
 
