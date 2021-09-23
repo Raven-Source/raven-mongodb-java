@@ -1,4 +1,5 @@
 package org.raven.mongodb.repository;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
@@ -7,6 +8,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.raven.commons.data.AutoIncr;
 import org.raven.commons.data.Deletable;
 import org.raven.commons.data.MemberFormatType;
+import org.raven.commons.data.Versioned;
 import org.raven.commons.data.annotation.Contract;
 import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
@@ -19,13 +21,15 @@ import java.util.Date;
 @Getter
 @Setter
 @EntityListeners({DeletableInterceptor.class, VersionedEntityInterceptor.class})
-public final class User implements AutoIncr<Long>, Deletable {
+public final class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
     @BsonId()
     private Long id;
 
     private String name;
 
     private int age;
+
+    private Long version = 0L;
 
     @BsonIgnore
     private Status status;
@@ -36,7 +40,7 @@ public final class User implements AutoIncr<Long>, Deletable {
 
     private Mall mall;
 
-    public User(){
+    public User() {
         status = Status.Normal;
         createDate = new Date();
     }

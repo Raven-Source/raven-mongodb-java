@@ -23,16 +23,17 @@ public class VersionedEntityInterceptor implements EntityInterceptor {
             PropertyModel<?> propertyModel = entityInformation.getClassModel().getPropertyModel(Versioned.VERSION);
             Bson update = options.update();
             BsonDocument bsonDocument;
+            Bson incVersion = Updates.inc(propertyModel.getWriteName(), 1);
+
             if (update == null) {
-                bsonDocument = new BsonDocument();
+                update = incVersion;
             } else {
                 bsonDocument = update.toBsonDocument();
+                if (!bsonDocument.containsKey(propertyModel.getName())) {
+                    update = Updates.combine(update, incVersion);
+                }
             }
-
-            if (!bsonDocument.containsKey(propertyModel.getName())) {
-                update = Updates.combine(update, Updates.inc(propertyModel.getWriteName(), 1));
-                options.update(update);
-            }
+            options.update(update);
 
         }
     }
