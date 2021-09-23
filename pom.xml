@@ -26,6 +26,7 @@
         <mongodb-driver.version>4.2.3</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>
+        <raven-logger.version>1.1.0</raven-logger.version>
 
     </properties>
 

@@ -14,9 +14,6 @@
 
     <artifactId>raven-mongodb-repository-sync</artifactId>
     <packaging>jar</packaging>
-    <properties>
-        <raven-logger.version>1.1.0</raven-logger.version>
-    </properties>
 
     <dependencies>
 

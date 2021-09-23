@@ -14,6 +14,7 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.annotations.PostUpdate;
+import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.IdGenerator;
@@ -98,7 +99,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             TKey id = idGenerator.generateId();
             entity.setId(id);
         }
-        return super.getCollection(writeConcern).insertOne(entity);
+        return this.doInsert(entity, writeConcern);
     }
 
     /**
@@ -127,7 +128,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             }
         }
 
-        return super.getCollection(writeConcern).insertMany(entities);
+        return this.doInsertBatch(entities, writeConcern);
     }
 
     //#endregion
@@ -619,23 +620,24 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //region protected
 
     /**
-     * @param updateEntity
-     * @param isUpsert
+     * @param entity
+     * @param writeConcern
      * @return
      */
-    protected Bson createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
+    protected InsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
-        BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
-        bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
+        callGlobalInterceptors(PreInsert.class, entity, null);
 
-        Bson update = new BsonDocument("$set", bsDoc);
-        if (isUpsert && entityInformation.getIdGenerationType() == IdGenerationType.AUTO_INCR) {
-            TKey id = idGenerator.generateId();
-            update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
+        return super.getCollection(writeConcern).insertOne(entity);
+    }
+
+    protected InsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
+
+        for (TEntity entity : entities) {
+            callGlobalInterceptors(PreInsert.class, entity, null);
         }
 
-        return update;
-
+        return super.getCollection(writeConcern).insertMany(entities);
     }
 
     /**
@@ -700,6 +702,26 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                         .hint(options.hint())
                         .sort(options.sort())
         );
+    }
+
+    /**
+     * @param updateEntity
+     * @param isUpsert
+     * @return
+     */
+    protected Bson createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
+
+        BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
+        bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
+
+        Bson update = new BsonDocument("$set", bsDoc);
+        if (isUpsert && entityInformation.getIdGenerationType() == IdGenerationType.AUTO_INCR) {
+            TKey id = idGenerator.generateId();
+            update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
+        }
+
+        return update;
+
     }
 
     //endregion
