@@ -263,6 +263,18 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         options.skip(skip);
         options.sort(sort);
 
+        return this.getList(options);
+    }
+
+    /**
+     * 根据条件获取获取列表
+     *
+     * @param options FindOptions
+     * @return
+     */
+    @Override
+    public List<TEntity> getList(final FindOptions options) {
+
         FindIterable<TEntity> result = doFind(options);
 
         ArrayList<TEntity> list = new ArrayList<TEntity>();
@@ -271,25 +283,6 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         }
 
         return list;
-    }
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param findOptions
-     * @return
-     */
-    @Override
-    public List<TEntity> getList(final FindOptions findOptions) {
-        return this.getList(
-                findOptions.filter(),
-                findOptions.includeFields(),
-                findOptions.sort(),
-                findOptions.limit(),
-                findOptions.skip(),
-                findOptions.hint(),
-                findOptions.readPreference()
-        );
     }
 
     //#endregion

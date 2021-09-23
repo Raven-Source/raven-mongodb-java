@@ -245,7 +245,14 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
-        return this.updateOne(filter, update, isUpsert, hint, writeConcern);
+        UpdateOptions options = new UpdateOptions();
+        options.filter(filter);
+        options.update(update);
+        options.upsert(isUpsert);
+        options.hint(hint);
+        options.writeConcern(writeConcern);
+
+        return this.updateOne(options);
     }
 
     /**
@@ -297,7 +304,13 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public UpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final WriteConcern writeConcern) {
 
-        return this.updateMany(filter, update, hint, writeConcern);
+        UpdateOptions options = new UpdateOptions();
+        options.filter(filter);
+        options.update(update);
+        options.hint(hint);
+        options.writeConcern(writeConcern);
+
+        return this.updateMany(options);
     }
 
     /**
