@@ -14,7 +14,7 @@ import org.bson.conversions.Bson;
 public class UpdateOptions implements Options {
     private Bson filter;
     private Bson update;
-    private Boolean upsert;
+    private boolean upsert;
     private Bson hint;
     private WriteConcern writeConcern;
 

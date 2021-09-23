@@ -70,7 +70,7 @@ public class MongoRepositoryTest {
     }
 
     @Test
-    public void a3_insertBatch() throws Exception {
+    public void a3_insertBatch() {
 
         ArrayList<User> list = new ArrayList<>();
         for (int i = 1; i <= size; i++) {
@@ -95,6 +95,8 @@ public class MongoRepositoryTest {
     @Test
     public void a4_update() {
 
+        new MongoRepositoryTest().a3_insertBatch();
+
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
         List<User> users = repos.getList(FindOptions.Empty().limit(10));
 
@@ -104,7 +106,7 @@ public class MongoRepositoryTest {
                             .filter(
                                     Filters.eq("_id", user.getId())
                             )
-                            .update(Updates.inc("Del", 9))
+                            .update(Updates.inc("Version", 9))
 
             );
         }
