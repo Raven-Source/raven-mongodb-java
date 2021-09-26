@@ -32,7 +32,7 @@ public class DeletableInterceptor implements EntityInterceptor {
     }
 
     @Override
-    public void postUpdate(UpdateOptions options, EntityInformation<?, ?> entityInformation) {
+    public void preUpdate(UpdateOptions options, EntityInformation<?, ?> entityInformation) {
 
         if (Deletable.class.isAssignableFrom(entityInformation.getEntityType())) {
 

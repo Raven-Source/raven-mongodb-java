@@ -2,7 +2,7 @@ package org.raven.mongodb.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.repository.annotations.PostUpdate;
+import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
@@ -46,8 +46,8 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
                 log.debug("Calling interceptor method " + event.getSimpleName() + " on " + ei);
             }
 
-            if (PostUpdate.class.equals(event)) {
-                ei.postUpdate((UpdateOptions) options, entityInformation);
+            if (PreUpdate.class.equals(event)) {
+                ei.preUpdate((UpdateOptions) options, entityInformation);
             } else if (PreFind.class.equals(event)) {
                 ei.preFind((AbstractFindOptions) options, entityInformation);
             } else if (PreInsert.class.equals(event)) {

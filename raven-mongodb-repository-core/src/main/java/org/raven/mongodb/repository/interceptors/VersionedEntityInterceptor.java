@@ -15,7 +15,7 @@ import org.raven.mongodb.repository.UpdateOptions;
 public class VersionedEntityInterceptor implements EntityInterceptor {
 
     @Override
-    public void postUpdate(final UpdateOptions options,
+    public void preUpdate(final UpdateOptions options,
                            final EntityInformation<?, ?> entityInformation) {
 
         if (Versioned.class.isAssignableFrom(entityInformation.getEntityType())) {

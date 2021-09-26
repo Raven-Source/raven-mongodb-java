@@ -13,7 +13,7 @@ import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.repository.annotations.PostUpdate;
+import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerationType;
@@ -650,7 +650,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             options.filter(new BsonDocument());
         }
 
-        callGlobalInterceptors(PostUpdate.class, null, options);
+        callGlobalInterceptors(PreUpdate.class, null, options);
 
         if (updateType == UpdateType.ONE) {
             return super.getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
@@ -677,7 +677,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             options.filter(new BsonDocument());
         }
 
-        callGlobalInterceptors(PostUpdate.class, null, options);
+        callGlobalInterceptors(PreUpdate.class, null, options);
 
         return super.getCollection().findOneAndUpdate(options.filter(), options.update(),
                 new com.mongodb.client.model.FindOneAndUpdateOptions()

@@ -13,7 +13,7 @@ public interface EntityInterceptor {
     default void preInsert(Object entity, final EntityInformation<?, ?> entityInformation) {
     }
 
-    default void postUpdate(final UpdateOptions options,
+    default void preUpdate(final UpdateOptions options,
                             final EntityInformation<?, ?> entityInformation) {
 
     }
