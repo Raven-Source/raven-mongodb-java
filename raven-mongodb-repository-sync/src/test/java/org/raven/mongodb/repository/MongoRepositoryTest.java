@@ -113,4 +113,31 @@ public class MongoRepositoryTest {
 
 
     }
+
+    @Test
+    public void a5_update() {
+
+        new MongoRepositoryTest().a3_insertBatch();
+
+        MongoRepository<User, Long> repos = new UserRepositoryImpl();
+        List<User> users = repos.getList(FindOptions.Empty().limit(1));
+        User user = users.get(0);
+
+        int age = user.getAge();
+        Long version = user.getVersion();
+
+        user = repos.findOneAndUpdate(
+                (FindOneAndUpdateOptions) FindOneAndUpdateOptions.Empty()
+                        .filter(
+                                Filters.eq("_id", user.getId())
+                        )
+                        .update(Updates.inc("Age", 5))
+
+        );
+
+        Assert.assertEquals(user.getAge(), age + 5);
+        Assert.assertEquals(user.getVersion().longValue(), Long.sum(version, 1L));
+
+
+    }
 }

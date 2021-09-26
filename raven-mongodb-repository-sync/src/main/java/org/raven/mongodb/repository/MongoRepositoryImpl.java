@@ -394,7 +394,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public TEntity findOneAndUpdate(final FindOneAndUpdateOptions options) {
         options.returnDocument(ReturnDocument.AFTER);
 
-        return this.doFindOneAndUpdate(options.filter(), options.update(), options);
+        return this.doFindOneAndUpdate(options);
     }
 
     /**
@@ -491,7 +491,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public TEntity findOneAndDelete(final FindOneAndDeleteOptions option) {
 
-        return doFindOneAndDelete(option.filter(), option);
+        return doFindOneAndDelete(option);
     }
 
     //#endregion
@@ -671,7 +671,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      *
      */
-    protected TEntity doFindOneAndUpdate(@NonNull final Bson filter, @NonNull final Bson update, final FindOneAndUpdateOptions options) {
+    protected TEntity doFindOneAndUpdate(final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
             options.filter(new BsonDocument());
@@ -679,7 +679,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         callGlobalInterceptors(PostUpdate.class, null, options);
 
-        return super.getCollection().findOneAndUpdate(filter, update,
+        return super.getCollection().findOneAndUpdate(options.filter(), options.update(),
                 new com.mongodb.client.model.FindOneAndUpdateOptions()
                         .returnDocument(options.returnDocument())
                         .upsert(options.upsert())
@@ -691,13 +691,13 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      *
      */
-    protected TEntity doFindOneAndDelete(@NonNull final Bson filter, @NonNull final FindOneAndDeleteOptions options) {
+    protected TEntity doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(new BsonDocument());
         }
 
-        return super.getCollection().findOneAndDelete(filter,
+        return super.getCollection().findOneAndDelete(options.filter(),
                 new com.mongodb.client.model.FindOneAndDeleteOptions()
                         .hint(options.hint())
                         .sort(options.sort())
