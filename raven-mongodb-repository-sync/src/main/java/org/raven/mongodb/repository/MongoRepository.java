@@ -1,11 +1,13 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.Function;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.conversions.Bson;
+import org.raven.mongodb.repository.query.*;
 
 import java.util.List;
 
@@ -92,7 +94,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param isUpsert     default false
      * @return
      */
-    UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert);
+    UpdateResult updateOne(Bson filter, TEntity updateEntity, boolean isUpsert);
 
     /**
      * 修改单条数据
@@ -103,7 +105,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern WriteConcern
      * @return
      */
-    UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, WriteConcern writeConcern);
+    UpdateResult updateOne(Bson filter, TEntity updateEntity, boolean isUpsert, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
@@ -115,7 +117,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern WriteConcern
      * @return
      */
-    UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+    UpdateResult updateOne(Bson filter, TEntity updateEntity, boolean isUpsert, Bson hint, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
@@ -143,7 +145,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param isUpsert default false
      * @return
      */
-    UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert);
+    UpdateResult updateOne(Bson filter, Bson update, boolean isUpsert);
 
     /**
      * 修改单条数据
@@ -154,7 +156,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern WriteConcern
      * @return
      */
-    UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert, WriteConcern writeConcern);
+    UpdateResult updateOne(Bson filter, Bson update, boolean isUpsert, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
@@ -166,7 +168,49 @@ public interface MongoRepository<TEntity, TKey>
      * @param writeConcern WriteConcern
      * @return
      */
-    UpdateResult updateOne(Bson filter, Bson update, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+    UpdateResult updateOne(Bson filter, Bson update, boolean isUpsert, Bson hint, WriteConcern writeConcern);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateOne(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                           Function<UpdateBuilder<TEntity>, Bson> updateBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateOne(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                           Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                           boolean isUpsert);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateOne(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                           Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                           boolean isUpsert,
+                           Function<HintBuilder<TEntity>, Bson> hintBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateOne(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                           Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                           boolean isUpsert,
+                           Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                           WriteConcern writeConcern);
 
     /**
      * 修改单条数据
@@ -206,6 +250,39 @@ public interface MongoRepository<TEntity, TKey>
      */
     UpdateResult updateMany(Bson filter, Bson update, Bson hint, WriteConcern writeConcern);
 
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateMany(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                            Function<UpdateBuilder<TEntity>, Bson> updateBuilder);
+
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateMany(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                            Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                            Function<HintBuilder<TEntity>, Bson> hintBuilder);
+
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    UpdateResult updateMany(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                            Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                            Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                            WriteConcern writeConcern);
+
     /**
      * 修改多条数据
      *
@@ -228,7 +305,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param sort     sort Bson
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort);
+    TEntity findOneAndUpdate(Bson filter, Bson update, boolean isUpsert, Bson sort);
 
     /**
      * @param filter   filter Bson
@@ -238,7 +315,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param hint     hint Bson
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort, Bson hint);
+    TEntity findOneAndUpdate(Bson filter, Bson update, boolean isUpsert, Bson sort, Bson hint);
 
     /**
      * 找到并更新
@@ -262,7 +339,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param sort     sort Bson
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort);
+    TEntity findOneAndUpdate(Bson filter, TEntity entity, boolean isUpsert, Bson sort);
 
     /**
      * @param filter   filter Bson
@@ -272,7 +349,7 @@ public interface MongoRepository<TEntity, TKey>
      * @param hint     hint Bson
      * @return
      */
-    TEntity findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort, Bson hint);
+    TEntity findOneAndUpdate(Bson filter, TEntity entity, boolean isUpsert, Bson sort, Bson hint);
 
     /**
      * @param filter filter Bson

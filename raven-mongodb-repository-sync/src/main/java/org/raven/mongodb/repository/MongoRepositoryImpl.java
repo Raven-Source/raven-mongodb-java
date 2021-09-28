@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.Function;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -16,12 +17,14 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.query.*;
 import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -156,7 +159,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert) {
+    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert) {
 
         return this.updateOne(filter, updateEntity, isUpsert, null);
     }
@@ -171,7 +174,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final WriteConcern writeConcern) {
+    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final WriteConcern writeConcern) {
 
         Bson update = createUpdateBson(updateEntity, isUpsert);
 
@@ -189,7 +192,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
+    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
 
         Bson update = createUpdateBson(updateEntity, isUpsert);
 
@@ -231,7 +234,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert) {
+    public UpdateResult updateOne(final Bson filter, final Bson update, final boolean isUpsert) {
         return this.updateOne(filter, update, isUpsert, (WriteConcern) null);
     }
 
@@ -245,7 +248,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, final WriteConcern writeConcern) {
+    public UpdateResult updateOne(final Bson filter, final Bson update, final boolean isUpsert, final WriteConcern writeConcern) {
         return this.updateOne(filter, update, isUpsert, (Bson) null, writeConcern);
     }
 
@@ -259,7 +262,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final Bson update, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
+    public UpdateResult updateOne(final Bson filter, final Bson update, final boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.filter(filter);
@@ -270,6 +273,57 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         return this.updateOne(options);
     }
+
+    @Override
+    public UpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
+        return this.updateOne(filterBuilder, updateBuilder, false);
+    }
+
+    @Override
+    public UpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                                  final boolean isUpsert) {
+        return this.updateOne(filterBuilder, updateBuilder, isUpsert, null);
+    }
+
+    @Override
+    public UpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                                  final boolean isUpsert,
+                                  final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
+        return this.updateOne(filterBuilder, updateBuilder, isUpsert, hintBuilder, null);
+    }
+
+    @Override
+    public UpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                                  final boolean isUpsert,
+                                  final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                                  final WriteConcern writeConcern) {
+
+        final UpdateOptions options = new UpdateOptions();
+        if (!Objects.isNull(filterBuilder)) {
+            options.filter(
+                    filterBuilder.apply(FilterBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        if (!Objects.isNull(updateBuilder)) {
+            options.update(
+                    updateBuilder.apply(UpdateBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        if (!Objects.isNull(hintBuilder)) {
+            options.hint(
+                    hintBuilder.apply(HintBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        options.upsert(isUpsert);
+        options.writeConcern(writeConcern);
+
+        return this.updateOne(options);
+    }
+
 
     /**
      * 修改单条数据
@@ -329,6 +383,48 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         return this.updateMany(options);
     }
 
+    @Override
+    public UpdateResult updateMany(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                   final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
+        return this.updateMany(filterBuilder, updateBuilder, null);
+    }
+
+    @Override
+    public UpdateResult updateMany(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                   final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                                   final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
+        return this.updateMany(filterBuilder, updateBuilder, hintBuilder, null);
+    }
+
+    @Override
+    public UpdateResult updateMany(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                   final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+                                   final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                                   final WriteConcern writeConcern) {
+
+        final UpdateOptions options = new UpdateOptions();
+
+        if (!Objects.isNull(filterBuilder)) {
+            options.filter(
+                    filterBuilder.apply(FilterBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        if (!Objects.isNull(updateBuilder)) {
+            options.update(
+                    updateBuilder.apply(UpdateBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        if (!Objects.isNull(hintBuilder)) {
+            options.hint(
+                    hintBuilder.apply(HintBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        options.writeConcern(writeConcern);
+
+        return this.updateMany(options);
+
+    }
+
     /**
      * 修改多条数据
      *
@@ -368,7 +464,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public TEntity findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort) {
+    public TEntity findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort) {
 
         return this.findOneAndUpdate(filter, update, isUpsert, sort, null);
     }
@@ -384,7 +480,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public TEntity findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort, final Bson hint) {
+    public TEntity findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.filter(filter);
@@ -433,7 +529,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort) {
+    public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort) {
         return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
     }
 
@@ -447,7 +543,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort, final Bson hint) {
+    public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
 
         Bson update = createUpdateBson(entity, isUpsert);
 
@@ -723,7 +819,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param isUpsert
      * @return
      */
-    protected Bson createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
+    protected Bson createUpdateBson(final TEntity updateEntity, final boolean isUpsert) {
 
         BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
         bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);

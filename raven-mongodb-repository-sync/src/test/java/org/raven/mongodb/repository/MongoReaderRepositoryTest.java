@@ -8,6 +8,7 @@ import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.raven.mongodb.repository.contants.BsonConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,12 @@ public class MongoReaderRepositoryTest {
 
         User2RepositoryImpl repos2 = new User2RepositoryImpl();
         User2 user2 = repos2.get(1L);
+        Assert.assertNotNull(user2);
+
+        Long id = user2.getId();
+        user2 = repos2.get(filterBuilder -> {
+            return filterBuilder.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
+        });
         Assert.assertNotNull(user2);
 
     }

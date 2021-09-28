@@ -25,6 +25,10 @@ public class UpdateBuilder<TEntity> {
         this.entityClass = entityClass;
     }
 
+    public static <TEntity> UpdateBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return new UpdateBuilder<>(entityClass);
+    }
+
     public <TItem> UpdateBuilder<TEntity> set(final String fieldName, @Nullable final TItem value) {
 
         bsons.add(Updates.set(getWriteName(entityClass, fieldName), value));

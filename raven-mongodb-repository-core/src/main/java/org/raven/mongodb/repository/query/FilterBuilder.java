@@ -19,6 +19,10 @@ public class FilterBuilder<TEntity> {
     private final Class<TEntity> entityClass;
     private List<Bson> bsons = new ArrayList<>();
 
+    public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return new FilterBuilder<>(entityClass);
+    }
+
     public FilterBuilder(final Class<TEntity> entityClass) {
         this.entityClass = entityClass;
     }

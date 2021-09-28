@@ -1,7 +1,12 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.Function;
 import com.mongodb.ReadPreference;
 import org.bson.conversions.Bson;
+import org.raven.mongodb.repository.query.FieldNest;
+import org.raven.mongodb.repository.query.FilterBuilder;
+import org.raven.mongodb.repository.query.HintBuilder;
+import org.raven.mongodb.repository.query.SortBuilder;
 
 import java.util.List;
 
@@ -83,6 +88,57 @@ public interface MongoReaderRepository<TEntity, TKey>
     TEntity get(Bson filter, List<String> includeFields, Bson sort, Bson hint
             , ReadPreference readPreference);
 
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    TEntity get(Function<FilterBuilder<TEntity>, Bson> filterBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    TEntity get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    TEntity get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList,
+                Function<SortBuilder<TEntity>, Bson> sortBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    TEntity get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList,
+                Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                Function<HintBuilder<TEntity>, Bson> hintBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    TEntity get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList,
+                Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                ReadPreference readPreference);
+
     /**
      * 根据条件获取实体
      *
@@ -152,6 +208,68 @@ public interface MongoReaderRepository<TEntity, TKey>
             , Bson hint
             , ReadPreference readPreference);
 
+
+    /**
+     * 根据条件获取获取列表
+     *
+     * @return
+     */
+    List<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    List<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    List<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    List<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                          int limit, int skip);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    List<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                          int limit, int skip,
+                          Function<HintBuilder<TEntity>, Bson> hintBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    List<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                          int limit, int skip,
+                          Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                          ReadPreference readPreference);
 
     /**
      * 根据条件获取获取列表

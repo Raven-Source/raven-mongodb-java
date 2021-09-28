@@ -26,6 +26,10 @@ public class HintBuilder<TEntity> {
         this.entityClass = entityClass;
     }
 
+    public static <TEntity> HintBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return new HintBuilder<>(entityClass);
+    }
+
     public HintBuilder<TEntity> ascending(final String... fieldNames) {
         return ascending(asList(fieldNames));
     }

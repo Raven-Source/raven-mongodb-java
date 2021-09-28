@@ -26,6 +26,10 @@ public class SortBuilder<TEntity> {
         this.entityClass = entityClass;
     }
 
+    public static <TEntity> SortBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return new SortBuilder<>(entityClass);
+    }
+
     public SortBuilder<TEntity> ascending(final String... fieldNames) {
         return ascending(asList(fieldNames));
     }

@@ -14,7 +14,7 @@ public class FieldNest {
 
     private static final String delimiter = ".";
 
-    private FieldNest() {
+    public FieldNest() {
         fields = new ArrayList<>();
     }
 
