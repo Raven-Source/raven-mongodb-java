@@ -16,7 +16,7 @@ import java.util.List;
  * @since JDK11
  */
 public interface MongoRepository<TEntity, TKey>
-    extends MongoReaderRepository<TEntity, TKey> {
+        extends MongoReaderRepository<TEntity, TKey> {
 
 //    /**
 //     * @return
@@ -116,6 +116,15 @@ public interface MongoRepository<TEntity, TKey>
      * @return
      */
     UpdateResult updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+
+    /**
+     * 修改单条数据
+     *
+     * @param id     TKey
+     * @param update update Bson
+     * @return
+     */
+    UpdateResult updateOne(TKey id, Bson update);
 
     /**
      * 修改单条数据

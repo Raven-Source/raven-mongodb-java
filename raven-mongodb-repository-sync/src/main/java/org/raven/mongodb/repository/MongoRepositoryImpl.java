@@ -199,6 +199,20 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 修改单条数据
      *
+     * @param id     TKey
+     * @param update
+     * @return
+     */
+    @Override
+    public UpdateResult updateOne(final TKey id, final Bson update) {
+
+        final Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
+        return this.updateOne(filter, update, false, (WriteConcern) null);
+    }
+
+    /**
+     * 修改单条数据
+     *
      * @param filter
      * @param update
      * @return
