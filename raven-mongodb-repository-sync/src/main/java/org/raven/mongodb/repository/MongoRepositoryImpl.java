@@ -275,6 +275,13 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     @Override
+    public UpdateResult updateOne(TKey id,
+                                  final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
+        final Function<FilterBuilder<TEntity>, Bson> filterBuilder = f -> f.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
+        return this.updateOne(filterBuilder, updateBuilder, false);
+    }
+
+    @Override
     public UpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
                                   final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
         return this.updateOne(filterBuilder, updateBuilder, false);

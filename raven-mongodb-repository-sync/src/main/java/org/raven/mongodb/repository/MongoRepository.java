@@ -173,6 +173,15 @@ public interface MongoRepository<TEntity, TKey>
     /**
      * 根据条件获取实体
      *
+     * @param id     TKey
+     * @return
+     */
+    UpdateResult updateOne(TKey id,
+                           Function<UpdateBuilder<TEntity>, Bson> updateBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
      * @param filterBuilder 查询条件
      * @return
      */
