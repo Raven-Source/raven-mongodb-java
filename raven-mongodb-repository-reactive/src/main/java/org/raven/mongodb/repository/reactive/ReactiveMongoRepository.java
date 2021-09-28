@@ -55,33 +55,33 @@ public interface ReactiveMongoRepository<TEntity, TKey>
      *
      * @param filter       filter Bson
      * @param updateEntity TEntity
-     * @param isUpsert     Boolean
+     * @param isUpsert     boolean
      * @return
      */
-    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert);
+    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, boolean isUpsert);
 
     /**
      * 修改单条数据
      *
      * @param filter       filter Bson
      * @param updateEntity TEntity
-     * @param isUpsert     Boolean
+     * @param isUpsert     boolean
      * @param writeConcern WriteConcern
      * @return
      */
-    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, WriteConcern writeConcern);
+    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, boolean isUpsert, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
      *
      * @param filter       filter Bson
      * @param updateEntity TEntity
-     * @param isUpsert     Boolean
+     * @param isUpsert     boolean
      * @param hint         hint Bson
      * @param writeConcern WriteConcern
      * @return
      */
-    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+    Mono<UpdateResult> updateOne(Bson filter, TEntity updateEntity, boolean isUpsert, Bson hint, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
@@ -97,33 +97,33 @@ public interface ReactiveMongoRepository<TEntity, TKey>
      *
      * @param filter   filter Bson
      * @param update   update Bson
-     * @param isUpsert Boolean
+     * @param isUpsert boolean
      * @return
      */
-    Mono<UpdateResult> updateOne(Bson filter, Bson update, Boolean isUpsert);
+    Mono<UpdateResult> updateOne(Bson filter, Bson update, boolean isUpsert);
 
     /**
      * 修改单条数据
      *
      * @param filter       filter Bson
      * @param update       update Bson
-     * @param isUpsert     Boolean
+     * @param isUpsert     boolean
      * @param writeConcern WriteConcern
      * @return
      */
-    Mono<UpdateResult> updateOne(Bson filter, Bson update, Boolean isUpsert, WriteConcern writeConcern);
+    Mono<UpdateResult> updateOne(Bson filter, Bson update, boolean isUpsert, WriteConcern writeConcern);
 
     /**
      * 修改单条数据
      *
      * @param filter       filter Bson
      * @param update       update Bson
-     * @param isUpsert     Boolean
+     * @param isUpsert     boolean
      * @param hint         hint Bson
      * @param writeConcern WriteConcern
      * @return
      */
-    Mono<UpdateResult> updateOne(Bson filter, Bson update, Boolean isUpsert, Bson hint, WriteConcern writeConcern);
+    Mono<UpdateResult> updateOne(Bson filter, Bson update, boolean isUpsert, Bson hint, WriteConcern writeConcern);
 
     /**
      * 修改多条数据
@@ -169,7 +169,7 @@ public interface ReactiveMongoRepository<TEntity, TKey>
      * @param sort     sort Bson
      * @return
      */
-    Mono<TEntity> findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort);
+    Mono<TEntity> findOneAndUpdate(Bson filter, Bson update, boolean isUpsert, Bson sort);
 
     /**
      * @param filter   filter Bson
@@ -179,7 +179,7 @@ public interface ReactiveMongoRepository<TEntity, TKey>
      * @param hint     hint Bson
      * @return
      */
-    Mono<TEntity> findOneAndUpdate(Bson filter, Bson update, Boolean isUpsert, Bson sort, Bson hint);
+    Mono<TEntity> findOneAndUpdate(Bson filter, Bson update, boolean isUpsert, Bson sort, Bson hint);
 
     /**
      * @param filter filter Bson
@@ -195,7 +195,7 @@ public interface ReactiveMongoRepository<TEntity, TKey>
      * @param sort     sort Bson
      * @return
      */
-    Mono<TEntity> findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort);
+    Mono<TEntity> findOneAndUpdate(Bson filter, TEntity entity, boolean isUpsert, Bson sort);
 
     /**
      * @param filter   filter Bson
@@ -205,7 +205,7 @@ public interface ReactiveMongoRepository<TEntity, TKey>
      * @param hint     hint Bson
      * @return
      */
-    Mono<TEntity> findOneAndUpdate(Bson filter, TEntity entity, Boolean isUpsert, Bson sort, Bson hint);
+    Mono<TEntity> findOneAndUpdate(Bson filter, TEntity entity, boolean isUpsert, Bson sort, Bson hint);
 
     /**
      * @param filter filter Bson

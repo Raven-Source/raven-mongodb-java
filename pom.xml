@@ -13,7 +13,7 @@
         <module>raven-mongodb-repository-core</module>
         <module>raven-mongodb-repository-spi</module>
         <module>raven-mongodb-repository-sync</module>
-        <module>raven-mongodb-repository-reactive</module>
+<!--        <module>raven-mongodb-repository-reactive</module>-->
     </modules>
 
     <properties>

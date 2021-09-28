@@ -105,8 +105,8 @@ public class MongoReaderRepositoryTest {
         Assert.assertNotNull(user2);
 
         Long id = user2.getId();
-        user2 = repos2.get(filterBuilder -> {
-            return filterBuilder.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
+        user2 = repos2.get(f -> {
+            return f.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
         });
         Assert.assertNotNull(user2);
 

@@ -148,7 +148,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param isUpsert
      * @return
      */
-    protected Mono<Bson> createUpdateBson(final TEntity updateEntity, final Boolean isUpsert) {
+    protected Mono<Bson> createUpdateBson(final TEntity updateEntity, final boolean isUpsert) {
 
         BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
         bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
@@ -187,7 +187,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert) {
+    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert) {
 
         return this.updateOne(filter, updateEntity, isUpsert, null);
     }
@@ -202,7 +202,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, final WriteConcern writeConcern) {
+    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final WriteConcern writeConcern) {
 
         return this.updateOne(filter, updateEntity, isUpsert, writeConcern);
 
@@ -219,7 +219,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final Boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
+    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
         return createUpdateBson(updateEntity, isUpsert).flatMap(update -> Mono.from(
                 this.updateOne(filter, update, isUpsert, hint, writeConcern)
@@ -248,7 +248,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final Boolean isUpsert) {
+    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final boolean isUpsert) {
         return this.updateOne(filter, update, isUpsert, null);
     }
 
@@ -262,7 +262,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final Boolean isUpsert, final WriteConcern writeConcern) {
+    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final boolean isUpsert, final WriteConcern writeConcern) {
         return this.updateOne(filter, update, isUpsert, null, writeConcern);
     }
 
@@ -277,7 +277,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final Boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
+    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.upsert(isUpsert);
@@ -359,7 +359,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort) {
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort) {
         return this.findOneAndUpdate(filter, update, isUpsert, sort, (Bson) null);
     }
 
@@ -373,7 +373,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final Boolean isUpsert, final Bson sort, final Bson hint) {
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.returnDocument(ReturnDocument.AFTER);
@@ -406,7 +406,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort) {
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort) {
         return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
 
     }
@@ -421,7 +421,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return
      */
     @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final Boolean isUpsert, final Bson sort, final Bson hint) {
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.returnDocument(ReturnDocument.AFTER);
