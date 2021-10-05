@@ -6,12 +6,12 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
+import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PropertyCodecProvider;
 import org.bson.codecs.pojo.PropertyCodecRegistry;
 import org.bson.codecs.pojo.TypeWithTypeParameters;
 import org.bson.types.Decimal128;
-import org.raven.commons.data.SerializableType;
 import org.raven.commons.data.SerializableTypeUtils;
 import org.raven.commons.data.ValueType;
 
@@ -23,7 +23,7 @@ import java.math.BigInteger;
  * @author yi.liang
  * @since JDK11
  */
-public final class ValueTypePropertyCodecProvider implements PropertyCodecProvider {
+public final class ValueTypePropertyCodecProvider implements PropertyCodecProvider, CodecProvider {
 
     private final CodecRegistry codecRegistry;
     private final static Class<ValueType> valueTypeClass = ValueType.class;
@@ -46,6 +46,16 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
     @Override
     public <T> Codec<T> get(final TypeWithTypeParameters<T> type, final PropertyCodecRegistry propertyCodecRegistry) {
         Class<T> clazz = type.getType();
+        return this.get(clazz);
+    }
+
+    @Override
+    public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
+        return this.get(clazz);
+    }
+
+    private <T> Codec<T> get(Class<T> clazz) {
+
         if (valueTypeClass.isAssignableFrom(clazz)) {
             try {
                 return codecRegistry.get(clazz);
@@ -81,22 +91,22 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
         public void encode(BsonWriter writer, T value, EncoderContext encoderContext) {
 
             Number writeVal = value.getValue();
-            if (writeVal.equals(Integer.class)) {
+            if (genericType.equals(Integer.class)) {
                 writer.writeInt32(writeVal.intValue());
 
-            } else if (writeVal.equals(Long.class)) {
+            } else if (genericType.equals(Long.class)) {
                 writer.writeInt64(writeVal.longValue());
 
-            } else if (writeVal.equals(BigInteger.class)) {
+            } else if (genericType.equals(BigInteger.class)) {
                 writer.writeInt64(writeVal.longValue());
 
-            } else if (writeVal.equals(Double.class)) {
+            } else if (genericType.equals(Double.class)) {
                 writer.writeDouble(writeVal.doubleValue());
 
-            } else if (writeVal.equals(Float.class)) {
+            } else if (genericType.equals(Float.class)) {
                 writer.writeDouble(writeVal.doubleValue());
 
-            } else if (writeVal.equals(BigDecimal.class)) {
+            } else if (genericType.equals(BigDecimal.class)) {
                 writer.writeDecimal128(new Decimal128((BigDecimal) writeVal));
 
             } else {

@@ -6,6 +6,7 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
+import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PropertyCodecProvider;
 import org.bson.codecs.pojo.PropertyCodecRegistry;
@@ -18,7 +19,7 @@ import org.raven.commons.data.StringType;
  * @author yi.liang
  * @since JDK11
  */
-public final class StringTypePropertyCodecProvider implements PropertyCodecProvider {
+public final class StringTypePropertyCodecProvider implements PropertyCodecProvider, CodecProvider {
 
     private final CodecRegistry codecRegistry;
     private final static Class<StringType> stringTypeClass = StringType.class;
@@ -41,6 +42,16 @@ public final class StringTypePropertyCodecProvider implements PropertyCodecProvi
     @Override
     public <T> Codec<T> get(final TypeWithTypeParameters<T> type, final PropertyCodecRegistry propertyCodecRegistry) {
         Class<T> clazz = type.getType();
+        return this.get(clazz);
+    }
+
+    @Override
+    public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
+        return this.get(clazz);
+    }
+
+    private <T> Codec<T> get(Class<T> clazz) {
+
         if (stringTypeClass.isAssignableFrom(clazz)) {
             try {
                 return codecRegistry.get(clazz);

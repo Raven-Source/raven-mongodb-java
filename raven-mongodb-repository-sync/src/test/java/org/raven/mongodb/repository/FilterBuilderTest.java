@@ -82,7 +82,7 @@ public class FilterBuilderTest {
         filterBuilder = filterBuilder.eq("a", "1")
                 .ne("id", 2)
                 .eq("name", "adc")
-                .eq("status", Status.Normal.getValue())
+                .eq("status", Status.Normal)
                 .gte("createDate", new Date(100,9,1,10,0,0))
                 .eq("mall.name", 6);
 
