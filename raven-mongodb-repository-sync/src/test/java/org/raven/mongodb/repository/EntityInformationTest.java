@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository;
 
+import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
@@ -45,6 +46,8 @@ public class EntityInformationTest {
         for (EntityInterceptor interceptor : entityInformation.getInterceptors()) {
             Assert.assertEquals(set.contains(interceptor.getClass()), true);
         }
+
+
     }
 
 }
