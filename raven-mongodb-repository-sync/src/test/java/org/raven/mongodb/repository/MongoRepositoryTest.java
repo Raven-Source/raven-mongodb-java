@@ -3,9 +3,9 @@ package org.raven.mongodb.repository;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
-import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -111,6 +111,11 @@ public class MongoRepositoryTest {
             );
         }
 
+        User user = users.get(0);
+
+        UpdateResult result = repos.updateOne(Filters.eq("_id", user.getId()), user);
+
+        System.out.println("");
 
     }
 

@@ -2,11 +2,14 @@ package org.raven.mongodb.repository.interceptors;
 
 import com.mongodb.client.model.Updates;
 import org.bson.BsonDocument;
+import org.bson.BsonValue;
 import org.bson.codecs.pojo.PropertyModel;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Versioned;
 import org.raven.mongodb.repository.EntityInformation;
 import org.raven.mongodb.repository.UpdateOptions;
+
+import java.util.Map;
 
 /**
  * @author by yanfeng
@@ -16,7 +19,7 @@ public class VersionedEntityInterceptor implements EntityInterceptor {
 
     @Override
     public void preUpdate(final UpdateOptions options,
-                           final EntityInformation<?, ?> entityInformation) {
+                          final EntityInformation<?, ?> entityInformation) {
 
         if (Versioned.class.isAssignableFrom(entityInformation.getEntityType())) {
 
@@ -29,12 +32,28 @@ public class VersionedEntityInterceptor implements EntityInterceptor {
                 update = incVersion;
             } else {
                 bsonDocument = update.toBsonDocument();
-                if (!bsonDocument.containsKey(propertyModel.getName())) {
-                    update = Updates.combine(update, incVersion);
-                }
+                removeElement(bsonDocument, propertyModel.getWriteName());
+
+                update = Updates.combine(update, incVersion);
             }
             options.update(update);
 
         }
+    }
+
+    private boolean removeElement(BsonDocument bsonDocument, String key) {
+
+        if (bsonDocument.remove(key) != null) {
+            return true;
+        }
+
+        for (Map.Entry<String, BsonValue> entry : bsonDocument.entrySet()) {
+            if (entry.getValue() instanceof BsonDocument) {
+                return removeElement((BsonDocument) (entry.getValue()), key);
+            }
+        }
+
+        return false;
+
     }
 }
