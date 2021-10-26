@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository.query;
 
+import com.mongodb.client.model.Filters;
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
@@ -56,6 +57,9 @@ public class HintBuilder<TEntity> {
     }
 
     public Bson build() {
+        if (bsons.size() == 0) {
+            return null;
+        }
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {

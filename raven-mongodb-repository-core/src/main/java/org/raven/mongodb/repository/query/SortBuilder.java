@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository.query;
 
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import lombok.NonNull;
 import org.bson.*;
@@ -61,6 +62,9 @@ public class SortBuilder<TEntity> {
     }
 
     public Bson build() {
+        if (bsons.size() == 0) {
+            return null;
+        }
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {

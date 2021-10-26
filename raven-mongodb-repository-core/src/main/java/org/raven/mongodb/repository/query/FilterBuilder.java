@@ -1,6 +1,7 @@
 package org.raven.mongodb.repository.query;
 
 import com.mongodb.client.model.Filters;
+import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
@@ -120,6 +121,15 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
+    public FilterBuilder<TEntity> condition(boolean condition, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
+        if (condition) {
+            filterBuilderConsumer.accept(this);
+        }
+
+        return this;
+
+    }
+
     public FilterBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
         if (supplier.getAsBoolean()) {
             filterBuilderConsumer.accept(this);
@@ -135,6 +145,9 @@ public class FilterBuilder<TEntity> {
 
 
     public Bson build(Operator operator) {
+        if (bsons.size() == 0) {
+            return Filters.empty();
+        }
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {

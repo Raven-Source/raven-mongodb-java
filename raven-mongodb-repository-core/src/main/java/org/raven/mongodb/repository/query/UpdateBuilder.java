@@ -221,6 +221,15 @@ public class UpdateBuilder<TEntity> {
 
     }
 
+    public UpdateBuilder<TEntity> condition(boolean condition, Consumer<UpdateBuilder<TEntity>> updateBuilderConsumer) {
+        if (condition) {
+            updateBuilderConsumer.accept(this);
+        }
+
+        return this;
+
+    }
+
     public UpdateBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<UpdateBuilder<TEntity>> updateBuilderConsumer) {
         if (supplier.getAsBoolean()) {
             updateBuilderConsumer.accept(this);
@@ -237,6 +246,9 @@ public class UpdateBuilder<TEntity> {
     }
 
     public Bson build() {
+        if (bsons.size() == 0) {
+            return null;
+        }
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {

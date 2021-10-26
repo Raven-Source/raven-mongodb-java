@@ -764,7 +764,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                                     final UpdateType updateType) {
 
         if (options.filter() == null) {
-            options.filter(new BsonDocument());
+            options.filter(Filters.empty());
         }
 
         callGlobalInterceptors(PreUpdate.class, null, options);
@@ -791,7 +791,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     protected TEntity doFindOneAndUpdate(final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
-            options.filter(new BsonDocument());
+            options.filter(Filters.empty());
         }
 
         callGlobalInterceptors(PreUpdate.class, null, options);
@@ -811,7 +811,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     protected TEntity doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
-            options.filter(new BsonDocument());
+            options.filter(Filters.empty());
         }
 
         return super.getCollection().findOneAndDelete(options.filter(),

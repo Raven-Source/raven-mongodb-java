@@ -542,7 +542,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         Bson _filter = filter;
         if (_filter == null) {
-            _filter = new BsonDocument();
+            _filter = Filters.empty();
         }
 
         List<String> includeFields = new ArrayList<>(1);
@@ -568,7 +568,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     protected FindIterable<TEntity> doFind(final FindOptions options) {
 
         if (options.filter() == null) {
-            options.filter(new BsonDocument());
+            options.filter(Filters.empty());
         }
 
         Bson projection = null;
@@ -587,7 +587,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     protected long doCount(final CountOptions options) {
 
         if (options.filter() == null) {
-            options.filter(new BsonDocument());
+            options.filter(Filters.empty());
         }
 
         callGlobalInterceptors(PreFind.class, null, options);
