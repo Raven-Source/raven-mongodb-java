@@ -64,20 +64,30 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoOptions mongoOptions
+     * @param mongoSession
+     * @param collectionName
      */
-    public MongoRepositoryImpl(final MongoOptions mongoOptions) {
-        super(mongoOptions, null);
+    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
+        super(mongoSession, collectionName);
     }
 
     /**
      * constructor
      *
-     * @param mongoOptions
+     * @param mongoSession
+     */
+    public MongoRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
+        super(mongoSession, mongoOptions);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoSession
      * @param collectionName
      */
-    public MongoRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
-        super(mongoOptions, collectionName);
+    public MongoRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoSession, mongoOptions, collectionName);
     }
 
     //#endregion

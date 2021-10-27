@@ -70,14 +70,29 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         this::getDatabase);
     }
 
+
     public AbstractMongoBaseRepository(final MongoSession mongoSession) {
         this(mongoSession, null, null, null);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public AbstractMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
-        this(new DefaultMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName) {
+        this(mongoSession, collectionName, null, null);
     }
+
+    @SuppressWarnings({"unchecked"})
+    public AbstractMongoBaseRepository(final MongoSession mongoSession, final MongoOptions mongoOptions) {
+        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public AbstractMongoBaseRepository(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    }
+
+//    @SuppressWarnings({"unchecked"})
+//    public AbstractMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
+//        this(new DefaultMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+//    }
 
     //#endregion
 

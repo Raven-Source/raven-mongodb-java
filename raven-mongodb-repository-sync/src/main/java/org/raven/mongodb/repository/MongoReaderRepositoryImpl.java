@@ -61,11 +61,31 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoOptions   mongoOptions
+     * @param mongoSession   mongoSession
      * @param collectionName collectionName
      */
-    public MongoReaderRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
-        super(mongoOptions, collectionName);
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
+        super(mongoSession, collectionName);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoSession mongoSession
+     */
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
+        super(mongoSession, mongoOptions);
+    }
+
+
+    /**
+     * constructor
+     *
+     * @param mongoSession   mongoSession
+     * @param collectionName collectionName
+     */
+    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoSession, mongoOptions, collectionName);
     }
 
     //#endregion

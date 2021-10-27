@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 /**
@@ -12,5 +13,10 @@ public interface MongoSession {
      * @return {@link com.mongodb.client.MongoDatabase}
      */
     MongoDatabase getDatabase();
+
+    /**
+     * MongoClient
+     */
+    MongoClient getMongoClient();
 
 }
