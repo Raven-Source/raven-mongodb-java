@@ -4,8 +4,6 @@ import com.mongodb.Function;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReturnDocument;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
 import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
@@ -14,17 +12,15 @@ import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.query.FilterBuilder;
 import org.raven.mongodb.repository.query.HintBuilder;
 import org.raven.mongodb.repository.query.UpdateBuilder;
-import org.raven.mongodb.repository.spi.IdGenerator;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author by yanfeng
  * date 2021/10/30 21:39
  */
-public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TDeleteResult> {
+public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
 
     //#region insert
 
@@ -40,10 +36,6 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param writeConcern
      */
     default TInsertOneResult insert(final TEntity entity, final WriteConcern writeConcern) {
-        if (entity.getId() == null) {
-            TKey id = modifyProxy().getIdGenerator().generateId();
-            entity.setId(id);
-        }
         return modifyProxy().doInsert(entity, writeConcern);
     }
 
@@ -59,17 +51,6 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param writeConcern
      */
     default TInsertManyResult insertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
-
-        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
-        long count = entityStream.size();
-
-        if (count > 0) {
-            List<TKey> ids = modifyProxy().getIdGenerator().generateIdBatch(count);
-
-            for (int i = 0; i < count; i++) {
-                entityStream.get(i).setId(ids.get(i));
-            }
-        }
 
         return modifyProxy().doInsertBatch(entities, writeConcern);
     }
@@ -367,7 +348,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param update
      * @return
      */
-    default TEntity findOneAndUpdate(final Bson filter, final Bson update) {
+    default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final Bson update) {
         return this.findOneAndUpdate(filter, update, false, null);
     }
 
@@ -380,7 +361,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param sort
      * @return
      */
-    default TEntity findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort) {
+    default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort) {
 
         return this.findOneAndUpdate(filter, update, isUpsert, sort, null);
     }
@@ -395,7 +376,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param hint
      * @return
      */
-    default TEntity findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort, final Bson hint) {
+    default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort, final Bson hint) {
 
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.filter(filter);
@@ -415,7 +396,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param options FindOneAndUpdateOptions
      * @return
      */
-    default TEntity findOneAndUpdate(final FindOneAndUpdateOptions options) {
+    default TFindOneAndModifyResult findOneAndUpdate(final FindOneAndUpdateOptions options) {
         options.returnDocument(ReturnDocument.AFTER);
 
         return modifyProxy().doFindOneAndUpdate(options);
@@ -428,7 +409,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param entity
      * @return
      */
-    default TEntity findOneAndUpdate(final Bson filter, final TEntity entity) {
+    default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity) {
         return this.findOneAndUpdate(filter, entity, false, null);
     }
 
@@ -441,7 +422,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param sort
      * @return
      */
-    default TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort) {
+    default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort) {
         return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
     }
 
@@ -454,7 +435,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param sort
      * @return
      */
-    TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint);
+    TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint);
 
     /**
      * 找到并删除
@@ -462,7 +443,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param filter
      * @return
      */
-    default TEntity findOneAndDelete(final Bson filter) {
+    default TFindOneAndModifyResult findOneAndDelete(final Bson filter) {
         return this.findOneAndDelete(filter, (Bson) null);
     }
 
@@ -473,7 +454,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param sort
      * @return
      */
-    default TEntity findOneAndDelete(final Bson filter, final Bson sort) {
+    default TFindOneAndModifyResult findOneAndDelete(final Bson filter, final Bson sort) {
         return this.findOneAndDelete(filter, sort, (Bson) null);
     }
 
@@ -485,7 +466,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param hint
      * @return
      */
-    default TEntity findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
+    default TFindOneAndModifyResult findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
 
         FindOneAndDeleteOptions option = new FindOneAndDeleteOptions();
         option.filter(filter);
@@ -501,7 +482,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param option FindOneAndDeleteOptions
      * @return
      */
-    default TEntity findOneAndDelete(final FindOneAndDeleteOptions option) {
+    default TFindOneAndModifyResult findOneAndDelete(final FindOneAndDeleteOptions option) {
 
         return modifyProxy().doFindOneAndDelete(option);
     }
@@ -613,13 +594,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
     //#endregion
 
-    ModifyProxy<TEntity, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TDeleteResult> modifyProxy();
+    ModifyProxy<TEntity, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> modifyProxy();
 
-    abstract class ModifyProxy<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TDeleteResult> {
+    abstract class ModifyProxy<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
 
         protected abstract EntityInformation<TEntity, TKey> getEntityInformation();
-
-        protected abstract IdGenerator<TKey> getIdGenerator();
 
         protected abstract TInsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern);
 
@@ -627,9 +606,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
         protected abstract TUpdateResult doUpdate(@NonNull final UpdateOptions options, final UpdateType updateType);
 
-        protected abstract TEntity doFindOneAndUpdate(final FindOneAndUpdateOptions options);
+        protected abstract TFindOneAndModifyResult doFindOneAndUpdate(final FindOneAndUpdateOptions options);
 
-        protected abstract TEntity doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options);
+        protected abstract TFindOneAndModifyResult doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options);
 
         protected abstract TDeleteResult doDeleteOne(final DeleteOptions options);
 
