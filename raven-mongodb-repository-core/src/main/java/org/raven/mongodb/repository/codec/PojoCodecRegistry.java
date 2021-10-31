@@ -47,6 +47,7 @@ public class PojoCodecRegistry {
         return codecRegistry;
     }
 
+    @SuppressWarnings({"unchecked"})
     private static void modifyBson(CodecProvider codecProvider) {
 
         try {

@@ -14,6 +14,7 @@ import org.raven.mongodb.repository.operation.ModifyOperation;
  * @since JDK11
  */
 public interface MongoRepository<TEntity extends Entity<TKey>, TKey>
-        extends MongoReaderRepository<TEntity, TKey>, ModifyOperation<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, DeleteResult> {
+        extends MongoReaderRepository<TEntity, TKey>
+        , ModifyOperation<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> {
 
 }

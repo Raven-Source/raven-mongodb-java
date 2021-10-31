@@ -54,6 +54,7 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
         return this.get(clazz);
     }
 
+    @SuppressWarnings({"unchecked"})
     private <T> Codec<T> get(Class<T> clazz) {
 
         if (valueTypeClass.isAssignableFrom(clazz)) {

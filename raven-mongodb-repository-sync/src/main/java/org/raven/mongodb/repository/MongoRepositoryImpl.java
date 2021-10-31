@@ -21,6 +21,7 @@ import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @param <TEntity>
@@ -31,7 +32,6 @@ import java.util.List;
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends MongoReaderRepositoryImpl<TEntity, TKey>
         implements MongoRepository<TEntity, TKey> {
-
 
     //#region constructor
 
@@ -87,6 +87,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //#endregion
 
+    //#region update
+
     /**
      * 修改单条数据
      *
@@ -135,12 +137,27 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     protected InsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
+        if (entity.getId() == null) {
+            TKey id = idGenerator.generateId();
+            entity.setId(id);
+        }
         callGlobalInterceptors(PreInsert.class, entity, null);
 
         return super.getCollection(writeConcern).insertOne(entity);
     }
 
     protected InsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
+
+        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        long count = entityStream.size();
+
+        if (count > 0) {
+            List<TKey> ids = idGenerator.generateIdBatch(count);
+
+            for (int i = 0; i < count; i++) {
+                entityStream.get(i).setId(ids.get(i));
+            }
+        }
 
         for (TEntity entity : entities) {
             callGlobalInterceptors(PreInsert.class, entity, null);
@@ -250,16 +267,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //endregion
 
     @Override
-    public ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, DeleteResult> modifyProxy() {
+    public ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> modifyProxy() {
         return new ModifyProxy<>() {
             @Override
             protected EntityInformation<TEntity, TKey> getEntityInformation() {
                 return entityInformation;
-            }
-
-            @Override
-            protected IdGenerator<TKey> getIdGenerator() {
-                return idGenerator;
             }
 
             @Override

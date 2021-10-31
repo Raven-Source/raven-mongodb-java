@@ -29,16 +29,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     protected MongoDatabase mongoDatabase;
 
     /**
-     * Collection Name
-     *
-     * @return Collection Name
-     */
-    @Override
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    /**
      * @return MongoDatabase
      */
     @Override

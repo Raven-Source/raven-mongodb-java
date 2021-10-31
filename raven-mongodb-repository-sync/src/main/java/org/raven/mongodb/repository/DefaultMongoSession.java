@@ -50,7 +50,6 @@ public class DefaultMongoSession implements MongoSession {
         this.writeConcern = writeConcern != null ? writeConcern : WriteConcern.W1;
         this.readPreference = readPreference != null ? readPreference : ReadPreference.secondaryPreferred();
 
-
         mongoClient = MongoClients.create(connectionString);
 
         database = mongoClient.getDatabase(dbName).withReadPreference(this.readPreference).withWriteConcern(this.writeConcern);

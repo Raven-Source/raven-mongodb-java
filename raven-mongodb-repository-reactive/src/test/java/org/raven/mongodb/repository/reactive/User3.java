@@ -21,7 +21,7 @@ import java.util.Date;
 @Getter
 @Setter
 @EntityListeners({DeletableInterceptor.class, VersionedEntityInterceptor.class})
-public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
+public class User3 implements AutoIncr<Long>, Deletable, Versioned<Long> {
     @BsonId()
     private Long id;
 
@@ -40,7 +40,7 @@ public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
 
     private Mall mall;
 
-    public User() {
+    public User3() {
         status = Status.Normal;
         createDate = new Date();
     }

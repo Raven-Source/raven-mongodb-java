@@ -7,10 +7,15 @@ import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.EntityInformation;
 import org.raven.mongodb.repository.MongoOptions;
+import org.raven.mongodb.repository.UpdateType;
+import org.raven.mongodb.repository.annotations.PreInsert;
+import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
@@ -24,7 +29,6 @@ import java.util.stream.Collectors;
  * @param <TEntity>
  * @param <TKey>
  * @author yi.liang
- * @since JDK11
  */
 public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends ReactiveMongoReaderRepositoryImpl<TEntity, TKey>
@@ -49,7 +53,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
+     * @param mongoSession mongoSession
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession) {
         super(mongoSession);
@@ -58,35 +62,85 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoOptions mongoOptions
+     * @param mongoSession
+     * @param collectionName
      */
-    public ReactiveMongoRepositoryImpl(final MongoOptions mongoOptions) {
-        super(mongoOptions, null);
+    public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
+        super(mongoSession, collectionName);
     }
 
-    public ReactiveMongoRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
-        super(mongoOptions, collectionName);
+    /**
+     * constructor
+     *
+     * @param mongoSession
+     */
+    public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+        super(mongoSession, mongoOptions);
     }
 
+    /**
+     * constructor
+     *
+     * @param mongoSession
+     * @param collectionName
+     */
+    public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoSession, mongoOptions, collectionName);
+    }
 
     //#endregion
 
-    //#region insert
+    //#region update
 
     /**
-     * @param entity
+     * 修改单条数据
+     *
+     * @param filter
+     * @param updateEntity
+     * @param isUpsert
+     * @param hint
+     * @param writeConcern
+     * @return
      */
     @Override
-    public Mono<InsertOneResult> insert(final TEntity entity) {
-        return this.insert(entity, null);
+    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
+
+        return createUpdateBson(updateEntity, isUpsert).flatMap(update ->
+                this.updateOne(filter, update, isUpsert, hint, writeConcern)
+        );
+
     }
 
+    //#endregion
+
+    //#region findAndModify
+
     /**
+     * 找到并更新
+     *
+     * @param filter
      * @param entity
-     * @param writeConcern
+     * @param isUpsert default false
+     * @param sort
+     * @return
      */
     @Override
-    public Mono<InsertOneResult> insert(final TEntity entity, final WriteConcern writeConcern) {
+    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
+
+        return createUpdateBson(entity, isUpsert).flatMap(update ->
+                this.findOneAndUpdate(filter, update, isUpsert, sort, hint)
+        );
+
+    }
+
+    //#endregion
+
+    //region protected
+
+    /**
+     *
+     */
+    protected Mono<InsertOneResult> doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
         Mono<TEntity> mono = Mono.just(entity);
         if (entity.getId() == null) {
@@ -98,30 +152,23 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             });
 
         }
-        return mono.flatMap(e ->
-                Mono.from(super.getCollection(writeConcern).insertOne(e))
-        );
+
+        return mono.flatMap((e) -> {
+            callGlobalInterceptors(PreInsert.class, e, null);
+            return Mono.just(e);
+        }).flatMap((e) -> Mono.from(
+                super.getCollection(writeConcern).insertOne(e)
+        ));
     }
 
     /**
-     * @param entitys
+     *
      */
-    @Override
-    public Mono<InsertManyResult> insertBatch(final List<TEntity> entitys) {
-        return this.insertBatch(entitys, null);
-    }
+    protected Mono<InsertManyResult> doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
 
-    /**
-     * @param entitys
-     * @param writeConcern
-     */
-    @Override
-    public Mono<InsertManyResult> insertBatch(final List<TEntity> entitys, final WriteConcern writeConcern) {
-        //
+        Mono<List<TEntity>> mono = Mono.just(entities);
 
-        Mono<List<TEntity>> mono = Mono.just(entitys);
-
-        List<TEntity> entityStream = entitys.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = entityStream.size();
 
         if (count > 0) {
@@ -132,16 +179,111 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                     entityStream.get(i).setId(ids.get(i));
                 }
 
-                return entitys;
+                return entities;
             });
 
         }
-        return mono.flatMap(es ->
-                Mono.from(super.getCollection(writeConcern).insertMany(es))
+
+        return mono.flatMap((es) -> {
+            for (TEntity entity : es) {
+                callGlobalInterceptors(PreInsert.class, entity, null);
+            }
+            return Mono.just(es);
+        }).flatMap(es -> Mono.from(
+                super.getCollection(writeConcern).insertMany(es)
+        ));
+    }
+
+    /**
+     *
+     */
+    protected Mono<UpdateResult> doUpdate(@NonNull final org.raven.mongodb.repository.UpdateOptions options,
+                                          final UpdateType updateType) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreUpdate.class, null, options);
+
+        if (updateType == UpdateType.ONE) {
+            return Mono.from(
+                    super.getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
+                            new com.mongodb.client.model.UpdateOptions()
+                                    .hint(options.hint())
+                                    .upsert(options.upsert())
+
+                    )
+            );
+        } else {
+            return Mono.from(
+                    super.getCollection(options.writeConcern()).updateMany(options.filter(), options.update(),
+                            new com.mongodb.client.model.UpdateOptions()
+                                    .hint(options.hint())
+                                    .upsert(options.upsert())
+
+                    )
+            );
+        }
+    }
+
+    /**
+     *
+     */
+    protected Mono<TEntity> doFindOneAndUpdate(final org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreUpdate.class, null, options);
+
+        return Mono.from(
+                super.getCollection().findOneAndUpdate(options.filter(), options.update(),
+                        new com.mongodb.client.model.FindOneAndUpdateOptions()
+                                .returnDocument(options.returnDocument())
+                                .upsert(options.upsert())
+                                .hint(options.hint())
+                                .sort(options.sort())
+                )
         );
     }
 
-    //#endregion
+    /**
+     *
+     */
+    protected Mono<TEntity> doFindOneAndDelete(@NonNull final org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        return Mono.from(
+                super.getCollection().findOneAndDelete(options.filter(),
+                        new com.mongodb.client.model.FindOneAndDeleteOptions()
+                                .hint(options.hint())
+                                .sort(options.sort())
+                )
+        );
+    }
+
+    protected Mono<DeleteResult> doDeleteOne(final org.raven.mongodb.repository.DeleteOptions options) {
+        return Mono.from(
+                super.getCollection(options.writeConcern()).deleteOne(options.filter(),
+                        new com.mongodb.client.model.DeleteOptions()
+                                .hint(options.hint())
+                )
+        );
+    }
+
+    protected Mono<DeleteResult> doDeleteMany(final org.raven.mongodb.repository.DeleteOptions options) {
+        return Mono.from(
+                super.getCollection(options.writeConcern()).deleteMany(options.filter(),
+                        new com.mongodb.client.model.DeleteOptions()
+                                .hint(options.hint())
+                )
+        );
+    }
 
     /**
      * @param updateEntity
@@ -164,406 +306,52 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     }
 
-    //#region update
+    //endregion
 
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param updateEntity
-     * @return
-     */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity) {
-        return this.updateOne(filter, updateEntity, false, null);
+    public ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> modifyProxy() {
+        return new ModifyProxy<>() {
+            @Override
+            protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                return entityInformation;
+            }
+
+            @Override
+            protected Mono<InsertOneResult> doInsert(TEntity entity, WriteConcern writeConcern) {
+                return ReactiveMongoRepositoryImpl.this.doInsert(entity, writeConcern);
+            }
+
+            @Override
+            protected Mono<InsertManyResult> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                return ReactiveMongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
+            }
+
+            @Override
+            protected Mono<UpdateResult> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
+                return ReactiveMongoRepositoryImpl.this.doUpdate(options, updateType);
+            }
+
+            @Override
+            protected Mono<TEntity> doFindOneAndUpdate(org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
+                return ReactiveMongoRepositoryImpl.this.doFindOneAndUpdate(options);
+            }
+
+            @Override
+            protected Mono<TEntity> doFindOneAndDelete(@NonNull org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
+                return ReactiveMongoRepositoryImpl.this.doFindOneAndDelete(options);
+            }
+
+            @Override
+            protected Mono<DeleteResult> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
+                return ReactiveMongoRepositoryImpl.this.doDeleteOne(options);
+            }
+
+            @Override
+            protected Mono<DeleteResult> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
+                return ReactiveMongoRepositoryImpl.this.doDeleteMany(options);
+            }
+
+        };
     }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert) {
-
-        return this.updateOne(filter, updateEntity, isUpsert, null);
-    }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param writeConcern
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final WriteConcern writeConcern) {
-
-        return this.updateOne(filter, updateEntity, isUpsert, writeConcern);
-
-    }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param hint
-     * @param writeConcern
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
-
-        return createUpdateBson(updateEntity, isUpsert).flatMap(update -> Mono.from(
-                this.updateOne(filter, update, isUpsert, hint, writeConcern)
-        ));
-
-    }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param update
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update) {
-        return this.updateOne(filter, update, false, null);
-    }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final boolean isUpsert) {
-        return this.updateOne(filter, update, isUpsert, null);
-    }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @param writeConcern
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final boolean isUpsert, final WriteConcern writeConcern) {
-        return this.updateOne(filter, update, isUpsert, null, writeConcern);
-    }
-
-    /**
-     * 修改单条数据
-     *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @param hint
-     * @param writeConcern
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final Bson update, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
-
-        UpdateOptions options = new UpdateOptions();
-        options.upsert(isUpsert);
-        options.hint(hint);
-
-        return Mono.from(
-                super.getCollection(writeConcern).updateOne(filter, update, options)
-        );
-    }
-
-    /**
-     * 修改多条数据
-     *
-     * @param filter
-     * @param update
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateMany(final Bson filter, final Bson update) {
-        return this.updateMany(filter, update, null, null);
-    }
-
-    /**
-     * 修改多条数据
-     *
-     * @param filter
-     * @param update
-     * @param writeConcern
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
-        return this.updateMany(filter, update, null, writeConcern);
-    }
-
-    /**
-     * 修改多条数据
-     *
-     * @param filter
-     * @param update
-     * @param hint
-     * @param writeConcern
-     * @return
-     */
-    @Override
-    public Mono<UpdateResult> updateMany(final Bson filter, final Bson update, final Bson hint, final WriteConcern writeConcern) {
-
-        UpdateOptions options = new UpdateOptions();
-        options.hint(hint);
-
-        return Mono.from(
-                super.getCollection(writeConcern).updateMany(filter, update, options)
-        );
-    }
-
-    //#endregion
-
-    //#region findAndModify
-
-    /**
-     * 找到并更新
-     *
-     * @param filter
-     * @param update
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update) {
-        return this.findOneAndUpdate(filter, update, false, null);
-    }
-
-    /**
-     * 找到并更新
-     *
-     * @param filter
-     * @param update
-     * @param isUpsert default false
-     * @param sort
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort) {
-        return this.findOneAndUpdate(filter, update, isUpsert, sort, (Bson) null);
-    }
-
-    /**
-     * 找到并更新
-     *
-     * @param filter
-     * @param update
-     * @param isUpsert default false
-     * @param sort
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort, final Bson hint) {
-
-        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-        options.returnDocument(ReturnDocument.AFTER);
-        options.upsert(isUpsert);
-        options.sort(sort);
-        options.hint(hint);
-
-        return Mono.from(super.getCollection().findOneAndUpdate(filter, update, options));
-    }
-
-    /**
-     * 找到并更新
-     *
-     * @param filter
-     * @param entity
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity) {
-        return this.findOneAndUpdate(filter, entity, false, null);
-    }
-
-    /**
-     * 找到并更新
-     *
-     * @param filter
-     * @param entity
-     * @param isUpsert default false
-     * @param sort
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort) {
-        return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
-
-    }
-
-    /**
-     * 找到并更新
-     *
-     * @param filter
-     * @param entity
-     * @param isUpsert default false
-     * @param sort
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
-
-        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
-        options.returnDocument(ReturnDocument.AFTER);
-        options.upsert(isUpsert);
-        options.sort(sort);
-        options.hint(hint);
-
-        return createUpdateBson(entity, isUpsert).flatMap(update -> Mono.from(
-                super.getCollection().findOneAndUpdate(filter, update, options))
-        );
-
-    }
-
-    /**
-     * 找到并删除
-     *
-     * @param filter
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndDelete(final Bson filter) {
-        return Mono.from(super.getCollection().findOneAndDelete(filter));
-    }
-
-    /**
-     * 找到并删除
-     *
-     * @param filter
-     * @param sort
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndDelete(final Bson filter, final Bson sort) {
-        return this.findOneAndDelete(filter, sort, null);
-    }
-
-    /**
-     * 找到并删除
-     *
-     * @param filter
-     * @param sort
-     * @return
-     */
-    @Override
-    public Mono<TEntity> findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
-
-        FindOneAndDeleteOptions option = new FindOneAndDeleteOptions();
-        option.sort(sort);
-        option.hint(hint);
-
-        return Mono.from(super.getCollection().findOneAndDelete(filter, option));
-    }
-
-    //#endregion
-
-    //#region delete
-
-    /**
-     * @param id 主键
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteOne(final TKey id) {
-        Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return this.deleteOne(filter);
-    }
-
-    /**
-     * @param id           主键
-     * @param writeConcern WriteConcern
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteOne(final TKey id, final WriteConcern writeConcern) {
-        Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return this.deleteOne(filter, writeConcern);
-    }
-
-    /**
-     * @param filter
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteOne(final Bson filter) {
-        return this.deleteOne(filter, (Bson) null, (WriteConcern) null);
-    }
-
-    /**
-     * @param filter
-     * @param writeConcern WriteConcern
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteOne(final Bson filter, final WriteConcern writeConcern) {
-        return this.deleteOne(filter, (Bson) null, writeConcern);
-    }
-
-    /**
-     * @param filter
-     * @param writeConcern WriteConcern
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteOne(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
-        DeleteOptions options = new DeleteOptions();
-        options.hint(hint);
-        return Mono.from(super.getCollection(writeConcern).deleteOne(filter, options));
-    }
-
-    /**
-     * @param filter
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteMany(final Bson filter) {
-        return this.deleteMany(filter, (Bson) null, null);
-    }
-
-    /**
-     * @param filter
-     * @param writeConcern WriteConcern
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteMany(final Bson filter, final WriteConcern writeConcern) {
-        return this.deleteMany(filter, (Bson) null, writeConcern);
-    }
-
-    /**
-     * @param filter
-     * @param writeConcern WriteConcern
-     * @return
-     */
-    @Override
-    public Mono<DeleteResult> deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
-        DeleteOptions options = new DeleteOptions();
-        options.hint(hint);
-        return Mono.from(super.getCollection(writeConcern).deleteMany(filter, options));
-    }
-
-
-    //#endregion
-
 
 }

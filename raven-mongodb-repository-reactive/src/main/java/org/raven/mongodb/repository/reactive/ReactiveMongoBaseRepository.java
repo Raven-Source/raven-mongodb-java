@@ -12,6 +12,11 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 public interface ReactiveMongoBaseRepository<TEntity> {
 
     /**
+     * @return collectionName
+     */
+    String getCollectionName();
+
+    /**
      * @return MongoDatabase
      */
     MongoDatabase getDatabase();

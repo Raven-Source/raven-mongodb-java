@@ -179,28 +179,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
                           final Function<HintBuilder<TEntity>, Bson> hintBuilder,
                           final ReadPreference readPreference) {
 
-        final FindOptions findOptions = new FindOptions();
-        if (!Objects.isNull(filterBuilder)) {
-            findOptions.filter(
-                    filterBuilder.apply(FilterBuilder.empty(findProxy().getEntityInformation().getEntityType()))
-            );
-        }
-        if (!Objects.isNull(fieldNestList)) {
-            findOptions.includeFields(
-                    fieldNestList.apply(FieldNest.empty())
-            );
-        }
-        if (!Objects.isNull(sortBuilder)) {
-            findOptions.sort(
-                    sortBuilder.apply(SortBuilder.empty(findProxy().getEntityInformation().getEntityType()))
-            );
-        }
-        if (!Objects.isNull(hintBuilder)) {
-            findOptions.hint(
-                    hintBuilder.apply(HintBuilder.empty(findProxy().getEntityInformation().getEntityType()))
-            );
-        }
-        findOptions.readPreference(readPreference);
+        final FindOptions findOptions = createFindOptions(filterBuilder, fieldNestList, sortBuilder, 0, 0, hintBuilder, readPreference);
 
         return this.get(findOptions);
     }
@@ -333,30 +312,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
                                final Function<HintBuilder<TEntity>, Bson> hintBuilder,
                                final ReadPreference readPreference) {
 
-        final FindOptions findOptions = new FindOptions();
-        if (!Objects.isNull(filterBuilder)) {
-            findOptions.filter(
-                    filterBuilder.apply(FilterBuilder.empty(findProxy().getEntityInformation().getEntityType()))
-            );
-        }
-        if (!Objects.isNull(fieldNestList)) {
-            findOptions.includeFields(
-                    fieldNestList.apply(FieldNest.empty())
-            );
-        }
-        if (!Objects.isNull(sortBuilder)) {
-            findOptions.sort(
-                    sortBuilder.apply(SortBuilder.empty(findProxy().getEntityInformation().getEntityType()))
-            );
-        }
-        findOptions.limit(limit);
-        findOptions.skip(skip);
-        if (!Objects.isNull(hintBuilder)) {
-            findOptions.hint(
-                    hintBuilder.apply(HintBuilder.empty(findProxy().getEntityInformation().getEntityType()))
-            );
-        }
-        findOptions.readPreference(readPreference);
+        final FindOptions findOptions = createFindOptions(filterBuilder, fieldNestList, sortBuilder, limit, skip, hintBuilder, readPreference);
 
         return this.getList(findOptions);
 
@@ -370,6 +326,48 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      */
     default ListResult getList(final FindOptions findOptions) {
         return findProxy().doFindList(findOptions);
+    }
+
+    /**
+     *
+     */
+    private FindOptions createFindOptions(Function<FilterBuilder<TEntity>, Bson> filterBuilder, Function<FieldNest, List<String>> fieldNestList, Function<SortBuilder<TEntity>, Bson> sortBuilder, int limit, int skip, Function<HintBuilder<TEntity>, Bson> hintBuilder, ReadPreference readPreference) {
+        final FindOptions findOptions = new FindOptions();
+
+        if (!Objects.isNull(filterBuilder)) {
+            findOptions.filter(
+                    filterBuilder.apply(FilterBuilder.empty(findProxy().getEntityInformation().getEntityType()))
+            );
+        }
+
+        if (!Objects.isNull(fieldNestList)) {
+            findOptions.includeFields(
+                    fieldNestList.apply(FieldNest.empty())
+            );
+        }
+
+        if (!Objects.isNull(sortBuilder)) {
+            findOptions.sort(
+                    sortBuilder.apply(SortBuilder.empty(findProxy().getEntityInformation().getEntityType()))
+            );
+        }
+
+        if (limit > 0) {
+            findOptions.limit(limit);
+        }
+
+        if (skip > 0) {
+            findOptions.skip(skip);
+        }
+
+        if (!Objects.isNull(hintBuilder)) {
+            findOptions.hint(
+                    hintBuilder.apply(HintBuilder.empty(findProxy().getEntityInformation().getEntityType()))
+            );
+        }
+
+        findOptions.readPreference(readPreference);
+        return findOptions;
     }
 
     //#endregion

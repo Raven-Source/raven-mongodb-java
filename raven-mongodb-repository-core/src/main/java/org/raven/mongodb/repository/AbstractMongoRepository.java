@@ -23,6 +23,15 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
 
     protected final EntityInformation<TEntity, TKey> entityInformation;
 
+    /**
+     * Collection Name
+     *
+     * @return Collection Name
+     */
+    public String getCollectionName() {
+        return collectionName;
+    }
+
     @SuppressWarnings({"unchecked"})
     protected AbstractMongoRepository(final String collectionName) {
 

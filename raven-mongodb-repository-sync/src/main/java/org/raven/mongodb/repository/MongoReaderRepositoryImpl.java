@@ -91,7 +91,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     @Override
     public long count(final Bson filter) {
-        return this.count(filter, null, null);
+        return this.count(filter, (Bson) null, (ReadPreference) null);
     }
 
     /**

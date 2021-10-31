@@ -33,21 +33,12 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
     protected MongoDatabase mongoDatabase;
 
     /**
-     * Collection Name
-     *
-     * @return Collection Name
-     */
-    protected String getCollectionName() {
-        return collectionName;
-    }
-
-    /**
      * @return MongoDatabase
      */
     @Override
     public MongoDatabase getDatabase() {
 
-        return mongoDatabase;
+        return mongoSession.getDatabase().withCodecRegistry(entityInformation.getCodecRegistry());
     }
 
     //#region constructor
