@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository.reactive;
 
+import com.mongodb.Function;
 import com.mongodb.ReadPreference;
 import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
@@ -9,6 +10,10 @@ import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.*;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.query.FieldNest;
+import org.raven.mongodb.repository.query.FilterBuilder;
+import org.raven.mongodb.repository.query.HintBuilder;
+import org.raven.mongodb.repository.query.SortBuilder;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -57,10 +62,31 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoOptions mongoOptions
+     * @param mongoSession   mongoSession
+     * @param collectionName collectionName
      */
-    public ReactiveMongoReaderRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
-        super(mongoOptions, collectionName);
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
+        super(mongoSession, collectionName);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoSession mongoSession
+     */
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+        super(mongoSession, mongoOptions);
+    }
+
+
+    /**
+     * constructor
+     *
+     * @param mongoSession   mongoSession
+     * @param collectionName collectionName
+     */
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoSession, mongoOptions, collectionName);
     }
 
     //#endregion
@@ -104,14 +130,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
-        Bson projection = null;
-        if (includeFields != null) {
-            projection = super.includeFields(includeFields);
-        }
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(filter, entityInformation.getEntityType());
-        result = super.findOptions(result, projection, null, 1, 0, null);
-
-        return Mono.from(result.first());
+        return this.get(filter, includeFields, null, null, readPreference);
     }
 
     /**
@@ -165,20 +184,107 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     public Mono<TEntity> get(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
             , final ReadPreference readPreference) {
 
-        Bson _filter = filter;
-        if (_filter == null) {
-            _filter = new BsonDocument();
+        FindOptions options = new FindOptions();
+        options.filter(filter);
+        options.hint(hint);
+        options.includeFields(includeFields);
+        options.readPreference(readPreference);
+        options.limit(1);
+        options.skip(0);
+        options.sort(sort);
+
+        return this.get(options);
+    }
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    @Override
+    public Mono<TEntity> get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder) {
+        return this.get(filterBuilder, null);
+    }
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    @Override
+    public Mono<TEntity> get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                       final Function<FieldNest, List<String>> fieldNestList) {
+        return this.get(filterBuilder, fieldNestList, null);
+    }
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    @Override
+    public Mono<TEntity> get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                       final Function<FieldNest, List<String>> fieldNestList,
+                       final Function<SortBuilder<TEntity>, Bson> sortBuilder) {
+        return this.get(filterBuilder, fieldNestList, sortBuilder, null);
+
+    }
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    @Override
+    public Mono<TEntity> get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                       final Function<FieldNest, List<String>> fieldNestList,
+                       final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                       final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
+        return this.get(filterBuilder, fieldNestList, sortBuilder, hintBuilder, null);
+
+    }
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    @Override
+    public Mono<TEntity> get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                       final Function<FieldNest, List<String>> fieldNestList,
+                       final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                       final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                       final ReadPreference readPreference) {
+
+        final FindOptions findOptions = new FindOptions();
+        if (!Objects.isNull(filterBuilder)) {
+            findOptions.filter(
+                    filterBuilder.apply(FilterBuilder.empty(entityInformation.getEntityType()))
+            );
         }
-
-        Bson projection = null;
-        if (includeFields != null) {
-            projection = super.includeFields(includeFields);
+        if (!Objects.isNull(fieldNestList)) {
+            findOptions.includeFields(
+                    fieldNestList.apply(FieldNest.empty())
+            );
         }
+        if (!Objects.isNull(sortBuilder)) {
+            findOptions.sort(
+                    sortBuilder.apply(SortBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        if (!Objects.isNull(hintBuilder)) {
+            findOptions.hint(
+                    hintBuilder.apply(HintBuilder.empty(entityInformation.getEntityType()))
+            );
+        }
+        findOptions.readPreference(readPreference);
 
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
-        result = super.findOptions(result, projection, sort, 1, 0, hint);
-
-        return Mono.from(result.first());
+        return this.get(findOptions);
     }
 
     /**
@@ -189,7 +295,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<TEntity> get(final FindOptions findOptions) {
-        return this.get(findOptions.filter(), findOptions.includeFields(), findOptions.sort(), findOptions.hint(), findOptions.readPreference());
+        return this.doFind(findOptions).first();
     }
 
     //#endregion

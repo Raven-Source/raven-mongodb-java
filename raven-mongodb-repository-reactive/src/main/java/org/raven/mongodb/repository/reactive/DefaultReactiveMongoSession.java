@@ -58,12 +58,8 @@ public class DefaultReactiveMongoSession implements ReactiveMongoSession {
         database = mongoClient.getDatabase(dbName).withReadPreference(this.readPreference).withWriteConcern(this.writeConcern);
     }
 
-    /**
-     * constructor
-     *
-     * @param mongoOptions mongoOptions
-     */
-    public DefaultReactiveMongoSession(MongoOptions mongoOptions) {
-        this(mongoOptions.getConnString(), mongoOptions.getDbName(), mongoOptions.getWriteConcern(), mongoOptions.getReadPreference());
+    public DefaultReactiveMongoSession(@NonNull String connectionString, @NonNull String dbName) {
+        this(connectionString, dbName, null, null);
     }
+
 }

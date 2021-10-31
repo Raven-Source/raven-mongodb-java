@@ -6,14 +6,14 @@
 
     <groupId>io.github.raven-source</groupId>
     <artifactId>raven-mongodb</artifactId>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
 <!--        <module>raven-mongodb-repository-async</module>-->
         <module>raven-mongodb-repository-core</module>
         <module>raven-mongodb-repository-spi</module>
         <module>raven-mongodb-repository-sync</module>
-<!--        <module>raven-mongodb-repository-reactive</module>-->
+        <module>raven-mongodb-repository-reactive</module>
     </modules>
 
     <properties>

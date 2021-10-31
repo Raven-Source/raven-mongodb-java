@@ -1,10 +1,15 @@
 package org.raven.mongodb.repository.reactive;
 
+import com.mongodb.Function;
 import com.mongodb.ReadPreference;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.CountOptions;
 import org.raven.mongodb.repository.ExistsOptions;
 import org.raven.mongodb.repository.FindOptions;
+import org.raven.mongodb.repository.query.FieldNest;
+import org.raven.mongodb.repository.query.FilterBuilder;
+import org.raven.mongodb.repository.query.HintBuilder;
+import org.raven.mongodb.repository.query.SortBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +19,6 @@ import java.util.List;
  * @param <TEntity>
  * @param <TKey>
  * @author yi.liang
- * @since JDK11
  */
 public interface ReactiveMongoReaderRepository<TEntity, TKey>
         extends ReactiveMongoBaseRepository<TEntity> {
@@ -88,6 +92,57 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
     Mono<TEntity> get(Bson filter, List<String> includeFields, Bson sort, Bson hint
             , ReadPreference readPreference);
 
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Mono<TEntity> get(Function<FilterBuilder<TEntity>, Bson> filterBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Mono<TEntity> get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Mono<TEntity> get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList,
+                Function<SortBuilder<TEntity>, Bson> sortBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Mono<TEntity> get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList,
+                Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                Function<HintBuilder<TEntity>, Bson> hintBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Mono<TEntity> get(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                Function<FieldNest, List<String>> fieldNestList,
+                Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                ReadPreference readPreference);
+
     /**
      * 根据条件获取实体
      *
@@ -156,6 +211,69 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
             , int limit, int skip
             , Bson hint
             , ReadPreference readPreference);
+
+
+    /**
+     * 根据条件获取获取列表
+     *
+     * @return
+     */
+    Flux<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Flux<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Flux<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Flux<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                          int limit, int skip);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Flux<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                          int limit, int skip,
+                          Function<HintBuilder<TEntity>, Bson> hintBuilder);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterBuilder 查询条件
+     * @return
+     */
+    Flux<TEntity> getList(Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                          Function<FieldNest, List<String>> fieldNestList,
+                          Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                          int limit, int skip,
+                          Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                          ReadPreference readPreference);
 
 
     /**

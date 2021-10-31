@@ -53,7 +53,6 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
     //#region constructor
     public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-
         super(collectionName);
 
         this.mongoSession = mongoSession;
@@ -65,29 +64,31 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),
                         this::getDatabase) :
-                DefaultIdGeneratorProvider.Default.build(this.collectionName,
+                DefaultIdGeneratorProvider.Default.build(
+                        this.collectionName,
                         sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),
                         this::getDatabase);
     }
 
-    /**
-     * constructor
-     *
-     * @param mongoSession mongoSession
-     */
+
     public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession) {
         this(mongoSession, null, null, null);
     }
 
-    /**
-     * constructor
-     *
-     * @param mongoOptions mongoOptions
-     */
-    public AbstractReactiveMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
-        this(new DefaultReactiveMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName) {
+        this(mongoSession, collectionName, null, null);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion
@@ -177,8 +178,7 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
         }
 
         if (hint != null) {
-            Bson hintBson = new BsonDocument("$hint", hint.toBsonDocument());
-            filter = filter.hint(hintBson);
+            filter = filter.hint(hint);
         }
 
         return filter;

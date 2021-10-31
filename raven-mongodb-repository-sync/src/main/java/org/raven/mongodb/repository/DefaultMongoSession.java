@@ -67,13 +67,4 @@ public class DefaultMongoSession implements MongoSession {
         this(connectionString, dbName, null, null);
     }
 
-//    /**
-//     * constructor
-//     *
-//     * @param mongoOptions mongoOptions
-//     */
-//    public DefaultMongoSession(MongoOptions mongoOptions) {
-//        this(mongoOptions.getConnString(), mongoOptions.getDbName(), mongoOptions.getWriteConcern(), mongoOptions.getReadPreference());
-//    }
-
 }

@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository.reactive;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 
 /**
@@ -13,4 +14,9 @@ public interface ReactiveMongoSession {
      * @return {@link com.mongodb.reactivestreams.client.MongoDatabase}
      */
     MongoDatabase getDatabase();
+
+    /**
+     * MongoClient
+     */
+    MongoClient getMongoClient();
 }
