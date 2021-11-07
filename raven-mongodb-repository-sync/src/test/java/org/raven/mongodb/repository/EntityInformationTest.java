@@ -21,6 +21,7 @@ public class EntityInformationTest {
     MongoRepository<UserExtend, Long> userExtendRepository = new UserExtendRepositoryImpl();
 
     @Test
+    @SuppressWarnings("unchecked")
     public void test() throws Exception {
 
 

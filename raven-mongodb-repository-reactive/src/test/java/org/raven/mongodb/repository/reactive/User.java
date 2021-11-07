@@ -22,6 +22,9 @@ import java.util.Date;
 @Setter
 @EntityListeners({DeletableInterceptor.class, VersionedEntityInterceptor.class})
 public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
+
+    public static User NULL = new User();
+
     @BsonId()
     private Long id;
 

@@ -8,6 +8,9 @@ import org.raven.mongodb.repository.operation.FindOperation;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Optional;
+
 
 /**
  * @param <TEntity>
@@ -15,7 +18,7 @@ import reactor.core.publisher.Mono;
  * @author yi.liang
  */
 public interface ReactiveMongoReaderRepository<TEntity, TKey>
-        extends ReactiveMongoBaseRepository<TEntity>, FindOperation<TEntity, TKey, Mono<TEntity>, Flux<TEntity>> {
+    extends ReactiveMongoBaseRepository<TEntity>, FindOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> {
 
     /**
      * 数量
@@ -34,7 +37,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Mono<Long> count(Bson filter, Bson hint
-            , ReadPreference readPreference);
+        , ReadPreference readPreference);
 
 
     /**
@@ -48,7 +51,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Mono<Long> count(Bson filter, int limit, int skip, Bson hint
-            , ReadPreference readPreference);
+        , ReadPreference readPreference);
 
 
     /**
@@ -76,7 +79,7 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @return
      */
     Mono<Boolean> exists(Bson filter, Bson hint
-            , ReadPreference readPreference);
+        , ReadPreference readPreference);
 
     /**
      * 是否存在

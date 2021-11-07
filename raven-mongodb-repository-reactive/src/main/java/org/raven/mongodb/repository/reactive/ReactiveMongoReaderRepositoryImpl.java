@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 只读数据仓储
@@ -181,7 +181,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
 
         return Mono.from(
                 this.get(_filter, includeFields, null, hint, readPreference)
-        ).map(Objects::nonNull);
+        ).map(Optional::isPresent);
     }
 
     /**
@@ -198,16 +198,16 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
 
     //region protected
 
-    protected Mono<TEntity> doFindOne(final FindOptions options) {
+    protected Mono<Optional<TEntity>> doFindOne(final FindOptions options) {
         return Mono.from(
-                this.doFind(options).first()
-        );
+            this.doFind(options).first()
+        ).map(Optional::of).defaultIfEmpty(Optional.empty());
     }
 
-    protected Flux<TEntity> doFindList(final FindOptions options) {
+    protected Mono<List<TEntity>> doFindList(final FindOptions options) {
         return Flux.from(
-                doFind(options)
-        );
+            doFind(options)
+        ).collectList();
     }
 
     protected FindPublisher<TEntity> doFind(final FindOptions options) {
@@ -238,17 +238,17 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
         callGlobalInterceptors(PreFind.class, null, options);
 
         return Mono.from(
-                super.getCollection(options.readPreference()).countDocuments(options.filter(),
-                        new com.mongodb.client.model.CountOptions()
-                                .hint(options.hint())
-                                .limit(options.limit())
-                                .skip(options.skip())
-                )
+            super.getCollection(options.readPreference()).countDocuments(options.filter(),
+                new com.mongodb.client.model.CountOptions()
+                    .hint(options.hint())
+                    .limit(options.limit())
+                    .skip(options.skip())
+            )
         );
     }
 
     @Override
-    public FindProxy<TEntity, TKey, Mono<TEntity>, Flux<TEntity>> findProxy() {
+    public FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> findProxy() {
         return new FindProxy<>() {
             @Override
             protected EntityInformation<TEntity, TKey> getEntityInformation() {
@@ -256,12 +256,12 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
             }
 
             @Override
-            protected Mono<TEntity> doFindOne(FindOptions options) {
+            protected Mono<Optional<TEntity>> doFindOne(FindOptions options) {
                 return ReactiveMongoReaderRepositoryImpl.this.doFindOne(options);
             }
 
             @Override
-            protected Flux<TEntity> doFindList(FindOptions options) {
+            protected Mono<List<TEntity>> doFindList(FindOptions options) {
                 return ReactiveMongoReaderRepositoryImpl.this.doFindList(options);
             }
         };
