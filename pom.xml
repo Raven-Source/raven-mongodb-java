@@ -14,6 +14,7 @@
         <module>raven-mongodb-repository-spi</module>
         <module>raven-mongodb-repository-sync</module>
         <module>raven-mongodb-repository-reactive</module>
+        <module>raven-mongodb-repository-performance</module>
     </modules>
 
     <properties>
