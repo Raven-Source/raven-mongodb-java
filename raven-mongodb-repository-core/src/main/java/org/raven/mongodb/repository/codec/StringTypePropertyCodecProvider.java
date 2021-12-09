@@ -50,6 +50,7 @@ public final class StringTypePropertyCodecProvider implements PropertyCodecProvi
         return this.get(clazz);
     }
 
+    @SuppressWarnings({"unchecked"})
     private <T> Codec<T> get(Class<T> clazz) {
 
         if (stringTypeClass.isAssignableFrom(clazz)) {

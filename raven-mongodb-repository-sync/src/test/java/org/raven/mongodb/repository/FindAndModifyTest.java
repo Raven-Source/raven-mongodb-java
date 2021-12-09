@@ -86,8 +86,8 @@ public class FindAndModifyTest {
 
                     user3Repos.findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
 
-                    // 回滚事务
-                    clientSession.abortTransaction();
+//                    // 回滚事务
+//                    clientSession.abortTransaction();
 
                     return userRepos.findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
 

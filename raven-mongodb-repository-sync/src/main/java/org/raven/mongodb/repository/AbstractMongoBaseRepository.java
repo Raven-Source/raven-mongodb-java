@@ -29,15 +29,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     protected MongoDatabase mongoDatabase;
 
     /**
-     * Collection Name
-     *
-     * @return Collection Name
-     */
-    protected String getCollectionName() {
-        return collectionName;
-    }
-
-    /**
      * @return MongoDatabase
      */
     @Override
@@ -88,11 +79,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     public AbstractMongoBaseRepository(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
-
-//    @SuppressWarnings({"unchecked"})
-//    public AbstractMongoBaseRepository(final MongoOptions mongoOptions, final String collectionName) {
-//        this(new DefaultMongoSession(mongoOptions), collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
-//    }
 
     //#endregion
 

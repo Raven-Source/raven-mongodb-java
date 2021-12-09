@@ -1,0 +1,6 @@
+<included>
+
+    <!-- log base path -->
+    <property name="LOG_HOME" value="/data/applogs/${appId}"/>
+
+</included>

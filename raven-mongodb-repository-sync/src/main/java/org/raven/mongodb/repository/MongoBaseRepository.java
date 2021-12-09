@@ -12,6 +12,11 @@ import com.mongodb.client.MongoDatabase;
 public interface MongoBaseRepository<TEntity> {
 
     /**
+     * @return collectionName
+     */
+    String getCollectionName();
+
+    /**
      * @return MongoDatabase
      */
     MongoDatabase getDatabase();

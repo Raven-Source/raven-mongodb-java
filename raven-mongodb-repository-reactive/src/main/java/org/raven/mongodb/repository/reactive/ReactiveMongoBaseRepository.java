@@ -8,9 +8,13 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 /**
  * @param <TEntity>
  * @author yi.liang
- * @since JDK11
  */
 public interface ReactiveMongoBaseRepository<TEntity> {
+
+    /**
+     * @return collectionName
+     */
+    String getCollectionName();
 
     /**
      * @return MongoDatabase

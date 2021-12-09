@@ -34,7 +34,7 @@ public class MongoRepositoryTest {
 
         Assert.assertNotEquals(user.getId().longValue(), 0);
 
-        user = repos.get(user.getId()).block();
+        user = repos.get(user.getId()).block().orElse(null);
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getName(), uuid);
 

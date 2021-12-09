@@ -2,7 +2,6 @@ package org.raven.mongodb.repository;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
-import lombok.Builder;
 import org.bson.types.ObjectId;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;

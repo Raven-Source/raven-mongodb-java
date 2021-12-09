@@ -8,6 +8,7 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.*;
+import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
@@ -17,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 只读数据仓储
@@ -57,247 +58,31 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoOptions mongoOptions
+     * @param mongoSession   mongoSession
+     * @param collectionName collectionName
      */
-    public ReactiveMongoReaderRepositoryImpl(final MongoOptions mongoOptions, final String collectionName) {
-        super(mongoOptions, collectionName);
-    }
-
-    //#endregion
-
-    //#region get
-
-    /**
-     * 根据id获取实体
-     *
-     * @param id id
-     * @return
-     */
-    @Override
-    public Mono<TEntity> get(final TKey id) {
-        return this.get(id, null);
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
+        super(mongoSession, collectionName);
     }
 
     /**
-     * 根据id获取实体
+     * constructor
      *
-     * @param id
-     * @param includeFields 查询字段
-     * @return
+     * @param mongoSession mongoSession
      */
-    @Override
-    public Mono<TEntity> get(final TKey id, final List<String> includeFields) {
-        return this.get(id, includeFields, null);
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+        super(mongoSession, mongoOptions);
     }
 
-    /**
-     * 根据id获取实体
-     *
-     * @param id
-     * @param includeFields  查询字段
-     * @param readPreference 访问设置
-     * @return
-     */
-    @Override
-    public Mono<TEntity> get(final TKey id, final List<String> includeFields
-            , final ReadPreference readPreference) {
-
-        Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-
-        Bson projection = null;
-        if (includeFields != null) {
-            projection = super.includeFields(includeFields);
-        }
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(filter, entityInformation.getEntityType());
-        result = super.findOptions(result, projection, null, 1, 0, null);
-
-        return Mono.from(result.first());
-    }
 
     /**
-     * 根据条件获取实体
+     * constructor
      *
-     * @param filter 查询条件
-     * @return
+     * @param mongoSession   mongoSession
+     * @param collectionName collectionName
      */
-    @Override
-    public Mono<TEntity> get(final Bson filter) {
-        return this.get(filter, null);
-    }
-
-    /**
-     * 根据条件获取实体
-     *
-     * @param filter        查询条件
-     * @param includeFields 查询字段
-     * @return
-     */
-    @Override
-    public Mono<TEntity> get(final Bson filter, final List<String> includeFields) {
-        return this.get(filter, includeFields, null);
-    }
-
-    /**
-     * 根据条件获取实体
-     *
-     * @param filter        查询条件
-     * @param includeFields 查询字段
-     * @param sort          排序
-     * @return
-     */
-    @Override
-    public Mono<TEntity> get(final Bson filter, final List<String> includeFields, final Bson sort) {
-        return this.get(filter, includeFields, sort, null, null);
-
-    }
-
-    /**
-     * 根据条件获取实体
-     *
-     * @param filter         查询条件
-     * @param includeFields  查询字段
-     * @param sort           排序
-     * @param hint           hint索引
-     * @param readPreference 访问设置
-     * @return
-     */
-    @Override
-    public Mono<TEntity> get(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
-            , final ReadPreference readPreference) {
-
-        Bson _filter = filter;
-        if (_filter == null) {
-            _filter = new BsonDocument();
-        }
-
-        Bson projection = null;
-        if (includeFields != null) {
-            projection = super.includeFields(includeFields);
-        }
-
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
-        result = super.findOptions(result, projection, sort, 1, 0, hint);
-
-        return Mono.from(result.first());
-    }
-
-    /**
-     * 根据条件获取实体
-     *
-     * @param findOptions
-     * @return
-     */
-    @Override
-    public Mono<TEntity> get(final FindOptions findOptions) {
-        return this.get(findOptions.filter(), findOptions.includeFields(), findOptions.sort(), findOptions.hint(), findOptions.readPreference());
-    }
-
-    //#endregion
-
-    //#region getList
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param filter 查询条件
-     * @return
-     */
-    @Override
-    public Flux<TEntity> getList(final Bson filter) {
-        return this.getList(filter, null);
-    }
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param filter        查询条件
-     * @param includeFields 查询字段
-     * @return
-     */
-    @Override
-    public Flux<TEntity> getList(final Bson filter, final List<String> includeFields) {
-        return this.getList(filter, includeFields, null);
-    }
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param filter        查询条件
-     * @param includeFields 查询字段
-     * @param sort          排序
-     * @return
-     */
-    @Override
-    public Flux<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort) {
-        return this.getList(filter, includeFields, sort, 0, 0);
-    }
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param filter        查询条件
-     * @param includeFields 查询字段
-     * @param sort          排序
-     * @param limit
-     * @param skip
-     * @return
-     */
-    @Override
-    public Flux<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-            , final int limit, final int skip) {
-        return this.getList(filter, includeFields, sort, limit, skip, null, null);
-    }
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param filter         查询条件
-     * @param includeFields  查询字段
-     * @param sort           排序
-     * @param limit
-     * @param skip
-     * @param hint           hint索引
-     * @param readPreference 访问设置
-     * @return
-     */
-    @Override
-    public Flux<TEntity> getList(final Bson filter, final List<String> includeFields, final Bson sort
-            , final int limit, final int skip
-            , final Bson hint
-            , final ReadPreference readPreference) {
-
-        Bson _filter = filter;
-        if (_filter == null) {
-            _filter = new BsonDocument();
-        }
-
-        Bson projection = null;
-        if (includeFields != null) {
-            projection = super.includeFields(includeFields);
-        }
-
-        FindPublisher<TEntity> result = super.getCollection(readPreference).find(_filter, entityInformation.getEntityType());
-        result = super.findOptions(result, projection, sort, limit, skip, hint);
-
-        return Flux.from(result);
-    }
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param findOptions
-     * @return
-     */
-    @Override
-    public Flux<TEntity> getList(final FindOptions findOptions) {
-        return this.getList(findOptions.filter(),
-                findOptions.includeFields(),
-                findOptions.sort(),
-                findOptions.limit(),
-                findOptions.skip(),
-                findOptions.hint(),
-                findOptions.readPreference()
-        );
+    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        super(mongoSession, mongoOptions, collectionName);
     }
 
     //#endregion
@@ -342,19 +127,14 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     public Mono<Long> count(final Bson filter, int limit, int skip, final Bson hint
             , final ReadPreference readPreference) {
 
-        Bson _filter = filter;
-        if (_filter == null) {
-            _filter = new BsonDocument();
-        }
+        CountOptions options = (CountOptions) new CountOptions()
+                .limit(limit)
+                .skip(skip)
+                .filter(filter)
+                .hint(hint)
+                .readPreference(readPreference);
 
-        return Mono.from(
-                super.getCollection(readPreference).countDocuments(_filter,
-                        new com.mongodb.client.model.CountOptions()
-                                .hint(hint)
-                                .limit(limit)
-                                .skip(skip)
-                )
-        );
+        return this.count(options);
     }
 
     /**
@@ -365,13 +145,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      */
     @Override
     public Mono<Long> count(final CountOptions countOptions) {
-        return count(
-                countOptions.filter(),
-                countOptions.limit(),
-                countOptions.skip(),
-                countOptions.hint(),
-                countOptions.readPreference()
-        );
+        return this.doCount(countOptions);
     }
 
     /**
@@ -407,7 +181,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
 
         return Mono.from(
                 this.get(_filter, includeFields, null, hint, readPreference)
-        ).map(Objects::nonNull);
+        ).map(Optional::isPresent);
     }
 
     /**
@@ -420,5 +194,79 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     public Mono<Boolean> exists(final ExistsOptions existsOptions) {
         return this.exists(existsOptions.filter(), existsOptions.hint(), existsOptions.readPreference());
     }
+
+
+    //region protected
+
+    protected Mono<Optional<TEntity>> doFindOne(final FindOptions options) {
+        return Mono.from(
+            this.doFind(options).first()
+        ).map(Optional::of).defaultIfEmpty(Optional.empty());
+    }
+
+    protected Mono<List<TEntity>> doFindList(final FindOptions options) {
+        return Flux.from(
+            doFind(options)
+        ).collectList();
+    }
+
+    protected FindPublisher<TEntity> doFind(final FindOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        Bson projection = null;
+        if (options.includeFields() != null) {
+            projection = BsonUtils.includeFields(options.includeFields());
+        }
+
+        callGlobalInterceptors(PreFind.class, null, options);
+
+        FindPublisher<TEntity> result = super.getCollection(options.readPreference()).find(options.filter(), entityInformation.getEntityType());
+        result = super.findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
+
+        return result;
+    }
+
+    protected Mono<Long> doCount(final CountOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreFind.class, null, options);
+
+        return Mono.from(
+            super.getCollection(options.readPreference()).countDocuments(options.filter(),
+                new com.mongodb.client.model.CountOptions()
+                    .hint(options.hint())
+                    .limit(options.limit())
+                    .skip(options.skip())
+            )
+        );
+    }
+
+    @Override
+    public FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> findProxy() {
+        return new FindProxy<>() {
+            @Override
+            protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                return ReactiveMongoReaderRepositoryImpl.this.entityInformation;
+            }
+
+            @Override
+            protected Mono<Optional<TEntity>> doFindOne(FindOptions options) {
+                return ReactiveMongoReaderRepositoryImpl.this.doFindOne(options);
+            }
+
+            @Override
+            protected Mono<List<TEntity>> doFindList(FindOptions options) {
+                return ReactiveMongoReaderRepositoryImpl.this.doFindList(options);
+            }
+        };
+    }
+
+    //endregion
 
 }

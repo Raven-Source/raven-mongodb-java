@@ -1,6 +1,5 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
@@ -11,7 +10,6 @@ import org.raven.mongodb.repository.query.FilterBuilder;
 import org.raven.mongodb.repository.query.Operator;
 
 import java.util.Date;
-import java.util.logging.Filter;
 
 /**
  * @author by yanfeng

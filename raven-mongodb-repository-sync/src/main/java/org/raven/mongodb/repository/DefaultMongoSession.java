@@ -50,7 +50,6 @@ public class DefaultMongoSession implements MongoSession {
         this.writeConcern = writeConcern != null ? writeConcern : WriteConcern.W1;
         this.readPreference = readPreference != null ? readPreference : ReadPreference.secondaryPreferred();
 
-
         mongoClient = MongoClients.create(connectionString);
 
         database = mongoClient.getDatabase(dbName).withReadPreference(this.readPreference).withWriteConcern(this.writeConcern);
@@ -66,14 +65,5 @@ public class DefaultMongoSession implements MongoSession {
     public DefaultMongoSession(@NonNull String connectionString, @NonNull String dbName) {
         this(connectionString, dbName, null, null);
     }
-
-//    /**
-//     * constructor
-//     *
-//     * @param mongoOptions mongoOptions
-//     */
-//    public DefaultMongoSession(MongoOptions mongoOptions) {
-//        this(mongoOptions.getConnString(), mongoOptions.getDbName(), mongoOptions.getWriteConcern(), mongoOptions.getReadPreference());
-//    }
 
 }

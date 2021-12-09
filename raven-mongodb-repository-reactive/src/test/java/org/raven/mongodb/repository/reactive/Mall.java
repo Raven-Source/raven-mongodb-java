@@ -1,10 +1,12 @@
 package org.raven.mongodb.repository.reactive;
+import lombok.experimental.FieldNameConstants;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.raven.commons.data.Entity;
 import org.raven.commons.data.MemberFormatType;
 import org.raven.commons.data.annotation.Contract;
 
 @Contract(formatType = MemberFormatType.PascalCase)
+@FieldNameConstants
 public class Mall implements Entity<String> {
 
     @BsonId
