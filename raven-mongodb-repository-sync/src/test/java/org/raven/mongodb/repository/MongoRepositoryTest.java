@@ -4,13 +4,16 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.codecs.Codec;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
+import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,7 +125,7 @@ public class MongoRepositoryTest {
     @Test
     public void a5_update() {
 
-        new MongoRepositoryTest().a3_insertBatch();
+//        new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
         List<User> users = repos.getList(FindOptions.Empty().limit(1));
@@ -143,6 +146,35 @@ public class MongoRepositoryTest {
         Assert.assertEquals(user.getAge(), age + 5);
         Assert.assertEquals(user.getVersion().longValue(), Long.sum(version, 1L));
 
+
+    }
+
+
+    @Test
+    public void a6_update() {
+
+        new MongoRepositoryTest().a3_insertBatch();
+
+        MongoRepository<User, Long> repos = new UserRepositoryImpl();
+        List<User> users = repos.getList(FindOptions.Empty().limit(1));
+        User user = users.get(0);
+
+        Mall mall = new Mall();
+        mall.setId("001");
+        mall.setName("新世界");
+
+        Bson updates = Updates.set("Mall", mall);
+        repos.updateOne(
+                UpdateOptions.Empty()
+                        .filter(
+                                Filters.eq("_id", user.getId())
+                        )
+                        .update(updates)
+
+        );
+
+        user = repos.get(user.getId());
+        Assert.assertEquals(user.getMall().getName(), mall.getName());
 
     }
 }

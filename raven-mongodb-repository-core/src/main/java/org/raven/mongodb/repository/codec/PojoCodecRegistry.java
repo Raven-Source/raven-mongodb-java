@@ -34,15 +34,15 @@ public class PojoCodecRegistry {
         ValueTypePropertyCodecProvider valueTypePropertyCodecProvider = new ValueTypePropertyCodecProvider(pojoCodecRegistry);
         StringTypePropertyCodecProvider stringTypePropertyCodecProvider = new StringTypePropertyCodecProvider(pojoCodecRegistry);
 
-        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(
-                        PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
-                                .register(valueTypePropertyCodecProvider, stringTypePropertyCodecProvider)
-                                .build()
-                        , valueTypePropertyCodecProvider, stringTypePropertyCodecProvider)
-        );
+        CodecRegistry customCodecRegistry = fromProviders(
+                PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
+                        .register(valueTypePropertyCodecProvider, stringTypePropertyCodecProvider)
+                        .build()
+                , valueTypePropertyCodecProvider, stringTypePropertyCodecProvider);
 
-        modifyBson(fromProviders(valueTypePropertyCodecProvider, stringTypePropertyCodecProvider));
+        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), customCodecRegistry);
+
+        modifyBson(customCodecRegistry);
 
         return codecRegistry;
     }
