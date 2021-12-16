@@ -25,9 +25,9 @@ public class FindAndModifyTest {
         userRepos = new UserRepositoryImpl();
         user3Repos = new User3RepositoryImpl();
 
-        User user = userRepos.get(1L);
-        User3 user3 = new User3();
-        user3.setAge(user.getAge());
+//        User user = userRepos.get(1L);
+//        User3 user3 = new User3();
+//        user3.setAge(user.getAge());
     }
 
     @Test

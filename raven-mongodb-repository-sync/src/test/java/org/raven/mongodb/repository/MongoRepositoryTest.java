@@ -118,14 +118,14 @@ public class MongoRepositoryTest {
 
         UpdateResult result = repos.updateOne(Filters.eq("_id", user.getId()), user);
 
-        System.out.println("");
+        Assert.assertEquals(result.getModifiedCount() > 0, true);
 
     }
 
     @Test
     public void a5_update() {
 
-//        new MongoRepositoryTest().a3_insertBatch();
+        new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
         List<User> users = repos.getList(FindOptions.Empty().limit(1));
