@@ -7,10 +7,11 @@ import org.raven.mongodb.repository.operation.FindOperation;
 import java.util.List;
 
 /**
- * @param <TEntity>
- * @param <TKey>
+ * MongoReaderRepository
+ *
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 public interface MongoReaderRepository<TEntity, TKey>
         extends MongoBaseRepository<TEntity>, FindOperation<TEntity, TKey, TEntity, List<TEntity>> {
@@ -19,7 +20,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * 数量
      *
      * @param filter 查询条件
-     * @return
+     * @return count
      */
     long count(Bson filter);
 
@@ -29,7 +30,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter         查询条件
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     long count(Bson filter, Bson hint
             , ReadPreference readPreference);
@@ -42,7 +43,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     long count(Bson filter, int limit, int skip, Bson hint
             , ReadPreference readPreference);
@@ -52,7 +53,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * 数量
      *
      * @param countOptions CountOptions
-     * @return
+     * @return count
      */
     long count(CountOptions countOptions);
 
@@ -60,7 +61,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * 是否存在
      *
      * @param filter filter Bson
-     * @return
+     * @return exists
      */
     boolean exists(Bson filter);
 
@@ -70,7 +71,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * @param filter         filter Bson
      * @param hint           hint Bson
      * @param readPreference ReadPreference
-     * @return
+     * @return exists
      */
     boolean exists(Bson filter, Bson hint
             , ReadPreference readPreference);
@@ -79,7 +80,7 @@ public interface MongoReaderRepository<TEntity, TKey>
      * 是否存在
      *
      * @param existsOptions ExistsOptions
-     * @return
+     * @return exists
      */
     boolean exists(ExistsOptions existsOptions);
 }

@@ -25,7 +25,7 @@ public class DeleteOptions {
 
 
     /**
-     * @return
+     * @return Empty
      */
     public static DeleteOptions Empty() {
         return new DeleteOptions();

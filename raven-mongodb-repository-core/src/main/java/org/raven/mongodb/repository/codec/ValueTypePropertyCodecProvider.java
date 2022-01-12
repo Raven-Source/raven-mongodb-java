@@ -29,7 +29,7 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
     private final static Class<ValueType> valueTypeClass = ValueType.class;
 
     /**
-     * @param codecRegistry
+     * @param codecRegistry CodecRegistry
      */
     public ValueTypePropertyCodecProvider(final CodecRegistry codecRegistry) {
         this.codecRegistry = codecRegistry;
@@ -37,10 +37,10 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
 
 
     /**
-     * @param type
-     * @param propertyCodecRegistry
-     * @param <T>
-     * @return
+     * @param type TypeWithTypeParameters
+     * @param propertyCodecRegistry PropertyCodecRegistry
+     * @param <T> T
+     * @return Codec
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
@@ -67,27 +67,16 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
         return null;
     }
 
-    /**
-     * @param <T>
-     */
     private static class ValueTypeCodec<T extends ValueType> implements Codec<T> {
 
         private final Class<T> clazz;
         private final Class genericType;
 
-        /**
-         * @param clazz
-         */
         ValueTypeCodec(final Class<T> clazz) {
             this.clazz = clazz;
             genericType = SerializableTypeUtils.getGenericType(clazz);
         }
 
-        /**
-         * @param writer
-         * @param value
-         * @param encoderContext
-         */
         @Override
         public void encode(BsonWriter writer, T value, EncoderContext encoderContext) {
 
@@ -116,19 +105,11 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
 
         }
 
-        /**
-         * @return
-         */
         @Override
         public Class<T> getEncoderClass() {
             return clazz;
         }
 
-        /**
-         * @param reader
-         * @param decoderContext
-         * @return
-         */
         @Override
         public T decode(final BsonReader reader, final DecoderContext decoderContext) {
 

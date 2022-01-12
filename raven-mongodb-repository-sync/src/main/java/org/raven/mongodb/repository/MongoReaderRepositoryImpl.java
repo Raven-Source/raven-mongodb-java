@@ -18,10 +18,9 @@ import java.util.List;
 /**
  * 只读数据仓储
  *
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends AbstractMongoBaseRepository<TEntity, TKey>
@@ -32,9 +31,10 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession        mongoSession
+     * @param mongoSession        MongoSession
      * @param collectionName      collectionName
-     * @param idGeneratorProvider idGeneratorProvider
+     * @param sequence            Sequence
+     * @param idGeneratorProvider IdGeneratorProvider
      */
     public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
@@ -45,7 +45,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession mongoSession
+     * @param mongoSession MongoSession
      */
     public MongoReaderRepositoryImpl(final MongoSession mongoSession) {
         super(mongoSession);
@@ -54,7 +54,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession   mongoSession
+     * @param mongoSession   MongoSession
      * @param collectionName collectionName
      */
     public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
@@ -64,7 +64,8 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession mongoSession
+     * @param mongoSession MongoSession
+     * @param mongoOptions MongoOptions
      */
     public MongoReaderRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
         super(mongoSession, mongoOptions);
@@ -74,7 +75,8 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession   mongoSession
+     * @param mongoSession   MongoSession
+     * @param mongoOptions   MongoOptions
      * @param collectionName collectionName
      */
     public MongoReaderRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
@@ -87,7 +89,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * 数量
      *
      * @param filter 查询条件
-     * @return
+     * @return count
      */
     @Override
     public long count(final Bson filter) {
@@ -100,7 +102,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param filter         查询条件
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     @Override
     public long count(final Bson filter, final Bson hint
@@ -117,7 +119,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     @Override
     public long count(final Bson filter, int limit, int skip, final Bson hint
@@ -136,8 +138,8 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 数量
      *
-     * @param countOptions
-     * @return
+     * @param countOptions CountOptions
+     * @return count
      */
     @Override
     public long count(final CountOptions countOptions) {
@@ -147,8 +149,8 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 是否存在
      *
-     * @param filter
-     * @return
+     * @param filter conditions
+     * @return exists
      */
     @Override
     public boolean exists(final Bson filter) {
@@ -158,10 +160,10 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 是否存在
      *
-     * @param filter
-     * @param hint
-     * @param readPreference
-     * @return
+     * @param filter         conditions
+     * @param hint           hint
+     * @param readPreference {{@link ReadPreference}}
+     * @return exists
      */
     @Override
     public boolean exists(final Bson filter, final Bson hint
@@ -182,7 +184,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * 是否存在
      *
      * @param existsOptions ExistsOptions
-     * @return
+     * @return exists
      */
     @Override
     public boolean exists(final ExistsOptions existsOptions) {

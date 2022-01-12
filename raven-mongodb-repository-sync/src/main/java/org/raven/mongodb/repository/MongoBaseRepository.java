@@ -6,7 +6,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * @param <TEntity>
  * @author yi.liang
  */
 public interface MongoBaseRepository<TEntity> {

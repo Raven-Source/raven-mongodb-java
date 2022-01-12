@@ -23,8 +23,8 @@ import java.util.Optional;
 /**
  * 只读数据仓储
  *
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
  * @since JDK11
  */
@@ -37,9 +37,10 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession        mongoSession
+     * @param mongoSession        ReactiveMongoSession
      * @param collectionName      collectionName
-     * @param idGeneratorProvider idGeneratorProvider
+     * @param sequence            Sequence
+     * @param idGeneratorProvider IdGeneratorProvider
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
@@ -49,7 +50,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession mongoSession
+     * @param mongoSession ReactiveMongoSession
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession) {
         super(mongoSession);
@@ -58,7 +59,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession   mongoSession
+     * @param mongoSession   ReactiveMongoSession
      * @param collectionName collectionName
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
@@ -68,7 +69,8 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession mongoSession
+     * @param mongoSession ReactiveMongoSession
+     * @param mongoOptions MongoOptions
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
         super(mongoSession, mongoOptions);
@@ -78,7 +80,8 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * constructor
      *
-     * @param mongoSession   mongoSession
+     * @param mongoSession   ReactiveMongoSession
+     * @param mongoOptions   MongoOptions
      * @param collectionName collectionName
      */
     public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
@@ -91,7 +94,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * 数量
      *
      * @param filter 查询条件
-     * @return
+     * @return count
      */
     @Override
     public Mono<Long> count(final Bson filter) {
@@ -104,7 +107,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @param filter         查询条件
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     @Override
     public Mono<Long> count(final Bson filter, final Bson hint
@@ -121,7 +124,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     @Override
     public Mono<Long> count(final Bson filter, int limit, int skip, final Bson hint
@@ -140,8 +143,8 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * 数量
      *
-     * @param countOptions
-     * @return
+     * @param countOptions CountOptions
+     * @return count
      */
     @Override
     public Mono<Long> count(final CountOptions countOptions) {
@@ -151,8 +154,8 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * 是否存在
      *
-     * @param filter
-     * @return
+     * @param filter conditions
+     * @return exists
      */
     @Override
     public Mono<Boolean> exists(final Bson filter) {
@@ -162,10 +165,10 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * 是否存在
      *
-     * @param filter
-     * @param hint
-     * @param readPreference
-     * @return
+     * @param filter         conditions
+     * @param hint           hint
+     * @param readPreference {{@link ReadPreference}}
+     * @return exists
      */
     @Override
     public Mono<Boolean> exists(final Bson filter, final Bson hint
@@ -187,8 +190,8 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
     /**
      * 是否存在
      *
-     * @param existsOptions
-     * @return
+     * @param existsOptions ExistsOptions
+     * @return exists
      */
     @Override
     public Mono<Boolean> exists(final ExistsOptions existsOptions) {
@@ -200,13 +203,13 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
 
     protected Mono<Optional<TEntity>> doFindOne(final FindOptions options) {
         return Mono.from(
-            this.doFind(options).first()
+                this.doFind(options).first()
         ).map(Optional::of).defaultIfEmpty(Optional.empty());
     }
 
     protected Mono<List<TEntity>> doFindList(final FindOptions options) {
         return Flux.from(
-            doFind(options)
+                doFind(options)
         ).collectList();
     }
 
@@ -238,12 +241,12 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
         callGlobalInterceptors(PreFind.class, null, options);
 
         return Mono.from(
-            super.getCollection(options.readPreference()).countDocuments(options.filter(),
-                new com.mongodb.client.model.CountOptions()
-                    .hint(options.hint())
-                    .limit(options.limit())
-                    .skip(options.skip())
-            )
+                super.getCollection(options.readPreference()).countDocuments(options.filter(),
+                        new com.mongodb.client.model.CountOptions()
+                                .hint(options.hint())
+                                .limit(options.limit())
+                                .skip(options.skip())
+                )
         );
     }
 

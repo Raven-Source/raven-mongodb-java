@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
  */
 public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
@@ -40,9 +40,10 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
-     * @param idGeneratorProvider
+     * @param mongoSession        ReactiveMongoSession
+     * @param collectionName      collectionName
+     * @param sequence            Sequence
+     * @param idGeneratorProvider IdGeneratorProvider
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
@@ -53,7 +54,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession mongoSession
+     * @param mongoSession ReactiveMongoSession
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession) {
         super(mongoSession);
@@ -62,8 +63,8 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
+     * @param mongoSession   ReactiveMongoSession
+     * @param collectionName collectionName
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
         super(mongoSession, collectionName);
@@ -72,7 +73,8 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
+     * @param mongoSession ReactiveMongoSession
+     * @param mongoOptions MongoOptions
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
         super(mongoSession, mongoOptions);
@@ -81,8 +83,9 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
+     * @param mongoSession   ReactiveMongoSession
+     * @param mongoOptions   MongoOptions
+     * @param collectionName collectionName
      */
     public ReactiveMongoRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         super(mongoSession, mongoOptions, collectionName);
@@ -95,12 +98,12 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param hint
-     * @param writeConcern
-     * @return
+     * @param filter       filter
+     * @param updateEntity entity
+     * @param isUpsert     default false
+     * @param hint         hint
+     * @param writeConcern {{@link WriteConcern}}
+     * @return UpdateResult
      */
     @Override
     public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
@@ -118,11 +121,11 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param entity
+     * @param filter   filter
+     * @param entity   entity
      * @param isUpsert default false
-     * @param sort
-     * @return
+     * @param sort     sort
+     * @return Entity
      */
     @Override
     public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
@@ -137,9 +140,6 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //region protected
 
-    /**
-     *
-     */
     protected Mono<InsertOneResult> doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
         Mono<TEntity> mono = Mono.just(entity);
@@ -161,9 +161,6 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         ));
     }
 
-    /**
-     *
-     */
     protected Mono<InsertManyResult> doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
 
         Mono<List<TEntity>> mono = Mono.just(entities);
@@ -194,9 +191,6 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         ));
     }
 
-    /**
-     *
-     */
     protected Mono<UpdateResult> doUpdate(@NonNull final org.raven.mongodb.repository.UpdateOptions options,
                                           final UpdateType updateType) {
 
@@ -227,9 +221,6 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         }
     }
 
-    /**
-     *
-     */
     protected Mono<TEntity> doFindOneAndUpdate(final org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
@@ -249,9 +240,6 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         );
     }
 
-    /**
-     *
-     */
     protected Mono<TEntity> doFindOneAndDelete(@NonNull final org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
@@ -286,9 +274,9 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     /**
-     * @param updateEntity
-     * @param isUpsert
-     * @return
+     * @param updateEntity Entity
+     * @param isUpsert     default false
+     * @return Update Bson
      */
     protected Mono<Bson> createUpdateBson(final TEntity updateEntity, final boolean isUpsert) {
 

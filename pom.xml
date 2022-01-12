@@ -6,7 +6,7 @@
 
     <groupId>io.github.raven-source</groupId>
     <artifactId>raven-mongodb</artifactId>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.3.0</version>
     <packaging>pom</packaging>
     <modules>
 <!--        <module>raven-mongodb-repository-async</module>-->
@@ -27,7 +27,7 @@
         <mongodb-driver.version>4.2.3</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>
-        <raven-logger.version>1.1.0</raven-logger.version>
+        <raven-logger.version>1.1.2</raven-logger.version>
 
     </properties>
 
@@ -40,6 +40,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -49,13 +55,13 @@
     </dependencies>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Raven Mongodb Library</description>
-    <url>https://github.com/Raven-Source/raven-mongodb-java</url>
+    <description>Raven Serializer Library</description>
+    <url>https://github.com/Raven-Source/raven-logger-java</url>
 
     <scm>
-        <url>https://github.com/Indifer/raven-mongodb-java</url>
-        <connection>scm:git:https://github.com/Raven-Source/raven-mongodb-java.git</connection>
-        <developerConnection>scm:git:https://github.com/Raven-Source/raven-mongodb-java.git</developerConnection>
+        <url>https://github.com/Raven-Source/raven-logger-java</url>
+        <connection>scm:git:https://github.com/Raven-Source/raven-logger-java.git</connection>
+        <developerConnection>scm:git:https://github.com/Raven-Source/raven-logger-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -75,7 +81,7 @@
         </developer>
     </developers>
 
-    <!--<distributionManagement>
+    <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -84,30 +90,7 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-    </distributionManagement>-->
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>maven-snapshots</id>
-            <url>https://nexus.opsfun.com/repository/maven-snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>maven-releases</id>
-            <url>https://nexus.opsfun.com/repository/maven-releases/</url>
-        </repository>
     </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>disable-javadoc-doclint</id>
-            <activation>
-                <jdk>[11,)</jdk>
-            </activation>
-            <properties>
-                <additionalparam>-Xdoclint:none</additionalparam>
-            </properties>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>
@@ -127,16 +110,28 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>2.19</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
 
-            <!--<plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.0.1</version>
                 <configuration>
 
                     <encoding>${encoding}</encoding>
@@ -151,11 +146,11 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -165,20 +160,20 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.6</version>
                 <executions>
                     <execution>
-                        &lt;!&ndash;<id>sign-artifacts</id>&ndash;&gt;
+                        <!--<id>sign-artifacts</id>-->
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
 
             <!-- mvn versions:set -DprocessAllModules=true -DnewVersion=1.x-SNAPSHOT -->
             <plugin>

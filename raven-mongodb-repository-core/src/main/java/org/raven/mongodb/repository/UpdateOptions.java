@@ -26,7 +26,7 @@ public class UpdateOptions implements Options {
 
 
     /**
-     * @return
+     * @return Empty
      */
     public static UpdateOptions Empty() {
         return new UpdateOptions();

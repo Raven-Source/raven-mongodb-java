@@ -28,7 +28,7 @@ public class FindOneAndUpdateOptions extends UpdateOptions {
 
 
     /**
-     * @return
+     * @return Empty
      */
     public static FindOneAndUpdateOptions Empty() {
         return new FindOneAndUpdateOptions();

@@ -25,30 +25,34 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     //#region insert
 
     /**
-     * @param entity
+     * @param entity TEntity
+     * @return InsertOneResult
      */
     default TInsertOneResult insert(final TEntity entity) {
         return this.insert(entity, null);
     }
 
     /**
-     * @param entity
-     * @param writeConcern
+     * @param entity       TEntity
+     * @param writeConcern {{@link WriteConcern}}
+     * @return InsertOneResult
      */
     default TInsertOneResult insert(final TEntity entity, final WriteConcern writeConcern) {
         return modifyProxy().doInsert(entity, writeConcern);
     }
 
     /**
-     * @param entities
+     * @param entities entities
+     * @return InsertManyResult
      */
     default TInsertManyResult insertBatch(final List<TEntity> entities) {
         return this.insertBatch(entities, null);
     }
 
     /**
-     * @param entities
-     * @param writeConcern
+     * @param entities     entities
+     * @param writeConcern {{@link WriteConcern}}
+     * @return InsertManyResult
      */
     default TInsertManyResult insertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
 
@@ -62,9 +66,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @return
+     * @param filter       conditions
+     * @param updateEntity TEntity
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final TEntity updateEntity) {
         return this.updateOne(filter, updateEntity, false, null);
@@ -73,10 +77,10 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @return
+     * @param filter       conditions
+     * @param updateEntity updateEntity
+     * @param isUpsert     default false
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert) {
 
@@ -86,11 +90,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param updateEntity updateEntity
+     * @param isUpsert     default false
+     * @param writeConcern {{@link WriteConcern}}
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final WriteConcern writeConcern) {
 
@@ -100,12 +104,12 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param hint
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param updateEntity updateEntity
+     * @param isUpsert     default false
+     * @param hint         hint
+     * @param writeConcern {{@link WriteConcern}}
+     * @return UpdateResult
      */
     TUpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern);
 
@@ -113,8 +117,8 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * 修改单条数据
      *
      * @param id     TKey
-     * @param update
-     * @return
+     * @param update update
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final TKey id, final Bson update) {
 
@@ -125,9 +129,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
-     * @return
+     * @param filter conditions
+     * @param update update
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final Bson update) {
         return this.updateOne(filter, update, false, (WriteConcern) null);
@@ -136,10 +140,10 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @return
+     * @param filter   conditions
+     * @param update   update
+     * @param isUpsert default false
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final Bson update, final boolean isUpsert) {
         return this.updateOne(filter, update, isUpsert, (WriteConcern) null);
@@ -148,11 +152,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param update       update
+     * @param isUpsert     default false
+     * @param writeConcern {{@link WriteConcern}}
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final Bson update, final boolean isUpsert, final WriteConcern writeConcern) {
         return this.updateOne(filter, update, isUpsert, (Bson) null, writeConcern);
@@ -161,11 +165,12 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param update
-     * @param isUpsert
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param update       update
+     * @param isUpsert     default false
+     * @param hint         hint
+     * @param writeConcern {{@link WriteConcern}}
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final Bson update, final boolean isUpsert, Bson hint, final WriteConcern writeConcern) {
 
@@ -236,7 +241,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * 修改单条数据
      *
      * @param options UpdateOptions
-     * @return
+     * @return UpdateResult
      */
     default TUpdateResult updateOne(final UpdateOptions options) {
 
@@ -246,9 +251,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改多条数据
      *
-     * @param filter
-     * @param update
-     * @return
+     * @param filter conditions
+     * @param update update
+     * @return UpdateResult
      */
     default TUpdateResult updateMany(final Bson filter, final Bson update) {
         return this.updateMany(filter, update, (WriteConcern) null);
@@ -257,10 +262,10 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改多条数据
      *
-     * @param filter
-     * @param update
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param update       update
+     * @param writeConcern writeConcern
+     * @return UpdateResult
      */
     default TUpdateResult updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
         return this.updateMany(filter, update, (Bson) null, writeConcern);
@@ -269,11 +274,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改多条数据
      *
-     * @param filter
-     * @param update
-     * @param hint
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param update       update
+     * @param hint         hint
+     * @param writeConcern writeConcern
+     * @return UpdateResult
      */
     default TUpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final WriteConcern writeConcern) {
 
@@ -328,8 +333,8 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 修改多条数据
      *
-     * @param options
-     * @return
+     * @param options options
+     * @return UpdateResult
      */
     default TUpdateResult updateMany(final UpdateOptions options) {
 
@@ -344,9 +349,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param update
-     * @return
+     * @param filter conditions
+     * @param update update
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final Bson update) {
         return this.findOneAndUpdate(filter, update, false, null);
@@ -355,11 +360,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param update
+     * @param filter   conditions
+     * @param update   update
      * @param isUpsert default false
-     * @param sort
-     * @return
+     * @param sort     sort
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort) {
 
@@ -369,12 +374,12 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param update
+     * @param filter   conditions
+     * @param update   update
      * @param isUpsert default false
-     * @param sort
-     * @param hint
-     * @return
+     * @param sort     sort
+     * @param hint     hint
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final Bson update, final boolean isUpsert, final Bson sort, final Bson hint) {
 
@@ -394,7 +399,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * 找到并更新
      *
      * @param options FindOneAndUpdateOptions
-     * @return
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndUpdate(final FindOneAndUpdateOptions options) {
         options.returnDocument(ReturnDocument.AFTER);
@@ -405,9 +410,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param entity
-     * @return
+     * @param filter conditions
+     * @param entity entity
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity) {
         return this.findOneAndUpdate(filter, entity, false, null);
@@ -416,11 +421,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param entity
+     * @param filter   conditions
+     * @param entity   entity
      * @param isUpsert default false
-     * @param sort
-     * @return
+     * @param sort     sort
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort) {
         return this.findOneAndUpdate(filter, entity, isUpsert, sort, null);
@@ -429,19 +434,20 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param entity
+     * @param filter   conditions
+     * @param entity   entity
      * @param isUpsert default false
-     * @param sort
-     * @return
+     * @param sort     sort
+     * @param hint     hint
+     * @return FindOneAndModifyResult
      */
     TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint);
 
     /**
      * 找到并删除
      *
-     * @param filter
-     * @return
+     * @param filter conditions
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndDelete(final Bson filter) {
         return this.findOneAndDelete(filter, (Bson) null);
@@ -450,9 +456,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并删除
      *
-     * @param filter
-     * @param sort
-     * @return
+     * @param filter conditions
+     * @param sort   sort
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndDelete(final Bson filter, final Bson sort) {
         return this.findOneAndDelete(filter, sort, (Bson) null);
@@ -461,10 +467,10 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     /**
      * 找到并删除
      *
-     * @param filter
-     * @param sort
-     * @param hint
-     * @return
+     * @param filter conditions
+     * @param sort   sort
+     * @param hint   hint
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndDelete(final Bson filter, final Bson sort, final Bson hint) {
 
@@ -480,7 +486,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * 找到并删除
      *
      * @param option FindOneAndDeleteOptions
-     * @return
+     * @return FindOneAndModifyResult
      */
     default TFindOneAndModifyResult findOneAndDelete(final FindOneAndDeleteOptions option) {
 
@@ -492,17 +498,17 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     //#region delete
 
     /**
-     * @param id 主键
-     * @return
+     * @param id id
+     * @return DeleteResult
      */
     default TDeleteResult deleteOne(final TKey id) {
         return this.deleteOne(id, (WriteConcern) null);
     }
 
     /**
-     * @param id           主键
+     * @param id           id
      * @param writeConcern WriteConcern
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteOne(final TKey id, final WriteConcern writeConcern) {
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
@@ -510,27 +516,27 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     }
 
     /**
-     * @param filter
-     * @return
+     * @param filter conditions
+     * @return DeleteResult
      */
     default TDeleteResult deleteOne(final Bson filter) {
         return this.deleteOne(filter, (WriteConcern) null);
     }
 
     /**
-     * @param filter
+     * @param filter       conditions
      * @param writeConcern WriteConcern
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteOne(final Bson filter, final WriteConcern writeConcern) {
         return this.deleteOne(filter, (Bson) null, writeConcern);
     }
 
     /**
-     * @param filter
-     * @param hint
+     * @param filter       conditions
+     * @param hint         hint
      * @param writeConcern WriteConcern
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteOne(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
 
@@ -544,34 +550,34 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
     /**
      * @param options DeleteOptions
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteOne(final DeleteOptions options) {
         return modifyProxy().doDeleteOne(options);
     }
 
     /**
-     * @param filter
-     * @return
+     * @param filter conditions
+     * @return DeleteResult
      */
     default TDeleteResult deleteMany(final Bson filter) {
         return this.deleteMany(filter, null);
     }
 
     /**
-     * @param filter
+     * @param filter       conditions
      * @param writeConcern WriteConcern
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteMany(final Bson filter, final WriteConcern writeConcern) {
         return this.deleteMany(filter, (Bson) null, writeConcern);
     }
 
     /**
-     * @param filter
-     * @param hint
+     * @param filter       conditions
+     * @param hint         hint
      * @param writeConcern WriteConcern
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteMany(final Bson filter, final Bson hint, final WriteConcern writeConcern) {
 
@@ -585,7 +591,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
     /**
      * @param options DeleteOptions
-     * @return
+     * @return DeleteResult
      */
     default TDeleteResult deleteMany(final DeleteOptions options) {
         return modifyProxy().doDeleteMany(options);

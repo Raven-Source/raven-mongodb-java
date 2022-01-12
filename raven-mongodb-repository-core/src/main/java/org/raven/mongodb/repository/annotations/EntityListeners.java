@@ -17,7 +17,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface EntityListeners {
 
     /**
-     * The callback listener classes
+     * @return The callback listener classes
      */
     Class<? extends EntityInterceptor>[] value();
 }

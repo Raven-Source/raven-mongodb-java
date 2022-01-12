@@ -19,9 +19,9 @@ public class MongoSequence implements Sequence {
     private String incrementName;
 
     /**
-     * @param sequence
-     * @param collectionName
-     * @param incrementName
+     * @param sequence       sequence
+     * @param collectionName collectionName
+     * @param incrementName  incrementName
      */
     public MongoSequence(final String sequence, final String collectionName, final String incrementName) {
         this.sequenceName = sequence;

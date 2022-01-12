@@ -13,18 +13,18 @@ import java.util.Optional;
 
 
 /**
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
  */
 public interface ReactiveMongoReaderRepository<TEntity, TKey>
-    extends ReactiveMongoBaseRepository<TEntity>, FindOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> {
+        extends ReactiveMongoBaseRepository<TEntity>, FindOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> {
 
     /**
      * 数量
      *
      * @param filter 查询条件
-     * @return
+     * @return count
      */
     Mono<Long> count(Bson filter);
 
@@ -34,10 +34,10 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @param filter         查询条件
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     Mono<Long> count(Bson filter, Bson hint
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
 
     /**
@@ -48,44 +48,44 @@ public interface ReactiveMongoReaderRepository<TEntity, TKey>
      * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return count
      */
     Mono<Long> count(Bson filter, int limit, int skip, Bson hint
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
 
     /**
      * 数量
      *
-     * @param countOptions
-     * @return
+     * @param countOptions CountOptions
+     * @return count
      */
     Mono<Long> count(CountOptions countOptions);
 
     /**
      * 是否存在
      *
-     * @param filter
-     * @return
+     * @param filter conditions
+     * @return exists
      */
     Mono<Boolean> exists(Bson filter);
 
     /**
      * 是否存在
      *
-     * @param filter
-     * @param hint
-     * @param readPreference
-     * @return
+     * @param filter         conditions
+     * @param hint           hint
+     * @param readPreference ReadPreference
+     * @return exists
      */
     Mono<Boolean> exists(Bson filter, Bson hint
-        , ReadPreference readPreference);
+            , ReadPreference readPreference);
 
     /**
      * 是否存在
      *
-     * @param existsOptions
-     * @return
+     * @param existsOptions ExistsOptions
+     * @return exists
      */
     Mono<Boolean> exists(ExistsOptions existsOptions);
 }

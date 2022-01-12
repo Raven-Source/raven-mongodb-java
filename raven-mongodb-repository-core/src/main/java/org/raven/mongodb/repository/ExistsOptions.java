@@ -19,7 +19,7 @@ public class ExistsOptions extends AbstractFindOptions {
     }
 
     /**
-     * @return
+     * @return Empty
      */
     public static ExistsOptions Empty() {
         return new ExistsOptions();

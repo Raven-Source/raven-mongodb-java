@@ -26,8 +26,8 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据id获取实体
      *
-     * @param id
-     * @return
+     * @param id ID
+     * @return Result
      */
     default GetResult get(final TKey id) {
         return this.get(id, null);
@@ -36,9 +36,9 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据id获取实体
      *
-     * @param id
+     * @param id            id
      * @param includeFields 查询字段
-     * @return
+     * @return Result
      */
     default GetResult get(final TKey id, final List<String> includeFields) {
         return this.get(id, includeFields, null);
@@ -47,10 +47,10 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据id获取实体
      *
-     * @param id
+     * @param id             id
      * @param includeFields  查询字段
      * @param readPreference 访问设置
-     * @return
+     * @return Result
      */
     default GetResult get(final TKey id, final List<String> includeFields
             , final ReadPreference readPreference) {
@@ -64,7 +64,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * 根据条件获取实体
      *
      * @param filter 查询条件
-     * @return
+     * @return Result
      */
     default GetResult get(final Bson filter) {
         return this.get(filter, null);
@@ -75,7 +75,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      *
      * @param filter        查询条件
      * @param includeFields 查询字段
-     * @return
+     * @return Result
      */
     default GetResult get(final Bson filter, final List<String> includeFields) {
         return this.get(filter, includeFields, null);
@@ -87,7 +87,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * @param filter        查询条件
      * @param includeFields 查询字段
      * @param sort          排序
-     * @return
+     * @return Result
      */
     default GetResult get(final Bson filter, final List<String> includeFields, final Bson sort) {
         return this.get(filter, includeFields, sort, null, null);
@@ -102,7 +102,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * @param sort           排序
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return Result
      */
     default GetResult get(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
             , final ReadPreference readPreference) {
@@ -122,8 +122,8 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据条件获取实体
      *
-     * @param filterBuilder 查询条件
-     * @return
+     * @param filterBuilder {{@link FilterBuilder}}
+     * @return Result
      */
     default GetResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder) {
         return this.get(filterBuilder, null);
@@ -132,8 +132,9 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据条件获取实体
      *
-     * @param filterBuilder 查询条件
-     * @return
+     * @param filterBuilder {{@link FilterBuilder}}
+     * @param fieldNestList {{@link FieldNest}}
+     * @return Result
      */
     default GetResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
                           final Function<FieldNest, List<String>> fieldNestList) {
@@ -143,8 +144,10 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据条件获取实体
      *
-     * @param filterBuilder 查询条件
-     * @return
+     * @param filterBuilder {{@link FilterBuilder}}
+     * @param fieldNestList {{@link FieldNest}}
+     * @param sortBuilder   {{@link SortBuilder}}
+     * @return Result
      */
     default GetResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
                           final Function<FieldNest, List<String>> fieldNestList,
@@ -156,8 +159,11 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据条件获取实体
      *
-     * @param filterBuilder 查询条件
-     * @return
+     * @param filterBuilder {{@link FilterBuilder}}
+     * @param fieldNestList {{@link FieldNest}}
+     * @param sortBuilder   {{@link SortBuilder}}
+     * @param hintBuilder   {{@link HintBuilder}}
+     * @return Result
      */
     default GetResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
                           final Function<FieldNest, List<String>> fieldNestList,
@@ -170,8 +176,12 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据条件获取实体
      *
-     * @param filterBuilder 查询条件
-     * @return
+     * @param filterBuilder  {{@link FilterBuilder}}
+     * @param fieldNestList  {{@link FieldNest}}
+     * @param sortBuilder    {{@link SortBuilder}}
+     * @param hintBuilder    {{@link HintBuilder}}
+     * @param readPreference {{@link ReadPreference}}
+     * @return Result
      */
     default GetResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
                           final Function<FieldNest, List<String>> fieldNestList,
@@ -187,8 +197,8 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
     /**
      * 根据条件获取实体
      *
-     * @param findOptions
-     * @return
+     * @param findOptions 查询条件
+     * @return Result
      */
     default GetResult get(final FindOptions findOptions) {
         return findProxy().doFindOne(findOptions);
@@ -202,7 +212,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * 根据条件获取获取列表
      *
      * @param filter 查询条件
-     * @return
+     * @return Result
      */
     default ListResult getList(final Bson filter) {
         return this.getList(filter, null);
@@ -213,7 +223,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      *
      * @param filter        查询条件
      * @param includeFields 查询字段
-     * @return
+     * @return Result
      */
     default ListResult getList(final Bson filter, final List<String> includeFields) {
         return this.getList(filter, includeFields, null);
@@ -225,7 +235,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * @param filter        查询条件
      * @param includeFields 查询字段
      * @param sort          排序
-     * @return
+     * @return Result
      */
     default ListResult getList(final Bson filter, final List<String> includeFields, final Bson sort) {
         return this.getList(filter, includeFields, sort, 0, 0);
@@ -237,11 +247,11 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * @param filter         查询条件
      * @param includeFields  查询字段
      * @param sort           排序
-     * @param limit
-     * @param skip
+     * @param limit          limit
+     * @param skip           skip
      * @param hint           hint索引
      * @param readPreference 访问设置
-     * @return
+     * @return Result
      */
     default ListResult getList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip
@@ -266,9 +276,9 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * @param filter        查询条件
      * @param includeFields 查询字段
      * @param sort          排序
-     * @param limit
-     * @param skip
-     * @return
+     * @param limit         limit
+     * @param skip          skip
+     * @return Result
      */
     default ListResult getList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip) {
@@ -322,7 +332,7 @@ public interface FindOperation<TEntity, TKey, GetResult, ListResult> {
      * 根据条件获取获取列表
      *
      * @param findOptions FindOptions
-     * @return
+     * @return Result
      */
     default ListResult getList(final FindOptions findOptions) {
         return findProxy().doFindList(findOptions);

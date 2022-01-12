@@ -10,8 +10,8 @@ import reactor.core.publisher.Mono;
 
 
 /**
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
  * @since JDK11
  */

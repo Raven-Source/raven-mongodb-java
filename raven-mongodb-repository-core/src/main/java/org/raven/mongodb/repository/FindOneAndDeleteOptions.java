@@ -25,7 +25,7 @@ public class FindOneAndDeleteOptions {
 
 
     /**
-     * @return
+     * @return Empty
      */
     public static FindOneAndDeleteOptions Empty() {
         return new FindOneAndDeleteOptions();

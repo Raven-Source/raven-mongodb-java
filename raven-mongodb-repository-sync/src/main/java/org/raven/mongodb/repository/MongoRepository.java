@@ -8,10 +8,9 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.operation.ModifyOperation;
 
 /**
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 public interface MongoRepository<TEntity extends Entity<TKey>, TKey>
         extends MongoReaderRepository<TEntity, TKey>

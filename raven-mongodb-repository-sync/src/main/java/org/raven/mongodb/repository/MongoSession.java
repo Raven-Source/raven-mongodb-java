@@ -15,7 +15,7 @@ public interface MongoSession {
     MongoDatabase getDatabase();
 
     /**
-     * MongoClient
+     * @return {@link com.mongodb.client.MongoClient}
      */
     MongoClient getMongoClient();
 

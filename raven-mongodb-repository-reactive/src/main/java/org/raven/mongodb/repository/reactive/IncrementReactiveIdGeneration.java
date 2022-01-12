@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
+ * @param <TKey> Key
  * @author yi.liang
  * @since JDK11
  * date 2021.07.26 18:31
@@ -34,8 +35,10 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
     private Supplier<MongoDatabase> databaseSupplier;
 
     /**
-     * @param sequence
-     * @param keyClazz
+     * @param collectionName   collectionName
+     * @param sequence         Sequence
+     * @param keyClazz         Key Class
+     * @param databaseSupplier MongoDatabase
      */
     public IncrementReactiveIdGeneration(@NonNull String collectionName
             , @NonNull Sequence sequence
@@ -79,9 +82,9 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
     }
 
     /**
-     * @param count
-     * @param iteration
-     * @return
+     * @param count     count
+     * @param iteration iteration
+     * @return inc id
      */
     public Mono<Long> createIncId(final long count, final int iteration) {
 

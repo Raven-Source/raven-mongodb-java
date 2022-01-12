@@ -16,7 +16,7 @@ public interface ReactiveMongoSession {
     MongoDatabase getDatabase();
 
     /**
-     * MongoClient
+     * @return {@link MongoClient}
      */
     MongoClient getMongoClient();
 }

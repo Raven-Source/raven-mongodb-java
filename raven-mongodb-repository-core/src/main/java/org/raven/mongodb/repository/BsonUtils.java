@@ -21,17 +21,11 @@ public final class BsonUtils {
     private BsonUtils() {
     }
 
-    /**
-     * convertToBsonDocument
-     */
     public static <TEntity> BsonDocument convertToBsonDocument(@NonNull final TEntity entity, @NonNull final Encoder<TEntity> encoder) {
 
         return new BsonDocumentWrapper<TEntity>(entity, encoder);
     }
 
-    /**
-     * includeFields
-     */
     public static Bson includeFields(@NonNull final List<String> includeFields) {
 
         Bson projection = null;
@@ -42,9 +36,6 @@ public final class BsonUtils {
         return projection;
     }
 
-    /**
-     * Bson combine
-     */
     public static <T extends Bson> Bson combine(@NonNull final List<T> bsons) {
 
         BsonDocument document = new BsonDocument();

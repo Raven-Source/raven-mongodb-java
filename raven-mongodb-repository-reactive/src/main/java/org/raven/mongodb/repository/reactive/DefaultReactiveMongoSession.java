@@ -34,7 +34,7 @@ public class DefaultReactiveMongoSession implements ReactiveMongoSession {
     private final ReadPreference readPreference;
 
     /**
-     * @return {@link com.mongodb.reactivestreams.client.MongoDatabase}
+     * @see com.mongodb.reactivestreams.client.MongoDatabase
      */
     @Getter
     private final MongoDatabase database;
@@ -44,8 +44,8 @@ public class DefaultReactiveMongoSession implements ReactiveMongoSession {
      *
      * @param connectionString connectionString
      * @param dbName           dbName
-     * @param writeConcern     WriteConcern选项
-     * @param readPreference
+     * @param writeConcern     {@link WriteConcern}
+     * @param readPreference   {@link ReadPreference}
      */
     public DefaultReactiveMongoSession(@NonNull String connectionString, @NonNull String dbName, WriteConcern writeConcern, ReadPreference readPreference) {
 

@@ -24,10 +24,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @param <TEntity>
- * @param <TKey>
+ * @param <TEntity> TEntity
+ * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends MongoReaderRepositoryImpl<TEntity, TKey>
@@ -40,6 +39,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession        mongoSession
      * @param collectionName      collectionName
+     * @param sequence Sequence
      * @param idGeneratorProvider idGeneratorProvider
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
@@ -59,8 +59,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
+     * @param mongoSession   MongoSession
+     * @param collectionName collectionName
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
         super(mongoSession, collectionName);
@@ -69,7 +69,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
+     * @param mongoSession MongoSession
+     * @param mongoOptions MongoOptions
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
         super(mongoSession, mongoOptions);
@@ -78,8 +79,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * constructor
      *
-     * @param mongoSession
-     * @param collectionName
+     * @param mongoSession   MongoSession
+     * @param mongoOptions   MongoOptions
+     * @param collectionName collectionName
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         super(mongoSession, mongoOptions, collectionName);
@@ -92,12 +94,12 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 修改单条数据
      *
-     * @param filter
-     * @param updateEntity
-     * @param isUpsert
-     * @param hint
-     * @param writeConcern
-     * @return
+     * @param filter       conditions
+     * @param updateEntity TEntity
+     * @param isUpsert     default false
+     * @param hint         hint
+     * @param writeConcern {{@link WriteConcern}}
+     * @return UpdateResult
      */
     @Override
     public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
@@ -112,11 +114,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     /**
      * 找到并更新
      *
-     * @param filter
-     * @param entity
+     * @param filter   conditions
+     * @param entity   TEntity
      * @param isUpsert default false
-     * @param sort
-     * @return
+     * @param sort     sort
+     * @return Entity
      */
     @Override
     public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
@@ -131,9 +133,9 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //region protected
 
     /**
-     * @param entity
-     * @param writeConcern
-     * @return
+     * @param entity       Entity
+     * @param writeConcern {{@link WriteConcern}}
+     * @return {{@link InsertOneResult}}
      */
     protected InsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
@@ -166,9 +168,6 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         return super.getCollection(writeConcern).insertMany(entities);
     }
 
-    /**
-     *
-     */
     protected UpdateResult doUpdate(@NonNull final UpdateOptions options,
                                     final UpdateType updateType) {
 
@@ -194,9 +193,6 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         }
     }
 
-    /**
-     *
-     */
     protected TEntity doFindOneAndUpdate(final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
@@ -214,9 +210,6 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         );
     }
 
-    /**
-     *
-     */
     protected TEntity doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
@@ -245,9 +238,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     /**
-     * @param updateEntity
-     * @param isUpsert
-     * @return
+     * createUpdateBson
+     *
+     * @param updateEntity Entity
+     * @param isUpsert     isUpsert
+     * @return Update Bson
      */
     protected Bson createUpdateBson(final TEntity updateEntity, final boolean isUpsert) {
 

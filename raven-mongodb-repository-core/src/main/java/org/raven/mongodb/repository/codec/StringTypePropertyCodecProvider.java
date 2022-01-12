@@ -25,7 +25,7 @@ public final class StringTypePropertyCodecProvider implements PropertyCodecProvi
     private final static Class<StringType> stringTypeClass = StringType.class;
 
     /**
-     * @param codecRegistry
+     * @param codecRegistry CodecRegistry
      */
     public StringTypePropertyCodecProvider(final CodecRegistry codecRegistry) {
         this.codecRegistry = codecRegistry;
@@ -33,10 +33,10 @@ public final class StringTypePropertyCodecProvider implements PropertyCodecProvi
 
 
     /**
-     * @param type
-     * @param propertyCodecRegistry
-     * @param <T>
-     * @return
+     * @param type TypeWithTypeParameters
+     * @param propertyCodecRegistry PropertyCodecRegistry
+     * @param <T> T
+     * @return Codec
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
@@ -63,43 +63,24 @@ public final class StringTypePropertyCodecProvider implements PropertyCodecProvi
         return null;
     }
 
-    /**
-     * @param <T>
-     */
     private static class StringTypeCodec<T extends StringType> implements Codec<T> {
 
         private final Class<T> clazz;
 
-        /**
-         * @param clazz
-         */
         StringTypeCodec(final Class<T> clazz) {
             this.clazz = clazz;
         }
 
-        /**
-         * @param writer
-         * @param value
-         * @param encoderContext
-         */
         @Override
         public void encode(BsonWriter writer, T value, EncoderContext encoderContext) {
             writer.writeString(value.getValue());
         }
 
-        /**
-         * @return
-         */
         @Override
         public Class<T> getEncoderClass() {
             return clazz;
         }
 
-        /**
-         * @param reader
-         * @param decoderContext
-         * @return
-         */
         @Override
         public T decode(final BsonReader reader, final DecoderContext decoderContext) {
             return SerializableTypeUtils.stringValueOf(clazz, reader.readString());

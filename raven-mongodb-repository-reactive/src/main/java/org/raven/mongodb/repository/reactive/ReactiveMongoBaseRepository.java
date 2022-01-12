@@ -6,7 +6,7 @@ import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 
 /**
- * @param <TEntity>
+ * @param <TEntity> TEntity
  * @author yi.liang
  */
 public interface ReactiveMongoBaseRepository<TEntity> {

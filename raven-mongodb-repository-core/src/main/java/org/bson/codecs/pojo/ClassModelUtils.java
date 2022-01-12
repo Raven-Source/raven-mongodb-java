@@ -23,9 +23,9 @@ public final class ClassModelUtils {
     private final static Map<Class<?>, ClassModel<?>> mappedClassModel = new ConcurrentHashMap<>();
 
     /**
-     * @param clazz
-     * @param <T>
-     * @return
+     * @param clazz clazz
+     * @param <T>   T
+     * @return ClassModel
      */
     @SuppressWarnings("unchecked")
     public static <T> ClassModel<T> getClassModel(Class<T> clazz) {
@@ -45,9 +45,10 @@ public final class ClassModelUtils {
     }
 
     /**
-     * @param entityClass
-     * @param <T>
-     * @return
+     * @param entityClass clazz
+     * @param properties properties
+     * @param <T>         T
+     * @return write name
      */
     public static <T> String getWriteName(final Class<T> entityClass, @NonNull final LinkedList<String> properties) {
 
@@ -58,10 +59,10 @@ public final class ClassModelUtils {
     }
 
     /**
-     * @param entityClass
-     * @param propertyName
-     * @param <T>
-     * @return
+     * @param entityClass clazz
+     * @param propertyName propertyName
+     * @param <T>         T
+     * @return write name
      */
     public static <T> String getWriteName(final Class<T> entityClass, @NonNull final String propertyName) {
 
@@ -69,13 +70,6 @@ public final class ClassModelUtils {
         return getWriteName(entityClass, properties);
     }
 
-
-    /**
-     * @param entityClass
-     * @param resList
-     * @param propertyNames
-     * @param <T>
-     */
     public static <T> void doWriteName(final Class<T> entityClass, final FieldNest resList, @NonNull final LinkedList<String> propertyNames) {
 
         String propertyName = propertyNames.poll();

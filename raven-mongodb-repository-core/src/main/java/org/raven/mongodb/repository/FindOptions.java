@@ -29,7 +29,7 @@ public class FindOptions extends AbstractFindOptions {
 
 
     /**
-     * @return
+     * @return Empty
      */
     public static FindOptions Empty() {
         return new FindOptions();

@@ -16,6 +16,7 @@ import java.util.Date;
  * date 2021/9/13 0:07
  */
 @Slf4j
+@SuppressWarnings("deprecation")
 public class FilterBuilderTest {
 
     @Test
