@@ -39,7 +39,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession        mongoSession
      * @param collectionName      collectionName
-     * @param sequence Sequence
+     * @param sequence            Sequence
      * @param idGeneratorProvider idGeneratorProvider
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
@@ -263,47 +263,50 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     @Override
     public ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> modifyProxy() {
-        return new ModifyProxy<>() {
-            @Override
-            protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                return entityInformation;
-            }
-
-            @Override
-            protected InsertOneResult doInsert(TEntity entity, WriteConcern writeConcern) {
-                return MongoRepositoryImpl.this.doInsert(entity, writeConcern);
-            }
-
-            @Override
-            protected InsertManyResult doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
-                return MongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
-            }
-
-            @Override
-            protected UpdateResult doUpdate(@NonNull UpdateOptions options, UpdateType updateType) {
-                return MongoRepositoryImpl.this.doUpdate(options, updateType);
-            }
-
-            @Override
-            protected TEntity doFindOneAndUpdate(FindOneAndUpdateOptions options) {
-                return MongoRepositoryImpl.this.doFindOneAndUpdate(options);
-            }
-
-            @Override
-            protected TEntity doFindOneAndDelete(@NonNull FindOneAndDeleteOptions options) {
-                return MongoRepositoryImpl.this.doFindOneAndDelete(options);
-            }
-
-            @Override
-            protected DeleteResult doDeleteOne(DeleteOptions options) {
-                return MongoRepositoryImpl.this.doDeleteOne(options);
-            }
-
-            @Override
-            protected DeleteResult doDeleteMany(DeleteOptions options) {
-                return MongoRepositoryImpl.this.doDeleteMany(options);
-            }
-
-        };
+        return proxy;
     }
+
+    private final ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> proxy =
+            new ModifyProxy<>() {
+                @Override
+                protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                    return entityInformation;
+                }
+
+                @Override
+                protected InsertOneResult doInsert(TEntity entity, WriteConcern writeConcern) {
+                    return MongoRepositoryImpl.this.doInsert(entity, writeConcern);
+                }
+
+                @Override
+                protected InsertManyResult doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                    return MongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
+                }
+
+                @Override
+                protected UpdateResult doUpdate(@NonNull UpdateOptions options, UpdateType updateType) {
+                    return MongoRepositoryImpl.this.doUpdate(options, updateType);
+                }
+
+                @Override
+                protected TEntity doFindOneAndUpdate(FindOneAndUpdateOptions options) {
+                    return MongoRepositoryImpl.this.doFindOneAndUpdate(options);
+                }
+
+                @Override
+                protected TEntity doFindOneAndDelete(@NonNull FindOneAndDeleteOptions options) {
+                    return MongoRepositoryImpl.this.doFindOneAndDelete(options);
+                }
+
+                @Override
+                protected DeleteResult doDeleteOne(DeleteOptions options) {
+                    return MongoRepositoryImpl.this.doDeleteOne(options);
+                }
+
+                @Override
+                protected DeleteResult doDeleteMany(DeleteOptions options) {
+                    return MongoRepositoryImpl.this.doDeleteMany(options);
+                }
+            };
+
 }

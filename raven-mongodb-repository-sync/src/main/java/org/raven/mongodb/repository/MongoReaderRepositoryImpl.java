@@ -247,23 +247,26 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     @Override
     public FindProxy<TEntity, TKey, TEntity, List<TEntity>> findProxy() {
-        return new FindProxy<>() {
-            @Override
-            protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                return MongoReaderRepositoryImpl.this.entityInformation;
-            }
-
-            @Override
-            protected TEntity doFindOne(FindOptions options) {
-                return MongoReaderRepositoryImpl.this.doFindOne(options);
-            }
-
-            @Override
-            protected List<TEntity> doFindList(FindOptions options) {
-                return MongoReaderRepositoryImpl.this.doFindList(options);
-            }
-        };
+        return proxy;
     }
+
+    private final FindProxy<TEntity, TKey, TEntity, List<TEntity>> proxy =
+            new FindProxy<>() {
+                @Override
+                protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                    return MongoReaderRepositoryImpl.this.entityInformation;
+                }
+
+                @Override
+                protected TEntity doFindOne(FindOptions options) {
+                    return MongoReaderRepositoryImpl.this.doFindOne(options);
+                }
+
+                @Override
+                protected List<TEntity> doFindList(FindOptions options) {
+                    return MongoReaderRepositoryImpl.this.doFindList(options);
+                }
+            };
 
     //endregion
 

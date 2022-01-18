@@ -252,23 +252,27 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
 
     @Override
     public FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> findProxy() {
-        return new FindProxy<>() {
-            @Override
-            protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                return ReactiveMongoReaderRepositoryImpl.this.entityInformation;
-            }
-
-            @Override
-            protected Mono<Optional<TEntity>> doFindOne(FindOptions options) {
-                return ReactiveMongoReaderRepositoryImpl.this.doFindOne(options);
-            }
-
-            @Override
-            protected Mono<List<TEntity>> doFindList(FindOptions options) {
-                return ReactiveMongoReaderRepositoryImpl.this.doFindList(options);
-            }
-        };
+        return proxy;
     }
+
+    private final FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>> proxy =
+
+            new FindProxy<>() {
+                @Override
+                protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                    return ReactiveMongoReaderRepositoryImpl.this.entityInformation;
+                }
+
+                @Override
+                protected Mono<Optional<TEntity>> doFindOne(FindOptions options) {
+                    return ReactiveMongoReaderRepositoryImpl.this.doFindOne(options);
+                }
+
+                @Override
+                protected Mono<List<TEntity>> doFindList(FindOptions options) {
+                    return ReactiveMongoReaderRepositoryImpl.this.doFindList(options);
+                }
+            };
 
     //endregion
 

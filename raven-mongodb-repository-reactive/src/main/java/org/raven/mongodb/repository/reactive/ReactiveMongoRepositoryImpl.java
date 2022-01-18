@@ -298,48 +298,51 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     @Override
     public ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> modifyProxy() {
-        return new ModifyProxy<>() {
-            @Override
-            protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                return entityInformation;
-            }
-
-            @Override
-            protected Mono<InsertOneResult> doInsert(TEntity entity, WriteConcern writeConcern) {
-                return ReactiveMongoRepositoryImpl.this.doInsert(entity, writeConcern);
-            }
-
-            @Override
-            protected Mono<InsertManyResult> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
-                return ReactiveMongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
-            }
-
-            @Override
-            protected Mono<UpdateResult> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
-                return ReactiveMongoRepositoryImpl.this.doUpdate(options, updateType);
-            }
-
-            @Override
-            protected Mono<TEntity> doFindOneAndUpdate(org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
-                return ReactiveMongoRepositoryImpl.this.doFindOneAndUpdate(options);
-            }
-
-            @Override
-            protected Mono<TEntity> doFindOneAndDelete(@NonNull org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
-                return ReactiveMongoRepositoryImpl.this.doFindOneAndDelete(options);
-            }
-
-            @Override
-            protected Mono<DeleteResult> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
-                return ReactiveMongoRepositoryImpl.this.doDeleteOne(options);
-            }
-
-            @Override
-            protected Mono<DeleteResult> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
-                return ReactiveMongoRepositoryImpl.this.doDeleteMany(options);
-            }
-
-        };
+        return proxy;
     }
+
+    private final ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> proxy =
+            new ModifyProxy<>() {
+
+                @Override
+                protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                    return entityInformation;
+                }
+
+                @Override
+                protected Mono<InsertOneResult> doInsert(TEntity entity, WriteConcern writeConcern) {
+                    return ReactiveMongoRepositoryImpl.this.doInsert(entity, writeConcern);
+                }
+
+                @Override
+                protected Mono<InsertManyResult> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                    return ReactiveMongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
+                }
+
+                @Override
+                protected Mono<UpdateResult> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
+                    return ReactiveMongoRepositoryImpl.this.doUpdate(options, updateType);
+                }
+
+                @Override
+                protected Mono<TEntity> doFindOneAndUpdate(org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
+                    return ReactiveMongoRepositoryImpl.this.doFindOneAndUpdate(options);
+                }
+
+                @Override
+                protected Mono<TEntity> doFindOneAndDelete(@NonNull org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
+                    return ReactiveMongoRepositoryImpl.this.doFindOneAndDelete(options);
+                }
+
+                @Override
+                protected Mono<DeleteResult> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
+                    return ReactiveMongoRepositoryImpl.this.doDeleteOne(options);
+                }
+
+                @Override
+                protected Mono<DeleteResult> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
+                    return ReactiveMongoRepositoryImpl.this.doDeleteMany(options);
+                }
+            };
 
 }
