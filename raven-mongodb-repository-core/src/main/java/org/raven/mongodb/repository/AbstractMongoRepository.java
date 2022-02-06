@@ -19,18 +19,7 @@ import java.lang.reflect.Type;
 @Slf4j
 public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey> {
 
-    protected String collectionName;
-
     protected final EntityInformation<TEntity, TKey> entityInformation;
-
-    /**
-     * Collection Name
-     *
-     * @return Collection Name
-     */
-    public String getCollectionName() {
-        return collectionName;
-    }
 
     @SuppressWarnings({"unchecked"})
     protected AbstractMongoRepository(final String collectionName) {
@@ -40,11 +29,16 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
         Class<TEntity> entityClazz = (Class) params[0];
         Class<TKey> keyClazz = (Class) params[1];
 
-        this.entityInformation = new EntityInformationSupport(entityClazz, keyClazz);
+        this.entityInformation = new EntityInformationSupport(entityClazz, keyClazz, collectionName);
+    }
 
-        this.collectionName = collectionName == null || collectionName.isEmpty()
-                ? entityInformation.getEntityName()
-                : collectionName;
+    /**
+     * Collection Name
+     *
+     * @return Collection Name
+     */
+    public String getCollectionName() {
+        return entityInformation.getCollectionName();
     }
 
     protected void callGlobalInterceptors(final Class<? extends Annotation> event,

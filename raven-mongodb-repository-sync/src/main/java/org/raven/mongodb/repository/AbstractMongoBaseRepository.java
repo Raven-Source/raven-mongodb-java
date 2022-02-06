@@ -48,13 +48,13 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(entityInformation.getCodecRegistry());
 
         this.idGenerator = idGeneratorProvider != null ?
-                idGeneratorProvider.build(this.collectionName,
+                idGeneratorProvider.build(this.getCollectionName(),
                         sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),
                         this::getDatabase) :
                 DefaultIdGeneratorProvider.Default.build(
-                        this.collectionName,
+                        this.getCollectionName(),
                         sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),

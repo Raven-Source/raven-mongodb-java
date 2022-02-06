@@ -25,4 +25,6 @@ public interface EntityInformation<TEntity, TKey> extends EntityMetadata<TEntity
     List<EntityInterceptor> getInterceptors();
 
     ClassModel<TEntity> getClassModel();
+
+    String getCollectionName();
 }

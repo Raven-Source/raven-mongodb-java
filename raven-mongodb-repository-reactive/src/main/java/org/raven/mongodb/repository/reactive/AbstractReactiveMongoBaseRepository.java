@@ -50,13 +50,13 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
         this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(entityInformation.getCodecRegistry());
 
         this.idGenerator = idGeneratorProvider != null ?
-                idGeneratorProvider.build(this.collectionName,
+                idGeneratorProvider.build(this.getCollectionName(),
                         sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),
                         this::getDatabase) :
                 DefaultIdGeneratorProvider.Default.build(
-                        this.collectionName,
+                        this.getCollectionName(),
                         sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),

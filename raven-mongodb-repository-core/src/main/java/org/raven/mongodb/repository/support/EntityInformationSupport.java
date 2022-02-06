@@ -22,8 +22,9 @@ import java.util.List;
  */
 public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> implements EntityInformation<TEntity, TKey> {
 
+    private final String collectionName;
     private final Class<TEntity> entityClass;
-    protected Class<TKey> keyClass;
+    private final Class<TKey> keyClass;
     private final CodecRegistry pojoCodecRegistry;
     private final ClassModel<TEntity> classModel;
 
@@ -34,10 +35,11 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
     /**
      * Constructor
      *
-     * @param entityClass TEntity
-     * @param keyClass    TKey
+     * @param entityClass    TEntity
+     * @param keyClass       TKey
+     * @param collectionName collectionName
      */
-    public EntityInformationSupport(Class<TEntity> entityClass, Class<TKey> keyClass) {
+    public EntityInformationSupport(final Class<TEntity> entityClass, final Class<TKey> keyClass, final String collectionName) {
         this.entityClass = entityClass;
         this.keyClass = keyClass;
         this.pojoCodecRegistry = PojoCodecRegistry.CODEC_REGISTRY;
@@ -51,6 +53,10 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
             idGenerationType = IdGenerationType.OBJECT_ID;
         } else
             idGenerationType = IdGenerationType.NONE;
+
+        this.collectionName = collectionName == null || collectionName.isEmpty()
+                ? getEntityName()
+                : collectionName;
     }
 
     @Override
@@ -71,6 +77,11 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
     @Override
     public ClassModel<TEntity> getClassModel() {
         return classModel;
+    }
+
+    @Override
+    public String getCollectionName() {
+        return collectionName;
     }
 
     @Override
