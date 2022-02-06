@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MongoReaderRepositoryTest {
+public class MongoReadonlyRepositoryTest {
     private int size = 90;
     MongoRepository<User, Long> repos = new UserRepositoryImpl();
 

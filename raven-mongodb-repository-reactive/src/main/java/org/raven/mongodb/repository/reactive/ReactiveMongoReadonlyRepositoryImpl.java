@@ -28,9 +28,9 @@ import java.util.Optional;
  * @author yi.liang
  * @since JDK11
  */
-public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
+public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends AbstractReactiveMongoBaseRepository<TEntity, TKey>
-        implements ReactiveMongoReaderRepository<TEntity, TKey> {
+        implements ReactiveMongoReadonlyRepository<TEntity, TKey> {
 
     //#region constructor
 
@@ -42,7 +42,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @param sequence            Sequence
      * @param idGeneratorProvider IdGeneratorProvider
      */
-    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
+    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
     }
@@ -52,7 +52,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      *
      * @param mongoSession ReactiveMongoSession
      */
-    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession) {
+    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession) {
         super(mongoSession);
     }
 
@@ -62,7 +62,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @param mongoSession   ReactiveMongoSession
      * @param collectionName collectionName
      */
-    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
+    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
         super(mongoSession, collectionName);
     }
 
@@ -72,7 +72,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @param mongoSession ReactiveMongoSession
      * @param mongoOptions MongoOptions
      */
-    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
         super(mongoSession, mongoOptions);
     }
 
@@ -84,7 +84,7 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
      * @param mongoOptions   MongoOptions
      * @param collectionName collectionName
      */
-    public ReactiveMongoReaderRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         super(mongoSession, mongoOptions, collectionName);
     }
 
@@ -260,17 +260,17 @@ public class ReactiveMongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKe
             new FindProxy<>() {
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return ReactiveMongoReaderRepositoryImpl.this.entityInformation;
+                    return ReactiveMongoReadonlyRepositoryImpl.this.entityInformation;
                 }
 
                 @Override
                 protected Mono<Optional<TEntity>> doFindOne(FindOptions options) {
-                    return ReactiveMongoReaderRepositoryImpl.this.doFindOne(options);
+                    return ReactiveMongoReadonlyRepositoryImpl.this.doFindOne(options);
                 }
 
                 @Override
                 protected Mono<List<TEntity>> doFindList(FindOptions options) {
-                    return ReactiveMongoReaderRepositoryImpl.this.doFindList(options);
+                    return ReactiveMongoReadonlyRepositoryImpl.this.doFindList(options);
                 }
             };
 

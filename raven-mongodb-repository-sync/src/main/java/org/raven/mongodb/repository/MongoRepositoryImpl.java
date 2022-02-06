@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author yi.liang
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends MongoReaderRepositoryImpl<TEntity, TKey>
+        extends MongoReadonlyRepositoryImpl<TEntity, TKey>
         implements MongoRepository<TEntity, TKey> {
 
     //#region constructor

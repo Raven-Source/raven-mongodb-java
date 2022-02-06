@@ -70,7 +70,7 @@ public class MongoReaderRepositoryTest {
     @Test
     public void get() {
 
-        ReactiveMongoReaderRepository<User, Long> repos = new UserRepositoryImpl();
+        ReactiveMongoReadonlyRepository<User, Long> repos = new UserRepositoryImpl();
         User user = null;
         for (long i = 1; i <= size; i++) {
             user = repos.get(i).block().orElse(null);

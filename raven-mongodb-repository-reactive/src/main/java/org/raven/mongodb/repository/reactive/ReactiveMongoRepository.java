@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
  * @since JDK11
  */
 public interface ReactiveMongoRepository<TEntity extends Entity<TKey>, TKey>
-        extends ReactiveMongoReaderRepository<TEntity, TKey>
+        extends ReactiveMongoReadonlyRepository<TEntity, TKey>
         , ModifyOperation<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> {
 
 }

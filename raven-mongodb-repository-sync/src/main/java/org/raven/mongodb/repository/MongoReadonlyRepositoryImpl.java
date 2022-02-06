@@ -22,9 +22,9 @@ import java.util.List;
  * @param <TKey>    TKey
  * @author yi.liang
  */
-public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
+public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends AbstractMongoBaseRepository<TEntity, TKey>
-        implements MongoReaderRepository<TEntity, TKey> {
+        implements MongoReadonlyRepository<TEntity, TKey> {
 
     //#region constructor
 
@@ -36,7 +36,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param sequence            Sequence
      * @param idGeneratorProvider IdGeneratorProvider
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
@@ -47,7 +47,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession MongoSession
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession) {
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession) {
         super(mongoSession);
     }
 
@@ -57,7 +57,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoSession   MongoSession
      * @param collectionName collectionName
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
         super(mongoSession, collectionName);
     }
 
@@ -67,7 +67,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoSession MongoSession
      * @param mongoOptions MongoOptions
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
         super(mongoSession, mongoOptions);
     }
 
@@ -79,7 +79,7 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoOptions   MongoOptions
      * @param collectionName collectionName
      */
-    public MongoReaderRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         super(mongoSession, mongoOptions, collectionName);
     }
 
@@ -254,17 +254,17 @@ public class MongoReaderRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             new FindProxy<>() {
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return MongoReaderRepositoryImpl.this.entityInformation;
+                    return MongoReadonlyRepositoryImpl.this.entityInformation;
                 }
 
                 @Override
                 protected TEntity doFindOne(FindOptions options) {
-                    return MongoReaderRepositoryImpl.this.doFindOne(options);
+                    return MongoReadonlyRepositoryImpl.this.doFindOne(options);
                 }
 
                 @Override
                 protected List<TEntity> doFindList(FindOptions options) {
-                    return MongoReaderRepositoryImpl.this.doFindList(options);
+                    return MongoReadonlyRepositoryImpl.this.doFindList(options);
                 }
             };
 

@@ -13,7 +13,7 @@ import org.raven.mongodb.repository.operation.ModifyOperation;
  * @author yi.liang
  */
 public interface MongoRepository<TEntity extends Entity<TKey>, TKey>
-        extends MongoReaderRepository<TEntity, TKey>
+        extends MongoReadonlyRepository<TEntity, TKey>
         , ModifyOperation<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> {
 
 }

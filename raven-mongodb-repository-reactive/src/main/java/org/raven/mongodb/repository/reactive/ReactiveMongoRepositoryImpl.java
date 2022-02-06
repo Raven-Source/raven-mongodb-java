@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author yi.liang
  */
 public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends ReactiveMongoReaderRepositoryImpl<TEntity, TKey>
+        extends ReactiveMongoReadonlyRepositoryImpl<TEntity, TKey>
         implements ReactiveMongoRepository<TEntity, TKey> {
 
 
