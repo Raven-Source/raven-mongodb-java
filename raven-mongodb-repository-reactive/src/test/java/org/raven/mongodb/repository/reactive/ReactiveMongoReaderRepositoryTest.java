@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MongoReaderRepositoryTest {
+public class ReactiveMongoReaderRepositoryTest {
     private int size = 10;
 
     @Before
     public void init() throws Exception {
 
-        ReactiveMongoRepository<User, Long> repos = new UserRepositoryImpl();
+        ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         Mono.from(repos.getDatabase().drop()).block();
 
         ArrayList<User> list = new ArrayList<>();
@@ -45,7 +45,7 @@ public class MongoReaderRepositoryTest {
 
         List<User> list = null;
 
-        ReactiveMongoRepository<User, Long> repos = new UserRepositoryImpl();
+        ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         list = repos.getList(FindOptions.Empty()).block();
         Assert.assertNotEquals(list.size(), 0);
 
@@ -70,7 +70,7 @@ public class MongoReaderRepositoryTest {
     @Test
     public void get() {
 
-        ReactiveMongoReadonlyRepository<User, Long> repos = new UserRepositoryImpl();
+        ReactiveMongoReadonlyRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         User user = null;
         for (long i = 1; i <= size; i++) {
             user = repos.get(i).block().orElse(null);
@@ -94,7 +94,7 @@ public class MongoReaderRepositoryTest {
             return true;
         }).block();
 
-        User2RepositoryImpl repos2 = new User2RepositoryImpl();
+        User2ReactiveRepositoryImpl repos2 = new User2ReactiveRepositoryImpl();
         User2 user2 = repos2.get(1L).block().orElse(null);
         Assert.assertNotNull(user2);
 

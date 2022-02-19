@@ -4,7 +4,9 @@ import com.mongodb.Function;
 import com.mongodb.ReadPreference;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
+import org.raven.mongodb.repository.CountOptions;
 import org.raven.mongodb.repository.EntityInformation;
+import org.raven.mongodb.repository.ExistsOptions;
 import org.raven.mongodb.repository.FindOptions;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.query.FieldNest;
@@ -19,7 +21,7 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 20:49
  */
-public interface FindOperation<TEntity, TKey, TSingleResult, TListResult> {
+public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
 
     //#region get
 
@@ -270,6 +272,103 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult> {
         return this.getList(options);
     }
 
+
+    /**
+     * 数量
+     *
+     * @param filter 查询条件
+     * @return count
+     */
+    default TCountResult count(Bson filter) {
+        return this.count(filter, (Bson) null, (ReadPreference) null);
+    }
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return count
+     */
+    default TCountResult count(Bson filter, Bson hint
+            , ReadPreference readPreference) {
+
+        return this.count(filter, 0, 0, hint, readPreference);
+    }
+
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param limit          limit
+     * @param skip           skip
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return count
+     */
+    default TCountResult count(Bson filter, int limit, int skip, Bson hint
+            , ReadPreference readPreference) {
+
+        CountOptions options = (CountOptions) new CountOptions()
+                .limit(limit)
+                .skip(skip)
+                .filter(filter)
+                .hint(hint)
+                .readPreference(readPreference);
+
+        return this.count(options);
+    }
+
+
+    /**
+     * 数量
+     *
+     * @param countOptions CountOptions
+     * @return count
+     */
+    default TCountResult count(CountOptions countOptions) {
+        return findProxy().doCount(countOptions);
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param filter conditions
+     * @return exists
+     */
+    default TExistsResult exists(Bson filter) {
+        return this.exists(filter, null, null);
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param filter         conditions
+     * @param hint           hint
+     * @param readPreference ReadPreference
+     * @return exists
+     */
+    default TExistsResult exists(Bson filter, Bson hint
+            , ReadPreference readPreference) {
+        ExistsOptions options = (ExistsOptions) new ExistsOptions()
+                .filter(filter)
+                .hint(hint)
+                .readPreference(readPreference);
+        return this.exists(options);
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param existsOptions ExistsOptions
+     * @return exists
+     */
+    default TExistsResult exists(ExistsOptions existsOptions){
+        return findProxy().doExists(existsOptions);
+    }
+
     /**
      * 根据条件获取获取列表
      *
@@ -383,15 +482,19 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult> {
     //#endregion
 
 
-    FindProxy<TEntity, TKey, TSingleResult, TListResult> findProxy();
+    FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> findProxy();
 
-    abstract class FindProxy<TEntity, TKey, TSingleResult, TListResult> {
+    abstract class FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
 
         protected abstract EntityInformation<TEntity, TKey> getEntityInformation();
 
         protected abstract TSingleResult doFindOne(final FindOptions options);
 
         protected abstract TListResult doFindList(final FindOptions options);
+
+        protected abstract TCountResult doCount(final CountOptions options);
+
+        protected abstract TExistsResult doExists(final ExistsOptions options);
     }
 
 }

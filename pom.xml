@@ -45,6 +45,12 @@
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-commons</artifactId>
             <version>${raven-commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

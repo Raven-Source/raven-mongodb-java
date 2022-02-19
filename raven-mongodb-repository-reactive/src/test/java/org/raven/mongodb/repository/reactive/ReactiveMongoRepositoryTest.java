@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class MongoRepositoryTest {
+public class ReactiveMongoRepositoryTest {
 
     int size = 10;
 
@@ -17,7 +17,7 @@ public class MongoRepositoryTest {
     @Before
     public void init() {
 
-        ReactiveMongoBaseRepository<User> repos = new UserRepositoryImpl();
+        ReactiveMongoBaseRepository<User> repos = new UserReactiveRepositoryImpl();
         Mono.from(repos.getDatabase().drop()).block();
     }
 
@@ -29,7 +29,7 @@ public class MongoRepositoryTest {
         user.setName(uuid);
         user.setAge(123);
 
-        ReactiveMongoRepository<User, Long> repos = new UserRepositoryImpl();
+        ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         repos.insert(user).block();
 
         Assert.assertNotEquals(user.getId().longValue(), 0);
@@ -61,7 +61,7 @@ public class MongoRepositoryTest {
             list.add(user);
         }
 
-        ReactiveMongoRepository<User, Long> repos = new UserRepositoryImpl();
+        ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         repos.insertBatch(list).block();
 
         for (User user : list) {

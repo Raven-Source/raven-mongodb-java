@@ -11,4 +11,19 @@
 
     <artifactId>raven-mongodb-repository-spring</artifactId>
 
+    <properties>
+        <spring-context.version>5.3.8</spring-context.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring-context.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>

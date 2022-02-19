@@ -2,13 +2,14 @@ package org.raven.mongodb.repository.reactive;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
+import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.FindPublisher;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
-import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.*;
+import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -22,7 +23,7 @@ import java.util.List;
  * @since JDK11
  */
 @SuppressWarnings({"unchecked"})
-public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
+public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
         extends AbstractMongoRepository<TEntity, TKey>
         implements ReactiveMongoBaseRepository<TEntity> {
 
@@ -42,7 +43,7 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
     }
 
     //#region constructor
-    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
+    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(collectionName);
 
@@ -64,26 +65,25 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
     }
 
 
-    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession) {
+    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession) {
         this(mongoSession, null, null, null);
     }
 
-    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName) {
+    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName) {
         this(mongoSession, collectionName, null, null);
     }
 
     @SuppressWarnings({"unchecked"})
-    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
         this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
     @SuppressWarnings({"unchecked"})
-    public AbstractReactiveMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion
-
 
     //#region getCollection
 
@@ -174,6 +174,25 @@ public abstract class AbstractReactiveMongoBaseRepository<TEntity extends Entity
 
         return filter;
 
+    }
+
+    protected FindPublisher<TEntity> doFind(final FindOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        Bson projection = null;
+        if (options.includeFields() != null) {
+            projection = BsonUtils.includeFields(options.includeFields());
+        }
+
+        callGlobalInterceptors(PreFind.class, null, options);
+
+        FindPublisher<TEntity> result = getCollection(options.readPreference()).find(options.filter(), entityInformation.getEntityType());
+        result = findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
+
+        return result;
     }
 
 }
