@@ -22,7 +22,15 @@ public class FilterBuilderTest {
     @Test
     public void filterTest() {
 
-        FilterBuilder<User> filterBuilder = new FilterBuilder<>(User.class);
+        FilterBuilder<User> filterBuilder;
+
+        filterBuilder = new FilterBuilder<>(User.class);
+        filterBuilder.eq(User.Fields.id, "123");
+
+        log.info(filterBuilder.build().toBsonDocument().toJson());
+        Assert.assertEquals(BsonDocument.parse("{\"_id\": \"123\"}"), filterBuilder.build().toBsonDocument());
+
+        filterBuilder = new FilterBuilder<>(User.class);
         filterBuilder.eq(User.Fields.name, "c6e6a5391d30").eq(User.Fields.del, false);
 
         log.info(filterBuilder.build().toBsonDocument().toJson());
@@ -84,7 +92,7 @@ public class FilterBuilderTest {
                 .ne("id", 2)
                 .eq("name", "adc")
                 .eq("status", Status.Normal)
-                .gte("createDate", new Date(100,9,1,10,0,0))
+                .gte("createDate", new Date(100, 9, 1, 10, 0, 0))
                 .eq("mall.name", 6);
 
         bson = filterBuilder.or(filterBuilder2).build();
@@ -93,7 +101,6 @@ public class FilterBuilderTest {
         Assert.assertEquals("{\"$or\": [{\"$and\": [{\"a\": \"1\"}, {\"_id\": {\"$ne\": 2}}, {\"Name\": \"adc\"}, {\"status\": 1}, {\"CreateDate\": {\"$gte\": {\"$date\": \"2000-10-01T02:00:00Z\"}}}, {\"Mall.Name\": 6}]}, {\"$and\": [{\"x\": {\"$ne\": 1}}, {\"y\": 2}]}]}",
                 bson.toBsonDocument().toJson()
         );
-
 
 
         bson = new FilterBuilder<>(User.class).build();
