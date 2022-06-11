@@ -31,11 +31,11 @@ public class FilterBuilderTest {
         Assert.assertEquals(BsonDocument.parse("{\"_id\": \"123\"}"), filterBuilder.build().toBsonDocument());
 
         filterBuilder = new FilterBuilder<>(User.class);
-        filterBuilder.eq(User.Fields.name, "c6e6a5391d30").eq(User.Fields.del, false);
+        filterBuilder.eq(User.Fields.name, "c6e6a5391d30").eq(User.Fields.deleted, false);
 
         log.info(filterBuilder.build().toBsonDocument().toJson());
 
-        Assert.assertEquals(BsonDocument.parse("{\"$and\": [{\"Name\": \"c6e6a5391d30\"}, {\"Del\": false}]}"), filterBuilder.build().toBsonDocument());
+        Assert.assertEquals(BsonDocument.parse("{\"$and\": [{\"Name\": \"c6e6a5391d30\"}, {\"Deleted\": false}]}"), filterBuilder.build().toBsonDocument());
 
 
         filterBuilder = new FilterBuilder<>(User.class);

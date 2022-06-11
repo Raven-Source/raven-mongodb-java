@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>raven-mongodb</artifactId>
-    <version>2.3.1</version>
+    <version>2.3.2</version>
     <packaging>pom</packaging>
     <modules>
 <!--        <module>raven-mongodb-repository-async</module>-->
@@ -28,7 +28,7 @@
         <encoding>UTF-8</encoding>
         <java.version>11</java.version>
 
-        <raven-commons.version>4.0.1</raven-commons.version>
+        <raven-commons.version>4.0.2</raven-commons.version>
         <mongodb-driver.version>4.2.3</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>

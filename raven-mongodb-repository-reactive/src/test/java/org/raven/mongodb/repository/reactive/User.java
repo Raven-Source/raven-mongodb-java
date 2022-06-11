@@ -37,7 +37,7 @@ public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
     @BsonIgnore
     private Status status;
 
-    private boolean del;
+    private Boolean deleted = Boolean.FALSE;
 
     private Date createDate;
 
