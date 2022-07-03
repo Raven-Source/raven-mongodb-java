@@ -15,7 +15,7 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.contants.BsonConstant;
-import org.raven.mongodb.repository.spi.IdGenerationType;
+//import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -139,7 +139,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      */
     protected InsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
-        if (entity.getId() == null) {
+        if (entity.getId() == null && idGenerator != null) {
             TKey id = idGenerator.generateId();
             entity.setId(id);
         }
@@ -153,7 +153,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = entityStream.size();
 
-        if (count > 0) {
+        if (count > 0 && idGenerator != null) {
             List<TKey> ids = idGenerator.generateIdBatch(count);
 
             for (int i = 0; i < count; i++) {
@@ -250,7 +250,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
 
         Bson update = new BsonDocument("$set", bsDoc);
-        if (isUpsert && entityInformation.getIdGenerationType() == IdGenerationType.AUTO_INCR) {
+        if (isUpsert && idGenerator != null) {
             TKey id = idGenerator.generateId();
             update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
         }

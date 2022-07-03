@@ -17,6 +17,7 @@ import org.raven.mongodb.repository.UpdateType;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.contants.BsonConstant;
+//import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -143,7 +144,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     protected Mono<InsertOneResult> doInsert(final TEntity entity, final WriteConcern writeConcern) {
 
         Mono<TEntity> mono = Mono.just(entity);
-        if (entity.getId() == null) {
+        if (entity.getId() == null && idGenerator != null) {
 
             mono = idGenerator.generateId().map(x -> {
                 entity.setId(x);
@@ -168,7 +169,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = entityStream.size();
 
-        if (count > 0) {
+        if (count > 0 && idGenerator != null) {
 
             mono = idGenerator.generateIdBatch(count).map(ids -> {
 
@@ -284,7 +285,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
 
         Bson update = new BsonDocument("$set", bsDoc);
-        if (isUpsert) {
+        if (isUpsert && idGenerator != null) {
             return idGenerator.generateId().map(id ->
                     Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id))
             );

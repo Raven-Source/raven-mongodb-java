@@ -5,7 +5,7 @@
     <parent>
         <artifactId>raven-mongodb</artifactId>
         <groupId>io.github.raven-source</groupId>
-        <version>2.3.3</version>
+        <version>2.3.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-repository-sync</artifactId>
-            <version>2.3.3</version>
+            <version>2.3.4</version>
         </dependency>
 
     </dependencies>

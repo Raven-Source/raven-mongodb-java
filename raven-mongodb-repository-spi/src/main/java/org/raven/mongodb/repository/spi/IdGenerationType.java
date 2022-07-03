@@ -8,6 +8,7 @@ public enum IdGenerationType {
     NONE,
 
     AUTO_INCR,
-    OBJECT_ID
+    OBJECT_ID,
+    OTHER
 
 }

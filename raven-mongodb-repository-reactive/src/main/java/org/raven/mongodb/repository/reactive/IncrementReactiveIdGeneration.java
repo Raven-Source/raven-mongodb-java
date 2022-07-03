@@ -32,7 +32,7 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
     private final Sequence sequence;
     private final Class<TKey> keyClazz;
 
-    private Supplier<MongoDatabase> databaseSupplier;
+    private final Supplier<MongoDatabase> databaseSupplier;
 
     /**
      * @param collectionName   collectionName
@@ -77,7 +77,7 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
     }
 
     @Override
-    public String getType() {
+    public String name() {
         return "INCREMENT";
     }
 

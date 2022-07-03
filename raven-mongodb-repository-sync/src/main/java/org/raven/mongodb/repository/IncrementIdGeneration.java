@@ -65,7 +65,7 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
     }
 
     @Override
-    public String getType() {
+    public String name() {
         return "INCREMENT";
     }
 

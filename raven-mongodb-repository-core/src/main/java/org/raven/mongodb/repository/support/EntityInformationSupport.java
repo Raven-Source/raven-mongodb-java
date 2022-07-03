@@ -11,7 +11,7 @@ import org.raven.mongodb.repository.EntityInformation;
 import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
-import org.raven.mongodb.repository.spi.IdGenerationType;
+//import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.util.EntityInterceptorUtils;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
     private final CodecRegistry pojoCodecRegistry;
     private final ClassModel<TEntity> classModel;
 
-    private IdGenerationType idGenerationType;
+//    private IdGenerationType idGenerationType;
 
     private final List<EntityInterceptor> interceptors;
 
@@ -47,12 +47,12 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
         this.classModel = ClassModelUtils.getClassModel(entityClass);
         this.interceptors = EntityInterceptorUtils.getInterceptors(entityClass);
 
-        if (BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClass)) {
-            idGenerationType = IdGenerationType.AUTO_INCR;
-        } else if (BsonConstant.OBJECT_ID_CLASS.isAssignableFrom(entityClass)) {
-            idGenerationType = IdGenerationType.OBJECT_ID;
-        } else
-            idGenerationType = IdGenerationType.NONE;
+//        if (BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClass)) {
+//            idGenerationType = IdGenerationType.AUTO_INCR;
+//        } else if (BsonConstant.OBJECT_ID_CLASS.isAssignableFrom(entityClass)) {
+//            idGenerationType = IdGenerationType.OBJECT_ID;
+//        } else
+//            idGenerationType = IdGenerationType.NONE;
 
         this.collectionName = collectionName == null || collectionName.isEmpty()
                 ? getEntityName()
@@ -94,10 +94,10 @@ public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> imp
         return keyClass;
     }
 
-    @Override
-    public IdGenerationType getIdGenerationType() {
-        return idGenerationType;
-    }
+//    @Override
+//    public IdGenerationType getIdGenerationType() {
+//        return idGenerationType;
+//    }
 
     @Override
     public String getEntityName() {

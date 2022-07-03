@@ -8,9 +8,10 @@ import java.util.List;
  * @since JDK11
  */
 public interface IdGenerator<TKey> {
+
     TKey generateId();
 
     List<TKey> generateIdBatch(long count);
 
-    String getType();
+    String name();
 }

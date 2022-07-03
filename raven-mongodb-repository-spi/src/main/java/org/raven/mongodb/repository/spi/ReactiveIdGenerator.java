@@ -14,6 +14,6 @@ public interface ReactiveIdGenerator<TKey> {
 
     Mono<List<TKey>> generateIdBatch(long count);
 
-    String getType();
+    String name();
 
 }

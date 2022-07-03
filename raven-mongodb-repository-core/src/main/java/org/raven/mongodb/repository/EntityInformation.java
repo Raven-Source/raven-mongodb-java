@@ -4,7 +4,7 @@ import org.bson.BsonDocument;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.ClassModel;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
-import org.raven.mongodb.repository.spi.IdGenerationType;
+//import org.raven.mongodb.repository.spi.IdGenerationType;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface EntityInformation<TEntity, TKey> extends EntityMetadata<TEntity
 
     Class<TKey> getIdType();
 
-    IdGenerationType getIdGenerationType();
+//    IdGenerationType getIdGenerationType();
 
     BsonDocument toBsonDocument(TEntity entity);
 

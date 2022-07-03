@@ -29,7 +29,7 @@ public class ObjectIdIdGeneration<TKey> implements IdGenerator<TKey> {
 
     @Override
     public TKey generateId() {
-        return (TKey) Objects.requireNonNull(createId());
+        return Objects.requireNonNull(createId());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ObjectIdIdGeneration<TKey> implements IdGenerator<TKey> {
     }
 
     @Override
-    public String getType() {
+    public String name() {
         return "OBJECTID";
     }
 

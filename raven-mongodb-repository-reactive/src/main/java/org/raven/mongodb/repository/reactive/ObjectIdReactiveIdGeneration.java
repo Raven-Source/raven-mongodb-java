@@ -54,7 +54,7 @@ public class ObjectIdReactiveIdGeneration<TKey> implements ReactiveIdGenerator<T
     }
 
     @Override
-    public String getType() {
+    public String name() {
         return "OBJECTID";
     }
 
