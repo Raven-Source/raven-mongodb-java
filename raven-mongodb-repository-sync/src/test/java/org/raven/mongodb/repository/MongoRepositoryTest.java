@@ -1,9 +1,12 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.Codec;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MongoRepositoryTest {
 
@@ -32,10 +36,13 @@ public class MongoRepositoryTest {
 
         System.out.println(classModel.getName());
 
-        MongoBaseRepository<User> repos = new UserRepositoryImpl();
-        repos.getDatabase().drop();
-        repos.getCollection().createIndex(Indexes.ascending("Mall._id"));
-        repos.getCollection().createIndex(Indexes.descending("CreateDate"));
+        MongoBaseRepository<User> userRepository = new UserRepositoryImpl();
+        userRepository.getDatabase().drop();
+        userRepository.getCollection().createIndex(Indexes.ascending("User_id"));
+        userRepository.getCollection().createIndex(Indexes.descending("CreateDate"));
+
+        MongoRepository<Mall, String> mallRepository = new MallRepositoryImpl();
+        mallRepository.getCollection().createIndex(Indexes.ascending("Mall_Name"), new IndexOptions().unique(true));
 
 //        DefaultMongoSession defaultMongoSession = ((DefaultMongoSession) MongoSessionInstance.mongoSession);
 //        Morphia morphia = new Morphia();
@@ -67,6 +74,14 @@ public class MongoRepositoryTest {
 
         MongoRepository<Mall, String> mall_repos = new MallRepositoryImpl();
         mall_repos.insert(mall);
+        log.info("insert mall success");
+        try {
+            mall_repos.insert(mall);
+        } catch (MongoWriteException ex) {
+            log.info("insert mall fail: " + ex.getMessage());
+        } catch (Exception ex) {
+            throw ex;
+        }
 
         //Assert.assertNotNull(mall.getId());
 

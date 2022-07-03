@@ -10,7 +10,6 @@ import org.raven.commons.data.annotation.Contract;
 public class Mall implements Entity<String> {
 
     @BsonId
-
     private String id;
 
     private String name;
