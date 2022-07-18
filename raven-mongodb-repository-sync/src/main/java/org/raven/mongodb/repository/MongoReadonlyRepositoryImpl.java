@@ -194,12 +194,12 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //region protected
 
     protected TEntity doFindOne(final FindOptions options) {
-        return this.doFind(options).first();
+        return this.doFind(options, entityInformation.getEntityType()).first();
     }
 
 
     protected List<TEntity> doFindList(final FindOptions options) {
-        FindIterable<TEntity> result = doFind(options);
+        FindIterable<TEntity> result = doFind(options, entityInformation.getEntityType());
 
         ArrayList<TEntity> list = new ArrayList<TEntity>();
         for (TEntity entity : result) {
@@ -207,25 +207,6 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         }
 
         return list;
-    }
-
-    protected FindIterable<TEntity> doFind(final FindOptions options) {
-
-        if (options.filter() == null) {
-            options.filter(Filters.empty());
-        }
-
-        Bson projection = null;
-        if (options.includeFields() != null) {
-            projection = BsonUtils.includeFields(options.includeFields());
-        }
-
-        callGlobalInterceptors(PreFind.class, null, options);
-
-        FindIterable<TEntity> result = super.getCollection(options.readPreference()).find(options.filter(), entityInformation.getEntityType());
-        result = super.findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
-
-        return result;
     }
 
     protected long doCount(final CountOptions options) {

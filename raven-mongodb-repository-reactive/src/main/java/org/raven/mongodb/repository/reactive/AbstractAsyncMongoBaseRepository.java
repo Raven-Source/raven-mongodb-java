@@ -148,10 +148,10 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
      * @param hint          hint
      * @return FindIterable
      */
-    protected FindPublisher<TEntity> findOptions(final FindPublisher<TEntity> findPublisher, final Bson projection, final Bson sort
+    protected <TResult> FindPublisher<TResult> findOptions(final FindPublisher<TResult> findPublisher, final Bson projection, final Bson sort
             , final int limit, final int skip, final Bson hint) {
 
-        FindPublisher<TEntity> filter = findPublisher;
+        FindPublisher<TResult> filter = findPublisher;
         if (projection != null) {
             filter = filter.projection(projection);
         }
@@ -176,7 +176,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
     }
 
-    protected FindPublisher<TEntity> doFind(final FindOptions options) {
+    protected <TResult> FindPublisher<TResult> doFind(final FindOptions options, final Class<TResult> resultClass) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -189,7 +189,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
         callGlobalInterceptors(PreFind.class, null, options);
 
-        FindPublisher<TEntity> result = getCollection(options.readPreference()).find(options.filter(), entityInformation.getEntityType());
+        FindPublisher<TResult> result = getCollection(options.readPreference()).find(options.filter(), resultClass);
         result = findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
 
         return result;

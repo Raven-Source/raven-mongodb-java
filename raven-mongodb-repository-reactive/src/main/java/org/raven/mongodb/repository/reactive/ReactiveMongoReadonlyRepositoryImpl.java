@@ -91,13 +91,13 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
 
     protected Mono<Optional<TEntity>> doFindOne(final FindOptions options) {
         return Mono.from(
-                this.doFind(options).first()
+                this.doFind(options, entityInformation.getEntityType()).first()
         ).map(Optional::of).defaultIfEmpty(Optional.empty());
     }
 
     protected Mono<List<TEntity>> doFindList(final FindOptions options) {
         return Flux.from(
-                doFind(options)
+                doFind(options, entityInformation.getEntityType())
         ).collectList();
     }
 

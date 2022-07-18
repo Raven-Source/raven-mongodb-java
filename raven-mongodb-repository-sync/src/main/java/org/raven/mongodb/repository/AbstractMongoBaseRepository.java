@@ -5,8 +5,10 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -138,10 +140,10 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @param hint         hint
      * @return FindIterable
      */
-    protected FindIterable<TEntity> findOptions(final FindIterable<TEntity> findIterable, final Bson projection, final Bson sort
+    protected <TResult> FindIterable<TResult> findOptions(final FindIterable<TResult> findIterable, final Bson projection, final Bson sort
             , final int limit, final int skip, final Bson hint) {
 
-        FindIterable<TEntity> filter = findIterable;
+        FindIterable<TResult> filter = findIterable;
         if (projection != null) {
             filter = filter.projection(projection);
         }
@@ -165,6 +167,25 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
         return filter;
 
+    }
+
+    protected <TResult> FindIterable<TResult> doFind(final FindOptions options, final Class<TResult> resultClass) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        Bson projection = null;
+        if (options.includeFields() != null) {
+            projection = BsonUtils.includeFields(options.includeFields());
+        }
+
+        callGlobalInterceptors(PreFind.class, null, options);
+
+        FindIterable<TResult> result = getCollection(options.readPreference()).find(options.filter(), resultClass);
+        result = findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
+
+        return result;
     }
 
 }
