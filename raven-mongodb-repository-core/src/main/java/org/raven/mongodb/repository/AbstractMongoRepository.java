@@ -6,6 +6,10 @@ import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
+import org.raven.mongodb.repository.query.FilterBuilder;
+import org.raven.mongodb.repository.query.HintBuilder;
+import org.raven.mongodb.repository.query.SortBuilder;
+import org.raven.mongodb.repository.query.UpdateBuilder;
 import org.raven.mongodb.repository.support.EntityInformationSupport;
 
 import java.lang.annotation.Annotation;
@@ -57,5 +61,21 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
                 ei.preInsert(entity, entityInformation);
             }
         }
+    }
+
+    protected FilterBuilder<TEntity> filterBuilder() {
+        return FilterBuilder.empty(entityInformation.getEntityType());
+    }
+
+    protected UpdateBuilder<TEntity> updateBuilder() {
+        return UpdateBuilder.empty(entityInformation.getEntityType());
+    }
+
+    protected SortBuilder<TEntity> sortBuilder() {
+        return SortBuilder.empty(entityInformation.getEntityType());
+    }
+
+    protected HintBuilder<TEntity> hintBuilder() {
+        return HintBuilder.empty(entityInformation.getEntityType());
     }
 }

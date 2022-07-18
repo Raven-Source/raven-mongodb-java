@@ -218,11 +218,11 @@ public class UserServiceTest {
     @Test
     public void a02Get() throws MongoException {
         String id = "abc_123";//有
-        User_StringID us = usRep.get(id).block().orElse(null);
+        User_StringID us = usRep.findOne(id).block().orElse(null);
         Assert.assertEquals(us.getId(), id);
 
         String id2 = "a1234";//没有
-        User_StringID us2 = usRep.get(id2).block().orElse(null);
+        User_StringID us2 = usRep.findOne(id2).block().orElse(null);
         Assert.assertNull(us2);
     }
 
@@ -238,7 +238,7 @@ public class UserServiceTest {
         String id = "abc_123";//有
 
         Bson filter = Filters.or(Filters.eq("_id", "abc_123"), Filters.eq("_id", "def_456"));
-        List<User_StringID> usList1 = usRep.getList(filter).block();
+        List<User_StringID> usList1 = usRep.findList(filter).block();
         Assert.assertNotNull(usList1);
         Assert.assertTrue(usList1.size() >= 1);
 
@@ -247,7 +247,7 @@ public class UserServiceTest {
         includeFields.add("ClassMap");
         includeFields.add("Name");
         Bson sort = Sorts.descending("Name");
-        List<User_StringID> usList2 = usRep.getList(filter, includeFields, sort, 100, 1).block();
+        List<User_StringID> usList2 = usRep.findList(filter, includeFields, sort, 100, 1).block();
         Assert.assertNotNull(usList2);
         Assert.assertTrue(usList2.size() >= 0);
         Assert.assertNotNull(usList2.get(0).getName());
@@ -397,20 +397,20 @@ public class UserServiceTest {
      */
     @Test
     public void a08GetObjectID() throws MongoException {
-        User_ObjectID getUo = uoRep.get(Filters.eq("Name", "bb")).block().orElse(null);
+        User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb")).block().orElse(null);
         Assert.assertNotNull(getUo);
 
-        User_ObjectID uo1 = uoRep.get(new ObjectId(getUo.getId().toString())).block().orElse(null); //取不到数据
-        User_ObjectID uo3 = uoRep.get(Filters.eq("_id", "ObjectId(\"" + getUo.getId().toString() + "\")")).block().orElse(null); //取不到数据
-        User_ObjectID uo5 = uoRep.get(Filters.eq("_id", getUo.getId())).block().orElse(null);//有数据
+        User_ObjectID uo1 = uoRep.findOne(new ObjectId(getUo.getId().toString())).block().orElse(null); //取不到数据
+        User_ObjectID uo3 = uoRep.findOne(Filters.eq("_id", "ObjectId(\"" + getUo.getId().toString() + "\")")).block().orElse(null); //取不到数据
+        User_ObjectID uo5 = uoRep.findOne(Filters.eq("_id", getUo.getId())).block().orElse(null);//有数据
         Assert.assertNotNull(uo1);
         Assert.assertNotNull(uo1.getId());
 
         //根据ID获取一条实体数据
         ObjectId id3 = new ObjectId(getUo.getId().toString());
-        User_ObjectID uoModel3 = uoRep.get(id3).block().orElse(null);
+        User_ObjectID uoModel3 = uoRep.findOne(id3).block().orElse(null);
 
-        List<User_ObjectID> uoList3 = uoRep.getList(Filters.eq("Name", "bb")).block();
+        List<User_ObjectID> uoList3 = uoRep.findList(Filters.eq("Name", "bb")).block();
 
         //新增一条实体数据
         User_ObjectID us2 = GetUO("啦啦啦啦11");
@@ -429,7 +429,7 @@ public class UserServiceTest {
         //自动生成ObjectId
         ObjectId oi = new ObjectId();
 
-        List<User_ObjectID> uoList = uoRep.getList(filter).block();
+        List<User_ObjectID> uoList = uoRep.findList(filter).block();
         Assert.assertNotNull(uoList);
         Assert.assertTrue(uoList.size() >= 1);
         Assert.assertNotNull(uoList.get(0).getId());
@@ -467,7 +467,7 @@ public class UserServiceTest {
      */
     @Test
     public void a10UpdateObjectID() throws MongoException {
-        User_ObjectID getUo = uoRep.get(Filters.eq("Name", "bb")).block().orElse(null);
+        User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb")).block().orElse(null);
         Assert.assertNotNull(getUo);
         UpdateResult updateResult1 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED).block();
         Assert.assertEquals(updateResult1.getMatchedCount(), 1);

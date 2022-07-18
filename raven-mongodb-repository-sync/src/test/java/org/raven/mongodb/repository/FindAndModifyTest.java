@@ -35,7 +35,7 @@ public class FindAndModifyTest {
 
         int seed = 10;
 
-        userRepos.get(1L);
+        userRepos.findOne(1L);
 
         List<CompletableFuture<?>> failures = new ArrayList<>(seed);
 
@@ -66,7 +66,7 @@ public class FindAndModifyTest {
 
         int seed = 10;
 
-        userRepos.get(1L);
+        userRepos.findOne(1L);
 
         List<CompletableFuture<?>> failures = new ArrayList<>(seed);
 
@@ -89,11 +89,17 @@ public class FindAndModifyTest {
 //                    // 回滚事务
 //                    clientSession.abortTransaction();
 
-                    return userRepos.findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
-
+                    User u = userRepos.findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
+                    clientSession.commitTransaction();
+                    return u;
+                } catch (Exception ex) {
+                    if (clientSession != null) {
+                        clientSession.abortTransaction();
+                    }
+                    return null;
                 } finally {
                     if (clientSession != null) {
-                        clientSession.commitTransaction();
+                        clientSession.close();
                     }
                 }
 

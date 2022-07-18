@@ -1,7 +1,6 @@
 package org.raven.mongodb.repository.query;
 
 import com.mongodb.client.model.Filters;
-import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;

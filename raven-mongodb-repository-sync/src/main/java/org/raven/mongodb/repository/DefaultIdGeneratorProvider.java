@@ -1,6 +1,5 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;

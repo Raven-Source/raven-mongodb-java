@@ -1,6 +1,5 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.ReadPreference;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -255,7 +254,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         List<String> includeFields = new ArrayList<>(1);
         includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
 
-        return this.get(_filter, includeFields, null, options.hint(), options.readPreference()) != null;
+        return this.findOne(_filter, includeFields, null, options.hint(), options.readPreference()) != null;
     }
 
     @Override

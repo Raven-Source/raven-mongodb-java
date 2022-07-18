@@ -8,15 +8,11 @@ import com.mongodb.client.model.Updates;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author by yanfeng
@@ -62,7 +58,7 @@ public class ApplicationRunner implements CommandLineRunner {
 
         System.out.println("start seed:" + seed);
 
-        User user = userRepos.get(1L);
+        User user = userRepos.findOne(1L);
         if (user == null) {
             user = new User();
 

@@ -14,6 +14,7 @@ import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
 import org.raven.mongodb.repository.interceptors.VersionedEntityInterceptor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Contract(formatType = MemberFormatType.PascalCase)
@@ -39,6 +40,8 @@ public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
     private Date createDate;
 
     private Mall mall;
+
+    private BigDecimal price = BigDecimal.valueOf(321.14);
 
     public User() {
         status = Status.Normal;

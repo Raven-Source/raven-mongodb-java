@@ -34,7 +34,7 @@ public class ReactiveMongoRepositoryTest {
 
         Assert.assertNotEquals(user.getId().longValue(), 0);
 
-        user = repos.get(user.getId()).block().orElse(null);
+        user = repos.findOne(user.getId()).block().orElse(null);
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getName(), uuid);
 

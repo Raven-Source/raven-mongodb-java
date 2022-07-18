@@ -31,8 +31,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param id ID
      * @return Result
      */
-    default TSingleResult get(final TKey id) {
-        return this.get(id, null);
+    default TSingleResult findOne(final TKey id) {
+        return this.findOne(id, null);
     }
 
     /**
@@ -42,8 +42,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param includeFields 查询字段
      * @return Result
      */
-    default TSingleResult get(final TKey id, final List<String> includeFields) {
-        return this.get(id, includeFields, null);
+    default TSingleResult findOne(final TKey id, final List<String> includeFields) {
+        return this.findOne(id, includeFields, null);
     }
 
     /**
@@ -54,12 +54,12 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param readPreference 访问设置
      * @return Result
      */
-    default TSingleResult get(final TKey id, final List<String> includeFields
+    default TSingleResult findOne(final TKey id, final List<String> includeFields
             , final ReadPreference readPreference) {
 
         Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
 
-        return this.get(filter, includeFields, null, null, readPreference);
+        return this.findOne(filter, includeFields, null, null, readPreference);
     }
 
     /**
@@ -68,8 +68,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param filter 查询条件
      * @return Result
      */
-    default TSingleResult get(final Bson filter) {
-        return this.get(filter, null);
+    default TSingleResult findOne(final Bson filter) {
+        return this.findOne(filter, null);
     }
 
     /**
@@ -79,8 +79,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param includeFields 查询字段
      * @return Result
      */
-    default TSingleResult get(final Bson filter, final List<String> includeFields) {
-        return this.get(filter, includeFields, null);
+    default TSingleResult findOne(final Bson filter, final List<String> includeFields) {
+        return this.findOne(filter, includeFields, null);
     }
 
     /**
@@ -91,8 +91,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param sort          排序
      * @return Result
      */
-    default TSingleResult get(final Bson filter, final List<String> includeFields, final Bson sort) {
-        return this.get(filter, includeFields, sort, null, null);
+    default TSingleResult findOne(final Bson filter, final List<String> includeFields, final Bson sort) {
+        return this.findOne(filter, includeFields, sort, null, null);
 
     }
 
@@ -106,7 +106,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param readPreference 访问设置
      * @return Result
      */
-    default TSingleResult get(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
+    default TSingleResult findOne(final Bson filter, final List<String> includeFields, final Bson sort, final Bson hint
             , final ReadPreference readPreference) {
 
         FindOptions options = new FindOptions();
@@ -118,7 +118,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
         options.skip(0);
         options.sort(sort);
 
-        return this.get(options);
+        return this.findOne(options);
     }
 
     /**
@@ -127,8 +127,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param filterBuilder {{@link FilterBuilder}}
      * @return Result
      */
-    default TSingleResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder) {
-        return this.get(filterBuilder, null);
+    default TSingleResult findOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder) {
+        return this.findOne(filterBuilder, null);
     }
 
     /**
@@ -138,9 +138,9 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param fieldNestList {{@link FieldNest}}
      * @return Result
      */
-    default TSingleResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                              final Function<FieldNest, List<String>> fieldNestList) {
-        return this.get(filterBuilder, fieldNestList, null);
+    default TSingleResult findOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<FieldNest, List<String>> fieldNestList) {
+        return this.findOne(filterBuilder, fieldNestList, null);
     }
 
     /**
@@ -151,10 +151,10 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param sortBuilder   {{@link SortBuilder}}
      * @return Result
      */
-    default TSingleResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                              final Function<FieldNest, List<String>> fieldNestList,
-                              final Function<SortBuilder<TEntity>, Bson> sortBuilder) {
-        return this.get(filterBuilder, fieldNestList, sortBuilder, null);
+    default TSingleResult findOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<FieldNest, List<String>> fieldNestList,
+                                  final Function<SortBuilder<TEntity>, Bson> sortBuilder) {
+        return this.findOne(filterBuilder, fieldNestList, sortBuilder, null);
 
     }
 
@@ -167,11 +167,11 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param hintBuilder   {{@link HintBuilder}}
      * @return Result
      */
-    default TSingleResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                              final Function<FieldNest, List<String>> fieldNestList,
-                              final Function<SortBuilder<TEntity>, Bson> sortBuilder,
-                              final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
-        return this.get(filterBuilder, fieldNestList, sortBuilder, hintBuilder, null);
+    default TSingleResult findOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<FieldNest, List<String>> fieldNestList,
+                                  final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                                  final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
+        return this.findOne(filterBuilder, fieldNestList, sortBuilder, hintBuilder, null);
 
     }
 
@@ -185,15 +185,15 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param readPreference {{@link ReadPreference}}
      * @return Result
      */
-    default TSingleResult get(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                              final Function<FieldNest, List<String>> fieldNestList,
-                              final Function<SortBuilder<TEntity>, Bson> sortBuilder,
-                              final Function<HintBuilder<TEntity>, Bson> hintBuilder,
-                              final ReadPreference readPreference) {
+    default TSingleResult findOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                  final Function<FieldNest, List<String>> fieldNestList,
+                                  final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                                  final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                                  final ReadPreference readPreference) {
 
         final FindOptions findOptions = createFindOptions(filterBuilder, fieldNestList, sortBuilder, 0, 0, hintBuilder, readPreference);
 
-        return this.get(findOptions);
+        return this.findOne(findOptions);
     }
 
     /**
@@ -202,7 +202,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param findOptions 查询条件
      * @return Result
      */
-    default TSingleResult get(final FindOptions findOptions) {
+    default TSingleResult findOne(final FindOptions findOptions) {
         return findProxy().doFindOne(findOptions);
     }
 
@@ -216,8 +216,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param filter 查询条件
      * @return Result
      */
-    default TListResult getList(final Bson filter) {
-        return this.getList(filter, null);
+    default TListResult findList(final Bson filter) {
+        return this.findList(filter, null);
     }
 
     /**
@@ -227,8 +227,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param includeFields 查询字段
      * @return Result
      */
-    default TListResult getList(final Bson filter, final List<String> includeFields) {
-        return this.getList(filter, includeFields, null);
+    default TListResult findList(final Bson filter, final List<String> includeFields) {
+        return this.findList(filter, includeFields, null);
     }
 
     /**
@@ -239,8 +239,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param sort          排序
      * @return Result
      */
-    default TListResult getList(final Bson filter, final List<String> includeFields, final Bson sort) {
-        return this.getList(filter, includeFields, sort, 0, 0);
+    default TListResult findList(final Bson filter, final List<String> includeFields, final Bson sort) {
+        return this.findList(filter, includeFields, sort, 0, 0);
     }
 
     /**
@@ -255,7 +255,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param readPreference 访问设置
      * @return Result
      */
-    default TListResult getList(final Bson filter, final List<String> includeFields, final Bson sort
+    default TListResult findList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip
             , final Bson hint
             , final ReadPreference readPreference) {
@@ -269,7 +269,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
         options.skip(skip);
         options.sort(sort);
 
-        return this.getList(options);
+        return this.findList(options);
     }
 
 
@@ -379,51 +379,51 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param skip          skip
      * @return Result
      */
-    default TListResult getList(final Bson filter, final List<String> includeFields, final Bson sort
+    default TListResult findList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip) {
-        return this.getList(filter, includeFields, sort, limit, skip, null, null);
+        return this.findList(filter, includeFields, sort, limit, skip, null, null);
     }
 
-    default TListResult getList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder) {
-        return this.getList(filterBuilder, null);
+    default TListResult findList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder) {
+        return this.findList(filterBuilder, null);
     }
 
-    default TListResult getList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                final Function<FieldNest, List<String>> fieldNestList) {
-        return this.getList(filterBuilder, fieldNestList, null);
+    default TListResult findList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                 final Function<FieldNest, List<String>> fieldNestList) {
+        return this.findList(filterBuilder, fieldNestList, null);
     }
 
-    default TListResult getList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                final Function<FieldNest, List<String>> fieldNestList,
-                                final Function<SortBuilder<TEntity>, Bson> sortBuilder) {
-        return this.getList(filterBuilder, fieldNestList, sortBuilder, 0, 0);
+    default TListResult findList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                 final Function<FieldNest, List<String>> fieldNestList,
+                                 final Function<SortBuilder<TEntity>, Bson> sortBuilder) {
+        return this.findList(filterBuilder, fieldNestList, sortBuilder, 0, 0);
     }
 
-    default TListResult getList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                final Function<FieldNest, List<String>> fieldNestList,
-                                final Function<SortBuilder<TEntity>, Bson> sortBuilder,
-                                int limit, int skip) {
-        return this.getList(filterBuilder, fieldNestList, sortBuilder, limit, skip, null);
+    default TListResult findList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                 final Function<FieldNest, List<String>> fieldNestList,
+                                 final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                                 int limit, int skip) {
+        return this.findList(filterBuilder, fieldNestList, sortBuilder, limit, skip, null);
     }
 
-    default TListResult getList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                final Function<FieldNest, List<String>> fieldNestList,
-                                final Function<SortBuilder<TEntity>, Bson> sortBuilder,
-                                int limit, int skip,
-                                final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
-        return this.getList(filterBuilder, fieldNestList, sortBuilder, limit, skip, hintBuilder, null);
+    default TListResult findList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                 final Function<FieldNest, List<String>> fieldNestList,
+                                 final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                                 int limit, int skip,
+                                 final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
+        return this.findList(filterBuilder, fieldNestList, sortBuilder, limit, skip, hintBuilder, null);
     }
 
-    default TListResult getList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                final Function<FieldNest, List<String>> fieldNestList,
-                                final Function<SortBuilder<TEntity>, Bson> sortBuilder,
-                                int limit, int skip,
-                                final Function<HintBuilder<TEntity>, Bson> hintBuilder,
-                                final ReadPreference readPreference) {
+    default TListResult findList(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+                                 final Function<FieldNest, List<String>> fieldNestList,
+                                 final Function<SortBuilder<TEntity>, Bson> sortBuilder,
+                                 int limit, int skip,
+                                 final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                                 final ReadPreference readPreference) {
 
         final FindOptions findOptions = createFindOptions(filterBuilder, fieldNestList, sortBuilder, limit, skip, hintBuilder, readPreference);
 
-        return this.getList(findOptions);
+        return this.findList(findOptions);
 
     }
 
@@ -433,7 +433,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param findOptions FindOptions
      * @return Result
      */
-    default TListResult getList(final FindOptions findOptions) {
+    default TListResult findList(final FindOptions findOptions) {
         return findProxy().doFindList(findOptions);
     }
 

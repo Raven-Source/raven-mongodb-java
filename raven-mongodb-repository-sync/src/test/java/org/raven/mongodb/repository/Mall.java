@@ -5,6 +5,8 @@ import org.raven.commons.data.Entity;
 import org.raven.commons.data.MemberFormatType;
 import org.raven.commons.data.annotation.Contract;
 
+import java.math.BigDecimal;
+
 @Contract(formatType = MemberFormatType.PascalCase)
 @FieldNameConstants
 public class Mall implements Entity<String> {

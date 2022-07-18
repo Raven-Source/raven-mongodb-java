@@ -1,6 +1,5 @@
 package org.raven.mongodb.repository.query;
 
-import com.mongodb.client.model.Filters;
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;

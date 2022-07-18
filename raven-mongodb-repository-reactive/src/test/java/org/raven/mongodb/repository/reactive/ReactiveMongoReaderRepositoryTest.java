@@ -46,21 +46,21 @@ public class ReactiveMongoReaderRepositoryTest {
         List<User> list = null;
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
-        list = repos.getList(FindOptions.Empty()).block();
+        list = repos.findList(FindOptions.Empty()).block();
         Assert.assertNotEquals(list.size(), 0);
 
-        list = repos.getList(Filters.gte("_id", 1)).block();
+        list = repos.findList(Filters.gte("_id", 1)).block();
         Assert.assertNotEquals(list.size(), 0);
 
         for (User user : list) {
             Assert.assertNotNull(user.getName());
         }
 
-        list = repos.getList(Filters.eq("_id", 1)).block();
+        list = repos.findList(Filters.eq("_id", 1)).block();
         Assert.assertEquals(list.size(), 1);
 
 
-        list = repos.getList(null, null, Sorts.descending("_id"), 1, 0).block();
+        list = repos.findList(null, null, Sorts.descending("_id"), 1, 0).block();
         Assert.assertNotNull(list.get(0));
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getId().longValue(), 10);
@@ -73,29 +73,29 @@ public class ReactiveMongoReaderRepositoryTest {
         ReactiveMongoReadonlyRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         User user = null;
         for (long i = 1; i <= size; i++) {
-            user = repos.get(i).block().orElse(null);
+            user = repos.findOne(i).block().orElse(null);
             Assert.assertNotNull(user);
 
-            user = repos.get(Filters.eq("Name", user.getName())).block().orElse(null);
+            user = repos.findOne(Filters.eq("Name", user.getName())).block().orElse(null);
             Assert.assertNotNull(user);
 
-            user = repos.get(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
+            user = repos.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
                 add("_id");
             }}).block().orElse(null);
             Assert.assertEquals(user.getName(), null);
 
         }
 
-        user = repos.get(Filters.eq("Name", "_none")).block().orElse(null);
+        user = repos.findOne(Filters.eq("Name", "_none")).block().orElse(null);
         Assert.assertNull(user);
 
-        repos.get(Filters.eq("Name", "_none")).map(u -> {
+        repos.findOne(Filters.eq("Name", "_none")).map(u -> {
             Assert.assertTrue(u.isEmpty());
             return true;
         }).block();
 
         User2ReactiveRepositoryImpl repos2 = new User2ReactiveRepositoryImpl();
-        User2 user2 = repos2.get(1L).block().orElse(null);
+        User2 user2 = repos2.findOne(1L).block().orElse(null);
         Assert.assertNotNull(user2);
 
 

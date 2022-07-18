@@ -130,7 +130,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
         includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
 
         return Mono.from(
-                this.get(_filter, includeFields, null, options.hint(), options.readPreference())
+                this.findOne(_filter, includeFields, null, options.hint(), options.readPreference())
         ).map(Optional::isPresent);
     }
 

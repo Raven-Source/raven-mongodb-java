@@ -56,26 +56,26 @@ public class MongoReadonlyRepositoryTest {
 
         List<User> list = null;
 
-        list = repos.getList(FindOptions.Empty());
+        list = repos.findList(FindOptions.Empty());
         Assert.assertNotEquals(list.size(), 0);
 
-        list = repos.getList(Filters.gte("_id", 1));
+        list = repos.findList(Filters.gte("_id", 1));
         Assert.assertNotEquals(list.size(), 0);
 
         for (User user : list) {
             Assert.assertNotNull(user.getName());
         }
 
-        list = repos.getList(Filters.eq("_id", 1));
+        list = repos.findList(Filters.eq("_id", 1));
         Assert.assertEquals(list.size(), 1);
 
 
-        list = repos.getList(null, null, Sorts.descending("_id"), 1, 0);
+        list = repos.findList(null, null, Sorts.descending("_id"), 1, 0);
         Assert.assertNotNull(list.get(0));
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getId().longValue(), size);
 
-        list = repos.getList(Filters.eq("Mall._id", "m3"), null
+        list = repos.findList(Filters.eq("Mall._id", "m3"), null
                 , Sorts.descending("CreateDate"), size, 0
                 , Indexes.descending("CreateDate"), null);
 
@@ -88,24 +88,24 @@ public class MongoReadonlyRepositoryTest {
 
         User user = null;
         for (long i = 1; i <= size; i++) {
-            user = repos.get(i);
+            user = repos.findOne(i);
             Assert.assertNotNull(user);
 
-            user = repos.get(Filters.eq("Name", user.getName()));
+            user = repos.findOne(Filters.eq("Name", user.getName()));
             Assert.assertNotNull(user);
 
-            user = repos.get(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
+            user = repos.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
                 add("_id");
             }});
             Assert.assertEquals(user.getName(), null);
         }
 
         User2RepositoryImpl repos2 = new User2RepositoryImpl();
-        User2 user2 = repos2.get(1L);
+        User2 user2 = repos2.findOne(1L);
         Assert.assertNotNull(user2);
 
         Long id = user2.getId();
-        user2 = repos2.get(f -> {
+        user2 = repos2.findOne(f -> {
             return f.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
         });
         Assert.assertNotNull(user2);

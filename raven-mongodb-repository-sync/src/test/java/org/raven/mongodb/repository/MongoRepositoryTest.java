@@ -7,7 +7,6 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.codecs.Codec;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
@@ -16,7 +15,6 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.raven.mongodb.repository.codec.PojoCodecRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +62,7 @@ public class MongoRepositoryTest {
 
         Assert.assertNotEquals(user.getId().longValue(), 0);
 
-        user = repos.get(user.getId());
+        user = repos.findOne(user.getId());
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getName(), uuid);
 
@@ -116,7 +114,7 @@ public class MongoRepositoryTest {
         new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
-        List<User> users = repos.getList(FindOptions.Empty().limit(10));
+        List<User> users = repos.findList(FindOptions.Empty().limit(10));
 
         for (User user : users) {
             repos.updateOne(
@@ -143,7 +141,7 @@ public class MongoRepositoryTest {
         new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
-        List<User> users = repos.getList(FindOptions.Empty().limit(1));
+        List<User> users = repos.findList(FindOptions.Empty().limit(1));
         User user = users.get(0);
 
         int age = user.getAge();
@@ -171,7 +169,7 @@ public class MongoRepositoryTest {
         new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
-        List<User> users = repos.getList(FindOptions.Empty().limit(1));
+        List<User> users = repos.findList(FindOptions.Empty().limit(1));
         User user = users.get(0);
 
         Mall mall = new Mall();
@@ -188,7 +186,7 @@ public class MongoRepositoryTest {
 
         );
 
-        user = repos.get(user.getId());
+        user = repos.findOne(user.getId());
         Assert.assertEquals(user.getMall().getName(), mall.getName());
 
     }

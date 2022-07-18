@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 /**
  * @author yi.liang
  */
-@SuppressWarnings("unchecked")
 public final class BsonUtils {
 
     private BsonUtils() {
@@ -26,7 +25,7 @@ public final class BsonUtils {
         return new BsonDocumentWrapper<TEntity>(entity, encoder);
     }
 
-    public static Bson includeFields(@NonNull final List<String> includeFields) {
+    public static Bson includeFields(final List<String> includeFields) {
 
         Bson projection = null;
         if (includeFields != null && includeFields.size() > 0) {
