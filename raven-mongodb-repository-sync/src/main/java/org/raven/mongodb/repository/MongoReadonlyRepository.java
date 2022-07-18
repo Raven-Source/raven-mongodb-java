@@ -1,7 +1,5 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.ReadPreference;
-import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.operation.FindOperation;
 
 import java.util.List;
@@ -84,4 +82,21 @@ public interface MongoReadonlyRepository<TEntity, TKey>
 //     * @return exists
 //     */
 //    boolean exists(ExistsOptions existsOptions);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param findOptions 查询条件
+     * @return Result
+     */
+    <TResult> TResult findOne(final FindOptions findOptions, final Class<TResult> resultClass);
+
+    /**
+     * 根据条件获取获取列表
+     *
+     * @param findOptions FindOptions
+     * @return Result
+     */
+    <TResult> List<TResult> findList(final FindOptions findOptions, final Class<TResult> resultClass);
+
 }

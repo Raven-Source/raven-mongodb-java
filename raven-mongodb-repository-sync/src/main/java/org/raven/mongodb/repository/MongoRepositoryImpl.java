@@ -109,6 +109,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         return updateOne(filter, update, isUpsert, hint, writeConcern);
     }
 
+    //#endregion
+
     //#region findAndModify
 
     /**

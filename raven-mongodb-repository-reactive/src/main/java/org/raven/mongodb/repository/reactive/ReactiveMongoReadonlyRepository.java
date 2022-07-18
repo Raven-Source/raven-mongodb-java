@@ -1,9 +1,6 @@
 package org.raven.mongodb.repository.reactive;
 
-import com.mongodb.ReadPreference;
-import org.bson.conversions.Bson;
-import org.raven.mongodb.repository.CountOptions;
-import org.raven.mongodb.repository.ExistsOptions;
+import org.raven.mongodb.repository.FindOptions;
 import org.raven.mongodb.repository.operation.FindOperation;
 import reactor.core.publisher.Mono;
 
@@ -88,4 +85,21 @@ public interface ReactiveMongoReadonlyRepository<TEntity, TKey>
 //     * @return exists
 //     */
 //    Mono<Boolean> exists(ExistsOptions existsOptions);
+
+    /**
+     * 根据条件获取实体
+     *
+     * @param findOptions 查询条件
+     * @return Result
+     */
+    <TResult> Mono<Optional<TResult>> findOne(final FindOptions findOptions, final Class<TResult> resultClass);
+
+    /**
+     * 根据条件获取获取列表
+     *
+     * @param findOptions FindOptions
+     * @return Result
+     */
+    <TResult> Mono<List<TResult>> findList(final FindOptions findOptions, final Class<TResult> resultClass);
+
 }

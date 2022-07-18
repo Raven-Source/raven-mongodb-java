@@ -110,6 +110,11 @@ public class MongoReadonlyRepositoryTest {
         });
         Assert.assertNotNull(user2);
 
+        FindOptions findOptions = (FindOptions) FindOptions.Empty().filter(Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id));
+        user2 = repos.findOne(findOptions, User2.class);
+        user = repos.findOne(id);
+        Assert.assertEquals(user.getName(), user2.getName());
+
     }
 
     @Test

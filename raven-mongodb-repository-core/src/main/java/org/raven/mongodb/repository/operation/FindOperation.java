@@ -365,7 +365,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @param existsOptions ExistsOptions
      * @return exists
      */
-    default TExistsResult exists(ExistsOptions existsOptions){
+    default TExistsResult exists(ExistsOptions existsOptions) {
         return findProxy().doExists(existsOptions);
     }
 

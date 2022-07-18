@@ -191,18 +191,39 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 //    }
 
 
+    //region ext
+
+    @Override
+    public <TResult> TResult findOne(FindOptions findOptions, Class<TResult> resultClass) {
+        return doFindOne(findOptions, resultClass);
+    }
+
+    @Override
+    public <TResult> List<TResult> findList(FindOptions findOptions, Class<TResult> resultClass) {
+        return doFindList(findOptions, resultClass);
+    }
+
+    //#endregion
+
     //region protected
 
     protected TEntity doFindOne(final FindOptions options) {
-        return this.doFind(options, entityInformation.getEntityType()).first();
+        return this.doFindOne(options, entityInformation.getEntityType());
     }
 
+    protected <TResult> TResult doFindOne(final FindOptions options, Class<TResult> resultClass) {
+        return this.doFind(options, resultClass).first();
+    }
 
     protected List<TEntity> doFindList(final FindOptions options) {
-        FindIterable<TEntity> result = doFind(options, entityInformation.getEntityType());
+        return this.doFindList(options, entityInformation.getEntityType());
+    }
 
-        ArrayList<TEntity> list = new ArrayList<TEntity>();
-        for (TEntity entity : result) {
+    protected <TResult> List<TResult> doFindList(final FindOptions options, Class<TResult> resultClass) {
+        FindIterable<TResult> result = doFind(options, resultClass);
+
+        ArrayList<TResult> list = new ArrayList<>();
+        for (TResult entity : result) {
             list.add(entity);
         }
 

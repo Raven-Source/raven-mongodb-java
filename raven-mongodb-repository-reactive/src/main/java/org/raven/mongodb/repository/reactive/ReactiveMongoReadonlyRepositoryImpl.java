@@ -87,17 +87,39 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
 
     //#endregion
 
+    //region ext
+
+    @Override
+    public <TResult> Mono<Optional<TResult>> findOne(FindOptions findOptions, Class<TResult> resultClass) {
+        return doFindOne(findOptions, resultClass);
+    }
+
+    @Override
+    public <TResult> Mono<List<TResult>> findList(FindOptions findOptions, Class<TResult> resultClass) {
+        return doFindList(findOptions, resultClass);
+    }
+
+    //#endregion
+
     //region protected
 
     protected Mono<Optional<TEntity>> doFindOne(final FindOptions options) {
+        return this.doFindOne(options, entityInformation.getEntityType());
+    }
+
+    protected <TResult> Mono<Optional<TResult>> doFindOne(final FindOptions options, Class<TResult> resultClass) {
         return Mono.from(
-                this.doFind(options, entityInformation.getEntityType()).first()
+                this.doFind(options, resultClass).first()
         ).map(Optional::of).defaultIfEmpty(Optional.empty());
     }
 
     protected Mono<List<TEntity>> doFindList(final FindOptions options) {
+        return this.doFindList(options, entityInformation.getEntityType());
+    }
+
+    protected <TResult> Mono<List<TResult>> doFindList(final FindOptions options, Class<TResult> resultClass) {
         return Flux.from(
-                doFind(options, entityInformation.getEntityType())
+                doFind(options, resultClass)
         ).collectList();
     }
 
