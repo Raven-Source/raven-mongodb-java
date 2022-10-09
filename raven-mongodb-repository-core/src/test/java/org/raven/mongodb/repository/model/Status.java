@@ -1,4 +1,4 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.model;
 
 
 import org.raven.commons.data.ValueType;

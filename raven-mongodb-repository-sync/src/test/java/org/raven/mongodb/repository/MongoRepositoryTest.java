@@ -7,6 +7,7 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.BsonDocument;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
@@ -15,6 +16,8 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.raven.mongodb.repository.model.Mall;
+import org.raven.mongodb.repository.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +60,11 @@ public class MongoRepositoryTest {
         user.setName(uuid);
         user.setAge(123);
 
-        MongoRepository<User, Long> repos = new UserRepositoryImpl();
+        UserRepositoryImpl repos = new UserRepositoryImpl();
+
+        BsonDocument bsonDocument = repos.getEntityInformation().toBsonDocument(user);
+        int size = bsonDocument.size();
+
         repos.insert(user);
 
         Assert.assertNotEquals(user.getId().longValue(), 0);

@@ -15,9 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.raven.mongodb.repository.reactive.withobjectid.User_ObjectID;
+import org.raven.mongodb.repository.model.User_ObjectID;
+import org.raven.mongodb.repository.model.User_StringID;
 import org.raven.mongodb.repository.reactive.withobjectid.User_ObjectIDRepository;
-import org.raven.mongodb.repository.reactive.withstringid.User_StringID;
 import org.raven.mongodb.repository.reactive.withstringid.User_StringIDRepository;
 import reactor.core.publisher.Mono;
 

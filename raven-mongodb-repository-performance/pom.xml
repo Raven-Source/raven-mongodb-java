@@ -12,16 +12,7 @@
     <artifactId>raven-mongodb-repository-performance</artifactId>
 
     <properties>
-
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
-        <lombok.version>1.18.20</lombok.version>
-        <raven-logger.version>1.1.1</raven-logger.version>
-        <raven-commons.version>3.1.2</raven-commons.version>
-        <raven-serializer-withJackson.version>3.1.2</raven-serializer-withJackson.version>
-
+        <raven-logger.version>2.0.2</raven-logger.version>
     </properties>
 
     <dependencies>
@@ -35,24 +26,6 @@
                     <artifactId>raven-serializer-withJackson</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.raven-source</groupId>
-            <artifactId>raven-serializer-withJackson</artifactId>
-            <version>${raven-serializer-withJackson.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>lombok</artifactId>
-                    <groupId>org.projectlombok</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
 
         <dependency>

@@ -1,28 +1,31 @@
-package org.raven.mongodb.repository;
-
+package org.raven.mongodb.repository.model;
+import lombok.experimental.FieldNameConstants;
 import org.bson.codecs.pojo.annotations.BsonId;
-import org.raven.commons.data.AutoIncr;
+import org.raven.commons.data.Entity;
 import org.raven.commons.data.MemberFormatType;
 import org.raven.commons.data.annotation.Contract;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Contract(formatType = MemberFormatType.PascalCase)
-public class User2 implements AutoIncr<Long> {
-    @BsonId()
-    private Long id;
+@FieldNameConstants
+public class Mall implements Entity<String> {
+
+    @BsonId
+    private String id;
 
     private String name;
 
-    private LocalDateTime createTime;
-
-    public Long getId() {
+    @Override
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(String id) {
         this.id = id;
     }
+
 
     public String getName() {
         return name;
@@ -30,10 +33,6 @@ public class User2 implements AutoIncr<Long> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public User2() {
-        id = 0L;
     }
 
 }

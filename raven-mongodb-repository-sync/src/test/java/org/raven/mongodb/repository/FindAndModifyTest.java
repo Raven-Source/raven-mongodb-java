@@ -5,6 +5,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.junit.Before;
 import org.junit.Test;
+import org.raven.mongodb.repository.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

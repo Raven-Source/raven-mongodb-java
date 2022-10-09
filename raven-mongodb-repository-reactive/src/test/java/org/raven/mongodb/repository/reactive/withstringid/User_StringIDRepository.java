@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository.reactive.withstringid;
 
+import org.raven.mongodb.repository.model.User_StringID;
 import org.raven.mongodb.repository.reactive.MongoSessionInstance;
 import org.raven.mongodb.repository.reactive.ReactiveMongoRepositoryImpl;
 

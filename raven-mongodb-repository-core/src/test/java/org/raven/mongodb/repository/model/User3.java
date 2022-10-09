@@ -1,4 +1,4 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,6 @@ import org.raven.commons.data.Versioned;
 import org.raven.commons.data.annotation.Contract;
 import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
-import org.raven.mongodb.repository.interceptors.EntityInterceptor;
 import org.raven.mongodb.repository.interceptors.VersionedEntityInterceptor;
 
 import java.util.Date;
@@ -21,13 +20,28 @@ import java.util.Date;
 @FieldNameConstants
 @Getter
 @Setter
-@EntityListeners({UserExtend.TestInterceptor.class, VersionedEntityInterceptor.class})
-public class UserExtend extends User {
-    String remark;
+@EntityListeners({DeletableInterceptor.class, VersionedEntityInterceptor.class})
+public class User3 implements AutoIncr<Long>, Deletable, Versioned<Long> {
+    @BsonId()
+    private Long id;
 
-    public static class TestInterceptor implements EntityInterceptor {
+    private String name;
 
+    private int age;
+
+    private Long version = 0L;
+
+    @BsonIgnore
+    private Status status;
+
+    private Boolean deleted = Boolean.FALSE;
+
+    private Date createDate;
+
+    private Mall mall;
+
+    public User3() {
+        status = Status.Normal;
+        createDate = new Date();
     }
 }
-
-

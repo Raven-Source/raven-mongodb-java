@@ -1,11 +1,12 @@
 package org.raven.mongodb.repository;
 
-import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
 import org.raven.mongodb.repository.interceptors.VersionedEntityInterceptor;
+import org.raven.mongodb.repository.model.User;
+import org.raven.mongodb.repository.model.UserExtend;
 
 import java.lang.reflect.Field;
 import java.util.Set;

@@ -4,19 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
-import org.raven.mongodb.repository.query.HintBuilder;
+import org.raven.mongodb.repository.model.User;
+import org.raven.mongodb.repository.query.SortBuilder;
 
 /**
  * @author by yanfeng
  * date 2021/9/13 0:07
  */
 @Slf4j
-public class HintBuilderTest {
+public class SortBuilderTest {
 
     @Test
     public void updaterTest() {
 
-        HintBuilder<User> updateBuilder = new HintBuilder<>(User.class);
+        SortBuilder<User> updateBuilder = new SortBuilder<>(User.class);
         updateBuilder
                 .ascending("a")
                 .descending("b")

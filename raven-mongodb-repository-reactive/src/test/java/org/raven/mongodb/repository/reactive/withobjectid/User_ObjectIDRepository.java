@@ -2,6 +2,7 @@ package org.raven.mongodb.repository.reactive.withobjectid;
 
 import org.bson.types.ObjectId;
 
+import org.raven.mongodb.repository.model.User_ObjectID;
 import org.raven.mongodb.repository.reactive.MongoSessionInstance;
 import org.raven.mongodb.repository.reactive.ReactiveMongoRepositoryImpl;
 

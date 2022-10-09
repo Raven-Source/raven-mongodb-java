@@ -6,14 +6,13 @@
     <parent>
         <groupId>io.github.raven-source</groupId>
         <artifactId>raven-framework</artifactId>
-        <version>4.0.4</version>
+        <version>4.0.6</version>
     </parent>
 
     <artifactId>raven-mongodb</artifactId>
     <version>3.0.0</version>
     <packaging>pom</packaging>
     <modules>
-<!--        <module>raven-mongodb-repository-async</module>-->
         <module>raven-mongodb-repository-core</module>
         <module>raven-mongodb-repository-spi</module>
         <module>raven-mongodb-repository-sync</module>
@@ -28,7 +27,7 @@
         <encoding>UTF-8</encoding>
         <java.version>11</java.version>
 
-        <raven-framework.version>4.0.4</raven-framework.version>
+        <raven-framework.version>4.0.6</raven-framework.version>
         <mongodb-driver.version>4.4.2</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>

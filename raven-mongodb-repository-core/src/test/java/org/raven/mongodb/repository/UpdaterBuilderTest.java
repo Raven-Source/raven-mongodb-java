@@ -1,13 +1,11 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.client.model.Updates;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
-import org.raven.mongodb.repository.query.FieldNest;
-import org.raven.mongodb.repository.query.FilterBuilder;
+import org.raven.mongodb.repository.model.Mall;
+import org.raven.mongodb.repository.model.User;
 import org.raven.mongodb.repository.query.UpdateBuilder;
 
 import java.util.List;

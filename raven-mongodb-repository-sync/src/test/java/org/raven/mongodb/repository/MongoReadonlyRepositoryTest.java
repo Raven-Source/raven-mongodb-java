@@ -9,6 +9,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.raven.mongodb.repository.contants.BsonConstant;
+import org.raven.mongodb.repository.model.Mall;
+import org.raven.mongodb.repository.model.User;
+import org.raven.mongodb.repository.model.User2;
 
 import java.util.ArrayList;
 import java.util.List;

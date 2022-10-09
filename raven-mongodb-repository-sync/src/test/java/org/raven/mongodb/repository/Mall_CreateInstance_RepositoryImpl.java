@@ -1,6 +1,6 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.WriteConcern;
+import org.raven.mongodb.repository.model.Mall;
 
 public class Mall_CreateInstance_RepositoryImpl extends MongoRepositoryImpl<Mall, String> {
     private Mall_CreateInstance_RepositoryImpl() {

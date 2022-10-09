@@ -15,9 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.raven.mongodb.repository.withobjectid.User_ObjectID;
+import org.raven.mongodb.repository.model.User_ObjectID;
 import org.raven.mongodb.repository.withobjectid.User_ObjectIDRepository;
-import org.raven.mongodb.repository.withstringid.User_StringID;
+import org.raven.mongodb.repository.model.User_StringID;
 import org.raven.mongodb.repository.withstringid.User_StringIDRepository;
 
 import java.util.*;
@@ -169,12 +169,12 @@ public class UserServiceTest {
             int random1 = GetRandomInt(0, 26);
             int random2 = GetRandomInt(0, 26);
             //String id = abcList.get(random1) + "_" + abcList.get(random2) + "_" + i;
-            String id = UUID.randomUUID().toString();
+//            String id = UUID.randomUUID().toString();
             User_StringID us = null;
             if (i % 2 == 0) {
-                us = GetUS(id, "RandomMan1");
+                us = GetUS(null, "RandomMan1");
             } else {
-                us = GetUS(id, "RandomMan2", null, null);
+                us = GetUS(null, "RandomMan2", null, null);
             }
             usList.add(us);
         }

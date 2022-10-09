@@ -1,4 +1,4 @@
-package org.raven.mongodb.repository.withobjectid;
+package org.raven.mongodb.repository.model;
 
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;

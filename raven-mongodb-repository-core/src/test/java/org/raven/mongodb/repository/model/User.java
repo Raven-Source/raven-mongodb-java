@@ -1,4 +1,4 @@
-package org.raven.mongodb.repository;
+package org.raven.mongodb.repository.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +14,7 @@ import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
 import org.raven.mongodb.repository.interceptors.VersionedEntityInterceptor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Contract(formatType = MemberFormatType.PascalCase)
@@ -21,7 +22,7 @@ import java.util.Date;
 @Getter
 @Setter
 @EntityListeners({DeletableInterceptor.class, VersionedEntityInterceptor.class})
-public class User3 implements AutoIncr<Long>, Deletable, Versioned<Long> {
+public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
     @BsonId()
     private Long id;
 
@@ -40,7 +41,9 @@ public class User3 implements AutoIncr<Long>, Deletable, Versioned<Long> {
 
     private Mall mall;
 
-    public User3() {
+    private BigDecimal price = BigDecimal.valueOf(321.14);
+
+    public User() {
         status = Status.Normal;
         createDate = new Date();
     }

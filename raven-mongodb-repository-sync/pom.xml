@@ -29,6 +29,14 @@
             <version>${mongodb-driver.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.raven-source</groupId>
+            <artifactId>raven-mongodb-repository-core</artifactId>
+            <version>${raven-mongodb.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

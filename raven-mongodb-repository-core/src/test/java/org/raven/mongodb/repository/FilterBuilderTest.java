@@ -5,6 +5,9 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
+import org.raven.mongodb.repository.model.Mall;
+import org.raven.mongodb.repository.model.Status;
+import org.raven.mongodb.repository.model.User;
 import org.raven.mongodb.repository.query.FieldNest;
 import org.raven.mongodb.repository.query.FilterBuilder;
 import org.raven.mongodb.repository.query.Operator;
@@ -105,6 +108,31 @@ public class FilterBuilderTest {
 
         bson = new FilterBuilder<>(User.class).build();
         log.info(bson.toBsonDocument().toJson());
+
+
+
+    }
+
+    @Test
+    public void bsonDocTest(){
+
+        FilterBuilder<BsonDocument> filterBuilder = new FilterBuilder<>(BsonDocument.class);
+
+        filterBuilder.eq("a", "1")
+                .ne("b", 2)
+                .gt("c", 3)
+                .lt("d", 4)
+                .gte("e", 5)
+                .lte("f", 6)
+                .in("g", 7, 8, 9)
+                .nin("h", 10, 11, 12);
+
+
+        Bson bson = filterBuilder.build();
+        log.info(bson.toBsonDocument().toJson());
+        Assert.assertEquals("{\"$and\": [{\"a\": \"1\"}, {\"b\": {\"$ne\": 2}}, {\"c\": {\"$gt\": 3}}, {\"d\": {\"$lt\": 4}}, {\"e\": {\"$gte\": 5}}, {\"f\": {\"$lte\": 6}}, {\"g\": {\"$in\": [7, 8, 9]}}, {\"h\": {\"$nin\": [10, 11, 12]}}]}",
+                bson.toBsonDocument().toJson()
+        );
     }
 
 
