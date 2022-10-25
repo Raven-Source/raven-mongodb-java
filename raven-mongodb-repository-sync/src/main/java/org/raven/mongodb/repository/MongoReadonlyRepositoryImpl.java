@@ -265,7 +265,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     private final FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy =
-            new FindProxy<>() {
+            new FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean>() {
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
                     return MongoReadonlyRepositoryImpl.this.entityInformation;

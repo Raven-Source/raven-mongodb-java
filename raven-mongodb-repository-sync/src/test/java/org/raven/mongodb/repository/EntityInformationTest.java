@@ -9,6 +9,9 @@ import org.raven.mongodb.repository.model.User;
 import org.raven.mongodb.repository.model.UserExtend;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -32,9 +35,9 @@ public class EntityInformationTest {
         EntityInformation<User, Long> entityInformation = (EntityInformation<User, Long>) field.get(userRepository);
 
         Assert.assertEquals(entityInformation.getInterceptors().size(), 2);
-        Set<Class> set = Set.of(DeletableInterceptor.class, VersionedEntityInterceptor.class);
+        Set<Class<?>> set = new HashSet<>(Arrays.asList(DeletableInterceptor.class, VersionedEntityInterceptor.class));
         for (EntityInterceptor interceptor : entityInformation.getInterceptors()) {
-            Assert.assertEquals(set.contains(interceptor.getClass()), true);
+            Assert.assertTrue(set.contains(interceptor.getClass()));
         }
 
 
@@ -44,9 +47,9 @@ public class EntityInformationTest {
         EntityInformation<UserExtend, Long> userExtendEntityInformation = (EntityInformation<UserExtend, Long>) field.get(userExtendRepository);
 
         Assert.assertEquals(userExtendEntityInformation.getInterceptors().size(), 3);
-        set = Set.of(UserExtend.TestInterceptor.class, DeletableInterceptor.class, VersionedEntityInterceptor.class);
+        set = new HashSet<>(Arrays.asList(UserExtend.TestInterceptor.class, DeletableInterceptor.class, VersionedEntityInterceptor.class));
         for (EntityInterceptor interceptor : entityInformation.getInterceptors()) {
-            Assert.assertEquals(set.contains(interceptor.getClass()), true);
+            Assert.assertTrue(set.contains(interceptor.getClass()));
         }
 
 

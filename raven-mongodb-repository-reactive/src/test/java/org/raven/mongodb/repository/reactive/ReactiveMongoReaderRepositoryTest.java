@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("")
 public class ReactiveMongoReaderRepositoryTest {
-    private int size = 10;
+    private final int size = 10;
 
     @Before
-    public void init() throws Exception {
+    public void init()  {
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         Mono.from(repos.getDatabase().drop()).block();
@@ -90,7 +91,7 @@ public class ReactiveMongoReaderRepositoryTest {
         Assert.assertNull(user);
 
         repos.findOne(Filters.eq("Name", "_none")).map(u -> {
-            Assert.assertTrue(u.isEmpty());
+            Assert.assertTrue(!u.isPresent());
             return true;
         }).block();
 

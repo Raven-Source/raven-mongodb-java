@@ -10,6 +10,7 @@ import org.raven.mongodb.repository.BsonUtils;
 import org.raven.mongodb.repository.EntityInformation;
 import org.raven.mongodb.repository.UpdateOptions;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,7 +58,7 @@ public class DeletableInterceptor implements EntityInterceptor {
             BsonDocument bsonDocument = filter.toBsonDocument();
             if (!bsonDocument.containsKey(propertyModel.getName())) {
 
-                return BsonUtils.combine(List.of(filter, delBson));
+                return BsonUtils.combine(Arrays.asList(filter, delBson));
             } else {
                 return filter;
             }

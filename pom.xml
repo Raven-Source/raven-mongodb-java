@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.raven-source</groupId>
         <artifactId>raven-framework</artifactId>
-        <version>4.0.6</version>
+        <version>4.0.7</version>
     </parent>
 
     <artifactId>raven-mongodb</artifactId>
@@ -25,9 +25,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <encoding>UTF-8</encoding>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
 
-        <raven-framework.version>4.0.6</raven-framework.version>
+        <raven-framework.version>4.0.7</raven-framework.version>
         <mongodb-driver.version>4.4.2</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>
@@ -79,6 +81,19 @@
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- mvn versions:set -DprocessAllModules=true -DnewVersion=1.x-SNAPSHOT -->
             <plugin>

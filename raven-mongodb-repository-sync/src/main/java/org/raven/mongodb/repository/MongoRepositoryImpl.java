@@ -269,7 +269,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     private final ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> proxy =
-            new ModifyProxy<>() {
+            new ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult>() {
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
                     return entityInformation;

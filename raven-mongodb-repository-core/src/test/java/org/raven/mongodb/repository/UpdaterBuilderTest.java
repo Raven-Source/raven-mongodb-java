@@ -8,7 +8,7 @@ import org.raven.mongodb.repository.model.Mall;
 import org.raven.mongodb.repository.model.User;
 import org.raven.mongodb.repository.query.UpdateBuilder;
 
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * @author by yanfeng
@@ -39,11 +39,11 @@ public class UpdaterBuilderTest {
                 .currentDate("j")
                 .currentTimestamp("k")
                 .addToSet("l", 12)
-                .addEachToSet("m", List.of(13, 14, 15))
+                .addEachToSet("m", Arrays.asList(13, 14, 15))
                 .push("n", 16)
-                .pushEach("o", List.of(17, 18, 19))
+                .pushEach("o",Arrays.asList(17, 18, 19))
                 .pull("p", 20)
-                .pullAll("q", List.of(21, 22))
+                .pullAll("q", Arrays.asList(21, 22))
                 .popFirst("r")
                 .popLast("s")
                 .bitwiseAnd("t", 10);

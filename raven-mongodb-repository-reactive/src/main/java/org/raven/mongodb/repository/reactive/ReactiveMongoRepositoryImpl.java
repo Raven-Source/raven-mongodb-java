@@ -303,7 +303,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     private final ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> proxy =
-            new ModifyProxy<>() {
+            new ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>>() {
 
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {

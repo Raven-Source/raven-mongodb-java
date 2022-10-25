@@ -163,7 +163,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
 
     private final FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> proxy =
 
-            new FindProxy<>() {
+            new FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>>() {
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
                     return ReactiveMongoReadonlyRepositoryImpl.this.entityInformation;
