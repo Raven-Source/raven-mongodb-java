@@ -266,22 +266,19 @@ public class UserServiceTest {
     @Test
     public void a04Update() throws MongoException {
         String id = "abc_123";//有
-        UpdateResult updateResult1 = usRep.updateOne(Filters.eq("_id", id), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED);
-        Assert.assertEquals(updateResult1.getMatchedCount(), 1);
-        Assert.assertTrue(updateResult1.getModifiedCount() <= 1);
+        long updateResult1 = usRep.updateOne(Filters.eq("_id", id), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(1L, updateResult1);
 
         User_StringID us = GetUS(id, "UUU");
-        UpdateResult updateResult2 = usRep.updateOne(Filters.eq("_id", id), us, false, WriteConcern.ACKNOWLEDGED);
-        Assert.assertEquals(updateResult2.getMatchedCount(), 1);
-        Assert.assertEquals(updateResult2.getModifiedCount(), 1);
+        long updateResult2 = usRep.updateOne(Filters.eq("_id", id), us, false, WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(updateResult2, 1L);
 
         String id2 = "sdsdfsd21f3d123123";//没有
-        UpdateResult updateResult3 = usRep.updateOne(Filters.eq("_id", id2), Updates.set("Name", "Update_OK"), true, WriteConcern.ACKNOWLEDGED);
+        long updateResult3 = usRep.updateOne(Filters.eq("_id", id2), Updates.set("Name", "Update_OK"), true, WriteConcern.ACKNOWLEDGED);
 
         Bson updateManyFilter = Filters.or(Filters.eq("_id", id), Filters.eq("_id", id2));
-        UpdateResult updateResult4 = usRep.updateMany(updateManyFilter, Updates.set("Name", "Update_OK"), WriteConcern.ACKNOWLEDGED);
-        Assert.assertTrue(updateResult4.getMatchedCount() >= 1);
-        Assert.assertTrue(updateResult4.getModifiedCount() <= 1);
+        long updateResult4 = usRep.updateMany(updateManyFilter, Updates.set("Name", "Update_OK"), WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(1L, updateResult4);
     }
 
     /**
@@ -328,14 +325,14 @@ public class UserServiceTest {
         String id = "ghi_789";//有
         String id2 = "12321dsfdf";//没有
         String id3 = "mno_131415";//有
-        DeleteResult drl1 = usRep.deleteOne(Filters.eq("_id", id));
+        Long drl1 = usRep.deleteOne(Filters.eq("_id", id));
 
-        DeleteResult drl2 = usRep.deleteOne(Filters.eq("_id", id2), WriteConcern.ACKNOWLEDGED);
+        Long drl2 = usRep.deleteOne(Filters.eq("_id", id2), WriteConcern.ACKNOWLEDGED);
         Assert.assertNotNull(drl2);
-        Assert.assertEquals(drl2.getDeletedCount(), 0);
+        Assert.assertEquals(0L, (long) drl2);
 
         Bson filter = Filters.and(Filters.eq("_id", id), Filters.eq("_id", id2), Filters.eq("_id", id3));
-        DeleteResult drl3 = usRep.deleteMany(filter);
+        Long drl3 = usRep.deleteMany(filter);
     }
     //#endregion
 
@@ -421,7 +418,7 @@ public class UserServiceTest {
         User_ObjectID uoModel = GetUO("啦啦啦啦11");
         Bson filterUpdate = Filters.eq("Name", "啦啦啦啦13");
         long count2 = uoRep.count(filterUpdate);
-        UpdateResult update = uoRep.updateOne(filterUpdate, uoModel, true, null);
+        long update = uoRep.updateOne(filterUpdate, uoModel, true, null);
         //BsonValue bv = update.getUpsertedId();
 
         Bson filter = Filters.eq("Name", "bb");
@@ -456,9 +453,8 @@ public class UserServiceTest {
             Bson filter = Filters.eq("_id", new ObjectId(objID));
             filterList.add(filter);
         }
-        DeleteResult drl = uoRep.deleteMany(Filters.or(filterList), WriteConcern.ACKNOWLEDGED);
-        Assert.assertNotNull(drl);
-        Assert.assertTrue(drl.getDeletedCount() == objectIDList.size());
+        long drl = uoRep.deleteMany(Filters.or(filterList), WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(drl, objectIDList.size());
     }
 
     /**
@@ -472,14 +468,12 @@ public class UserServiceTest {
     public void a10UpdateObjectID() throws MongoException {
         User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb"));
         Assert.assertNotNull(getUo);
-        UpdateResult updateResult1 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED);
-        Assert.assertEquals(updateResult1.getMatchedCount(), 1);
-        Assert.assertEquals(updateResult1.getModifiedCount(), 1);
+        long updateResult1 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(updateResult1, 1L);
 
         User_ObjectID us = GetUO("UpOK");
-        UpdateResult updateResult2 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), us, true, WriteConcern.ACKNOWLEDGED);
-        Assert.assertTrue(updateResult2.getMatchedCount() >= 0);
-        Assert.assertTrue(updateResult2.getModifiedCount() >= 0);
+        long updateResult2 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), us, true, WriteConcern.ACKNOWLEDGED);
+        Assert.assertTrue(updateResult2 >= 0);
     }
     //#endregion
 }

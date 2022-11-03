@@ -10,6 +10,7 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
+import org.raven.mongodb.repository.BsonUtils;
 import org.raven.mongodb.repository.MongoSequence;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -113,15 +114,7 @@ public class IncrementReactiveIdGeneration<TKey extends Number> implements React
     }
 
     private TKey convert(Long id) {
-
-        if (keyClazz.equals(Integer.class)) {
-            return (TKey) Integer.valueOf(id.intValue());
-        } else if (keyClazz.equals(Long.class)) {
-            return (TKey) id;
-        } else if (keyClazz.equals(Short.class)) {
-            return (TKey) Short.valueOf(id.shortValue());
-        }
-        return null;
+        return BsonUtils.convert(keyClazz, id);
     }
 
 }

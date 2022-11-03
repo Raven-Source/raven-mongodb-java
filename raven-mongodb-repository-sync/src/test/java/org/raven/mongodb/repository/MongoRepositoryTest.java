@@ -5,7 +5,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.codecs.pojo.ClassModel;
@@ -136,9 +135,9 @@ public class MongoRepositoryTest {
 
         User user = users.get(0);
 
-        UpdateResult result = repos.updateOne(Filters.eq("_id", user.getId()), user);
+        Long result = repos.updateOne(Filters.eq("_id", user.getId()), user);
 
-        Assert.assertEquals(result.getModifiedCount() > 0, true);
+        Assert.assertEquals(result > 0, true);
 
     }
 

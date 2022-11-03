@@ -10,6 +10,7 @@ import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import lombok.NonNull;
 import org.bson.BsonDocument;
+import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.annotations.PreUpdate;
@@ -20,7 +21,9 @@ import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -102,7 +105,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return UpdateResult
      */
     @Override
-    public UpdateResult updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
+    public Long updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
 
         Bson update = createUpdateBson(updateEntity, isUpsert);
 
@@ -264,30 +267,45 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //endregion
 
     @Override
-    public ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> modifyProxy() {
+    public ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyProxy() {
         return proxy;
     }
 
-    private final ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult> proxy =
-            new ModifyProxy<TEntity, TKey, InsertOneResult, InsertManyResult, UpdateResult, TEntity, DeleteResult>() {
+    private final ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> proxy =
+            new ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long>() {
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
                     return entityInformation;
                 }
 
                 @Override
-                protected InsertOneResult doInsert(TEntity entity, WriteConcern writeConcern) {
-                    return MongoRepositoryImpl.this.doInsert(entity, writeConcern);
+                protected TKey doInsert(TEntity entity, WriteConcern writeConcern) {
+                    InsertOneResult insertOneResult = MongoRepositoryImpl.this.doInsert(entity, writeConcern);
+                    return insertOneResult.wasAcknowledged()
+                            ? BsonUtils.convert(entityInformation.getIdType(), insertOneResult.getInsertedId())
+                            : null;
                 }
 
                 @Override
-                protected InsertManyResult doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
-                    return MongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
+                protected Map<Integer, TKey> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                    InsertManyResult insertManyResult = MongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
+
+                    Map<Integer, TKey> integerTKeyMap = new HashMap<>();
+                    if (insertManyResult.wasAcknowledged()) {
+                        for (Map.Entry<Integer, BsonValue> e : insertManyResult.getInsertedIds().entrySet()) {
+                            integerTKeyMap.put(
+                                    e.getKey(),
+                                    BsonUtils.convert(entityInformation.getIdType(), e.getValue()))
+                            ;
+                        }
+                    }
+                    return integerTKeyMap;
                 }
 
                 @Override
-                protected UpdateResult doUpdate(@NonNull UpdateOptions options, UpdateType updateType) {
-                    return MongoRepositoryImpl.this.doUpdate(options, updateType);
+                protected Long doUpdate(@NonNull UpdateOptions options, UpdateType updateType) {
+                    UpdateResult updateResult = MongoRepositoryImpl.this.doUpdate(options, updateType);
+                    return updateResult.wasAcknowledged() ? updateResult.getModifiedCount() : 0;
                 }
 
                 @Override
@@ -301,13 +319,15 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                protected DeleteResult doDeleteOne(DeleteOptions options) {
-                    return MongoRepositoryImpl.this.doDeleteOne(options);
+                protected Long doDeleteOne(DeleteOptions options) {
+                    DeleteResult deleteResult = MongoRepositoryImpl.this.doDeleteOne(options);
+                    return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
                 }
 
                 @Override
-                protected DeleteResult doDeleteMany(DeleteOptions options) {
-                    return MongoRepositoryImpl.this.doDeleteMany(options);
+                protected Long doDeleteMany(DeleteOptions options) {
+                    DeleteResult deleteResult = MongoRepositoryImpl.this.doDeleteMany(options);
+                    return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
                 }
             };
 

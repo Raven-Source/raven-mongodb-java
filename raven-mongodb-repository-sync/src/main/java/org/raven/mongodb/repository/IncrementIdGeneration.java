@@ -31,9 +31,9 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
     private final Supplier<MongoDatabase> databaseSupplier;
 
     public IncrementIdGeneration(@NonNull String collectionName
-        , @NonNull Sequence sequence
-        , @NonNull Class<TKey> keyClazz
-        , @NonNull Supplier<MongoDatabase> databaseSupplier) {
+            , @NonNull Sequence sequence
+            , @NonNull Class<TKey> keyClazz
+            , @NonNull Supplier<MongoDatabase> databaseSupplier) {
 
         if (!keyClazz.equals(Integer.class) && !keyClazz.equals(Long.class) && keyClazz.equals(Short.class)) {
             throw new MongoException(String.format("The TKey %s, is Unsupported type", keyClazz.getName()));
@@ -91,15 +91,7 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
     }
 
     private TKey convert(Long id) {
-
-        if (keyClazz.equals(Integer.class)) {
-            return (TKey) Integer.valueOf(id.intValue());
-        } else if (keyClazz.equals(Long.class)) {
-            return (TKey) id;
-        } else if (keyClazz.equals(Short.class)) {
-            return (TKey) Short.valueOf(id.shortValue());
-        }
-        return null;
+        return BsonUtils.convert(keyClazz, id);
     }
 
 }

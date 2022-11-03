@@ -5,8 +5,10 @@ import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentWrapper;
 import org.bson.BsonValue;
+import org.bson.codecs.BsonCodec;
 import org.bson.codecs.Encoder;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Map;
@@ -91,4 +93,38 @@ public final class BsonUtils {
 //
 //    }
 
+    @SuppressWarnings({"unchecked"})
+    public static <TKey extends Number> TKey convert(final Class<TKey> keyClazz, Number id) {
+
+        if (id.getClass().equals(keyClazz)) {
+            return (TKey) id;
+        } else if (keyClazz.equals(Integer.class)) {
+            return (TKey) Integer.valueOf(id.intValue());
+        } else if (keyClazz.equals(Long.class)) {
+            return (TKey) Long.valueOf(id.longValue());
+        }
+        return null;
+
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static <TKey> TKey convert(final Class<TKey> keyClazz, BsonValue id) {
+
+        if (keyClazz.equals(Integer.class)) {
+            return (TKey) Integer.valueOf(id.asInt32().intValue());
+        } else if (keyClazz.equals(Long.class)) {
+            return (TKey) Long.valueOf(id.asInt64().longValue());
+        } else if (keyClazz.equals(ObjectId.class)) {
+            return (TKey) id.asObjectId().getValue();
+        } else if (keyClazz.equals(String.class)) {
+            if (id.isString()) {
+                return (TKey) id.asString().getValue();
+            } else if (id.isObjectId()) {
+                return (TKey) id.asObjectId().getValue().toHexString();
+            }
+        }
+
+        return null;
+
+    }
 }

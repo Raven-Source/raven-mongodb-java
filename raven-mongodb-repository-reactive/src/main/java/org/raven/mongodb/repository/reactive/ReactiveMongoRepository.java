@@ -8,6 +8,9 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.operation.ModifyOperation;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+import java.util.Optional;
+
 
 /**
  * @param <TEntity> TEntity
@@ -17,6 +20,6 @@ import reactor.core.publisher.Mono;
  */
 public interface ReactiveMongoRepository<TEntity extends Entity<TKey>, TKey>
         extends ReactiveMongoReadonlyRepository<TEntity, TKey>
-        , ModifyOperation<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> {
+        , ModifyOperation<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> {
 
 }

@@ -9,8 +9,10 @@ import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.NonNull;
 import org.bson.BsonDocument;
+import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.BsonUtils;
 import org.raven.mongodb.repository.EntityInformation;
 import org.raven.mongodb.repository.MongoOptions;
 import org.raven.mongodb.repository.UpdateType;
@@ -23,7 +25,10 @@ import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -107,7 +112,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @return UpdateResult
      */
     @Override
-    public Mono<UpdateResult> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
+    public Mono<Long> updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
 
         return createUpdateBson(updateEntity, isUpsert).flatMap(update ->
                 this.updateOne(filter, update, isUpsert, hint, writeConcern)
@@ -298,12 +303,12 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //endregion
 
     @Override
-    public ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> modifyProxy() {
+    public ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyProxy() {
         return proxy;
     }
 
-    private final ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>> proxy =
-            new ModifyProxy<TEntity, TKey, Mono<InsertOneResult>, Mono<InsertManyResult>, Mono<UpdateResult>, Mono<TEntity>, Mono<DeleteResult>>() {
+    private final ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> proxy =
+            new ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>>() {
 
                 @Override
                 protected EntityInformation<TEntity, TKey> getEntityInformation() {
@@ -311,18 +316,40 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                protected Mono<InsertOneResult> doInsert(TEntity entity, WriteConcern writeConcern) {
-                    return ReactiveMongoRepositoryImpl.this.doInsert(entity, writeConcern);
+                protected Mono<Optional<TKey>> doInsert(TEntity entity, WriteConcern writeConcern) {
+                    return ReactiveMongoRepositoryImpl.this.doInsert(entity, writeConcern).map(x ->
+                            Optional.ofNullable(
+                                    x.wasAcknowledged()
+                                            ? BsonUtils.convert(entityInformation.getIdType(), x.getInsertedId())
+                                            : null
+                            )
+                    );
                 }
 
                 @Override
-                protected Mono<InsertManyResult> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
-                    return ReactiveMongoRepositoryImpl.this.doInsertBatch(entities, writeConcern);
+                protected Mono<Map<Integer, TKey>> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+
+                    return ReactiveMongoRepositoryImpl.this.doInsertBatch(entities, writeConcern).map(x -> {
+
+                        Map<Integer, TKey> integerTKeyMap = new HashMap<>();
+                        if (x.wasAcknowledged()) {
+                            for (Map.Entry<Integer, BsonValue> e : x.getInsertedIds().entrySet()) {
+                                integerTKeyMap.put(
+                                        e.getKey(),
+                                        BsonUtils.convert(entityInformation.getIdType(), e.getValue()))
+                                ;
+                            }
+                        }
+
+                        return integerTKeyMap;
+                    });
                 }
 
                 @Override
-                protected Mono<UpdateResult> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
-                    return ReactiveMongoRepositoryImpl.this.doUpdate(options, updateType);
+                protected Mono<Long> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
+                    return ReactiveMongoRepositoryImpl.this.doUpdate(options, updateType).map(x ->
+                            x.wasAcknowledged() ? x.getModifiedCount() : 0
+                    );
                 }
 
                 @Override
@@ -336,13 +363,17 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                protected Mono<DeleteResult> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
-                    return ReactiveMongoRepositoryImpl.this.doDeleteOne(options);
+                protected Mono<Long> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
+                    return ReactiveMongoRepositoryImpl.this.doDeleteOne(options).map(x ->
+                            x.wasAcknowledged() ? x.getDeletedCount() : 0
+                    );
                 }
 
                 @Override
-                protected Mono<DeleteResult> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
-                    return ReactiveMongoRepositoryImpl.this.doDeleteMany(options);
+                protected Mono<Long> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
+                    return ReactiveMongoRepositoryImpl.this.doDeleteMany(options).map(x ->
+                            x.wasAcknowledged() ? x.getDeletedCount() : 0
+                    );
                 }
             };
 

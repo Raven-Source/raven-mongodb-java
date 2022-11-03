@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.InsertManyResult;
+import lombok.val;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,7 +45,8 @@ public class MongoReadonlyRepositoryTest {
             list.add(user);
         }
 
-        InsertManyResult result = repos.insertBatch(list);
+        val result = repos.insertBatch(list);
+        System.out.println(result);
     }
 
 //    @After
