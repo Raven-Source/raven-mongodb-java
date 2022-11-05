@@ -13,7 +13,7 @@ import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * @param <TEntity> TEntity
@@ -41,7 +41,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     //#region constructor
 
-    @SuppressWarnings({"unchecked"})
     public AbstractMongoBaseRepository(final MongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(collectionName);
@@ -140,8 +139,12 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @param hint         hint
      * @return FindIterable
      */
-    protected <TResult> FindIterable<TResult> findOptions(final FindIterable<TResult> findIterable, final Bson projection, final Bson sort
-            , final int limit, final int skip, final Bson hint) {
+    protected <TResult> FindIterable<TResult> findOptions(final FindIterable<TResult> findIterable,
+                                                          @Nullable final Bson projection,
+                                                          @Nullable final Bson sort,
+                                                          final int limit,
+                                                          final int skip,
+                                                          @Nullable final Bson hint) {
 
         FindIterable<TResult> filter = findIterable;
         if (projection != null) {
@@ -175,10 +178,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
             options.filter(Filters.empty());
         }
 
-        Bson projection = null;
-        if (options.includeFields() != null) {
-            projection = BsonUtils.includeFields(options.includeFields());
-        }
+        Bson projection = BsonUtils.projection(entityInformation.getEntityType(),
+                options.includeFields(), options.excludeFields());
 
         callGlobalInterceptors(PreFind.class, null, options);
 

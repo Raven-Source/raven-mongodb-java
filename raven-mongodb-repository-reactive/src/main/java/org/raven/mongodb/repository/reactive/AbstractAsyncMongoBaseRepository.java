@@ -14,8 +14,6 @@ import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.ReactiveIdGenerator;
 import org.raven.mongodb.repository.spi.Sequence;
 
-import java.util.List;
-
 /**
  * @param <TEntity> TEntity
  * @param <TKey>    TKey
@@ -132,14 +130,6 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
     //#endregion
 
     /**
-     * @param includeFields includeFields
-     * @return Bson
-     */
-    protected Bson includeFields(final List<String> includeFields) {
-        return BsonUtils.includeFields(includeFields);
-    }
-
-    /**
      * @param findPublisher findPublisher
      * @param projection    projection
      * @param sort          sort
@@ -182,10 +172,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
             options.filter(Filters.empty());
         }
 
-        Bson projection = null;
-        if (options.includeFields() != null) {
-            projection = BsonUtils.includeFields(options.includeFields());
-        }
+        Bson projection = BsonUtils.projection(entityInformation.getEntityType(),
+                options.includeFields(), options.excludeFields());
 
         callGlobalInterceptors(PreFind.class, null, options);
 

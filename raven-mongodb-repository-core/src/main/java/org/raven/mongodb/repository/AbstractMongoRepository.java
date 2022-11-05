@@ -6,10 +6,7 @@ import org.raven.mongodb.repository.annotations.PreUpdate;
 import org.raven.mongodb.repository.annotations.PreFind;
 import org.raven.mongodb.repository.annotations.PreInsert;
 import org.raven.mongodb.repository.interceptors.EntityInterceptor;
-import org.raven.mongodb.repository.query.FilterBuilder;
-import org.raven.mongodb.repository.query.HintBuilder;
-import org.raven.mongodb.repository.query.SortBuilder;
-import org.raven.mongodb.repository.query.UpdateBuilder;
+import org.raven.mongodb.repository.query.*;
 import org.raven.mongodb.repository.support.EntityInformationSupport;
 
 import java.lang.annotation.Annotation;
@@ -30,10 +27,10 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
 
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        Class<TEntity> entityClazz = (Class) params[0];
-        Class<TKey> keyClazz = (Class) params[1];
+        Class<TEntity> entityClazz = (Class<TEntity>) params[0];
+        Class<TKey> keyClazz = (Class<TKey>) params[1];
 
-        this.entityInformation = new EntityInformationSupport(entityClazz, keyClazz, collectionName);
+        this.entityInformation = new EntityInformationSupport<>(entityClazz, keyClazz, collectionName);
     }
 
     /**
@@ -77,5 +74,9 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
 
     protected HintBuilder<TEntity> hintBuilder() {
         return HintBuilder.empty(entityInformation.getEntityType());
+    }
+
+    protected ProjectionBuilder<TEntity> projectionBuilder() {
+        return ProjectionBuilder.empty(entityInformation.getEntityType());
     }
 }

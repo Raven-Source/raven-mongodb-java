@@ -1,18 +1,17 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.client.model.Projections;
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentWrapper;
 import org.bson.BsonValue;
-import org.bson.codecs.BsonCodec;
 import org.bson.codecs.Encoder;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.raven.mongodb.repository.query.ProjectionBuilder;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author yi.liang
@@ -24,17 +23,26 @@ public final class BsonUtils {
 
     public static <TEntity> BsonDocument convertToBsonDocument(@NonNull final TEntity entity, @NonNull final Encoder<TEntity> encoder) {
 
-        return new BsonDocumentWrapper<TEntity>(entity, encoder);
+        return new BsonDocumentWrapper<>(entity, encoder);
     }
 
-    public static Bson includeFields(final List<String> includeFields) {
+    public static @Nullable
+    <TEntity> Bson projection(final Class<TEntity> entityClass,
+                              @Nullable final List<String> includeFields,
+                              @Nullable final List<String> excludeFields) {
 
-        Bson projection = null;
+        ProjectionBuilder<TEntity> projectionBuilder = ProjectionBuilder.empty(entityClass);
         if (includeFields != null && includeFields.size() > 0) {
-            projection = Projections.include(includeFields);
+
+            projectionBuilder.include(includeFields);
         }
 
-        return projection;
+        if (excludeFields != null && excludeFields.size() > 0) {
+
+            projectionBuilder.exclude(excludeFields);
+        }
+
+        return projectionBuilder.isEmpty() ? null : projectionBuilder.build();
     }
 
     public static <T extends Bson> Bson combine(@NonNull final List<T> bsons) {

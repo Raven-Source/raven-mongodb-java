@@ -17,6 +17,7 @@ import java.util.List;
 public class FindOptions extends AbstractFindOptions {
 
     private List<String> includeFields;
+    private List<String> excludeFields;
     private Bson sort;
     private int limit;
     private int skip;

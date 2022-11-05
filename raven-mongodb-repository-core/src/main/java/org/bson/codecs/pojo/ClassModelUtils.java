@@ -45,23 +45,9 @@ public final class ClassModelUtils {
     }
 
     /**
-     * @param entityClass clazz
-     * @param properties properties
-     * @param <T>         T
-     * @return write name
-     */
-    public static <T> String getWriteName(final Class<T> entityClass, @NonNull final LinkedList<String> properties) {
-
-        FieldNest fieldNest = FieldNest.empty();
-        doWriteName(entityClass, fieldNest, properties);
-
-        return fieldNest.build();
-    }
-
-    /**
-     * @param entityClass clazz
+     * @param entityClass  clazz
      * @param propertyName propertyName
-     * @param <T>         T
+     * @param <T>          T
      * @return write name
      */
     public static <T> String getWriteName(final Class<T> entityClass, @NonNull final String propertyName) {
@@ -96,15 +82,25 @@ public final class ClassModelUtils {
 
     }
 
+    /**
+     * @param entityClass clazz
+     * @param properties  properties
+     * @param <T>         T
+     * @return write name
+     */
+    private static <T> String getWriteName(final Class<T> entityClass, @NonNull final LinkedList<String> properties) {
+
+        FieldNest fieldNest = FieldNest.empty();
+        doWriteName(entityClass, fieldNest, properties);
+
+        return fieldNest.build();
+    }
 
     private static <T> PropertyModel<?> getPropertyModel(final Class<T> entityClass, final String propertyName) {
 
         ClassModel<T> classModel = getClassModel(entityClass);
         if (classModel != null) {
-            PropertyModel<?> propertyModel = classModel.getPropertyModel(propertyName);
-            if (propertyModel != null) {
-                return propertyModel;
-            }
+            return classModel.getPropertyModel(propertyName);
         }
 
         return null;

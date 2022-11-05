@@ -18,7 +18,7 @@ import java.util.List;
  * @author by yanfeng
  * date 2021/9/20 17:34
  */
-public class EntityInformationSupport<TEntity extends Entity<TEntity>, TKey> implements EntityInformation<TEntity, TKey> {
+public class EntityInformationSupport<TEntity extends Entity<TKey>, TKey> implements EntityInformation<TEntity, TKey> {
 
     private final String collectionName;
     private final Class<TEntity> entityClass;

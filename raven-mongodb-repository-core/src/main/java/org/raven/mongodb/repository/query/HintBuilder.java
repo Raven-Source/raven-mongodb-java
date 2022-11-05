@@ -20,7 +20,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
 public class HintBuilder<TEntity> {
 
     private final Class<TEntity> entityClass;
-    private List<Bson> bsons = new ArrayList<>();
+    private final List<Bson> bsons = new ArrayList<>();
 
     public HintBuilder(final Class<TEntity> entityClass) {
         this.entityClass = entityClass;
@@ -28,6 +28,10 @@ public class HintBuilder<TEntity> {
 
     public static <TEntity> HintBuilder<TEntity> empty(final Class<TEntity> entityClass) {
         return new HintBuilder<>(entityClass);
+    }
+
+    public boolean isEmpty() {
+        return bsons.isEmpty();
     }
 
     public HintBuilder<TEntity> ascending(final String... fieldNames) {

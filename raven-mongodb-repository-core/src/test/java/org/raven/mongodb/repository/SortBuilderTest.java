@@ -15,10 +15,10 @@ import org.raven.mongodb.repository.query.SortBuilder;
 public class SortBuilderTest {
 
     @Test
-    public void updaterTest() {
+    public void sortTest() {
 
-        SortBuilder<User> updateBuilder = new SortBuilder<>(User.class);
-        updateBuilder
+        SortBuilder<User> sortBuilder = new SortBuilder<>(User.class);
+        sortBuilder
                 .ascending("a")
                 .descending("b")
                 .ascending("c", "d")
@@ -26,7 +26,7 @@ public class SortBuilderTest {
                 .ascending("createDate");
 
 
-        Bson bson = updateBuilder.build();
+        Bson bson = sortBuilder.build();
         log.info(bson.toBsonDocument().toJson());
 
 

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-
 import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
 
 /**
@@ -20,7 +19,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
 public class SortBuilder<TEntity> {
 
     private final Class<TEntity> entityClass;
-    private List<Bson> bsons = new ArrayList<>();
+    private final List<Bson> bsons = new ArrayList<>();
 
     public SortBuilder(final Class<TEntity> entityClass) {
         this.entityClass = entityClass;
@@ -28,6 +27,10 @@ public class SortBuilder<TEntity> {
 
     public static <TEntity> SortBuilder<TEntity> empty(final Class<TEntity> entityClass) {
         return new SortBuilder<>(entityClass);
+    }
+
+    public boolean isEmpty() {
+        return bsons.isEmpty();
     }
 
     public SortBuilder<TEntity> ascending(final String... fieldNames) {
