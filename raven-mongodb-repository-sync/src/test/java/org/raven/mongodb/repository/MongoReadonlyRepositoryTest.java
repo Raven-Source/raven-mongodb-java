@@ -3,7 +3,6 @@ package org.raven.mongodb.repository;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Sorts;
-import com.mongodb.client.result.InsertManyResult;
 import lombok.val;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
@@ -102,7 +101,7 @@ public class MongoReadonlyRepositoryTest {
             user = repos.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
                 add("_id");
             }});
-            Assert.assertEquals(user.getName(), null);
+            Assert.assertNull(user.getName());
         }
 
         User2RepositoryImpl repos2 = new User2RepositoryImpl();

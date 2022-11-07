@@ -137,7 +137,7 @@ public class MongoRepositoryTest {
 
         Long result = repos.updateOne(Filters.eq("_id", user.getId()), user);
 
-        Assert.assertEquals(result > 0, true);
+        Assert.assertTrue(result > 0);
 
     }
 
