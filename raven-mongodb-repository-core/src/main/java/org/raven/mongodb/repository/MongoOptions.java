@@ -1,7 +1,5 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.ReadPreference;
-import com.mongodb.WriteConcern;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
@@ -28,7 +26,7 @@ public interface MongoOptions {
 //        return null;
 //    }
 
-    default IdGeneratorProvider getIdGeneratorProvider() {
+    default <T, TMongoDatabase> IdGeneratorProvider<T, TMongoDatabase> getIdGeneratorProvider() {
         return null;
     }
 
