@@ -43,9 +43,10 @@ public class FilterBuilderTest {
 
         filterBuilder = new FilterBuilder<>(User.class);
         filterBuilder.eq(User.Fields.mall + "." + Mall.Fields.id, "m1");
+        filterBuilder.eq(User.Fields.mall + "." + Mall.Fields.status, Status.Normal);
 
         log.info(filterBuilder.build().toBsonDocument().toJson());
-        Assert.assertEquals(BsonDocument.parse("{\"Mall._id\": \"m1\"}"), filterBuilder.build().toBsonDocument());
+        Assert.assertEquals(BsonDocument.parse("{\"$and\": [{\"Mall._id\": \"m1\"}, {\"Mall.Status\": 1}]}"), filterBuilder.build().toBsonDocument());
 
 
         filterBuilder = new FilterBuilder<>(User.class);

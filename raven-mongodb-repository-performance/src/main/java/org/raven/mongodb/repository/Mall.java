@@ -1,4 +1,6 @@
 package org.raven.mongodb.repository;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.raven.commons.data.Entity;
@@ -7,6 +9,8 @@ import org.raven.commons.data.annotation.Contract;
 
 @Contract(formatType = MemberFormatType.PascalCase)
 @FieldNameConstants
+@Setter
+@Getter
 public class Mall implements Entity<String> {
 
     @BsonId
@@ -15,23 +19,6 @@ public class Mall implements Entity<String> {
 
     private String name;
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private Status status = Status.Normal;
 
 }

@@ -437,9 +437,6 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
         return findProxy().doFindList(findOptions);
     }
 
-    /**
-     *
-     */
     default FindOptions createFindOptions(Function<FilterBuilder<TEntity>, Bson> filterBuilder, Function<FieldNest, List<String>> fieldNestList, Function<SortBuilder<TEntity>, Bson> sortBuilder, int limit, int skip, Function<HintBuilder<TEntity>, Bson> hintBuilder, ReadPreference readPreference) {
         final FindOptions findOptions = new FindOptions();
 

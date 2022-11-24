@@ -5,18 +5,18 @@
     <parent>
         <artifactId>raven-mongodb</artifactId>
         <groupId>io.github.raven-source</groupId>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>raven-mongodb-repository-performance</artifactId>
 
     <properties>
-        <raven-logger.version>2.0.2</raven-logger.version>
+        <raven-logger.version>2.0.3</raven-logger.version>
     </properties>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-logger</artifactId>
             <version>${raven-logger.version}</version>
@@ -26,7 +26,7 @@
                     <artifactId>raven-serializer-withJackson</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-repository-sync</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
         </dependency>
 
     </dependencies>

@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.logback.LogbackLoggingSystem;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +33,11 @@ import java.util.concurrent.CompletableFuture;
  * date 2021/11/17 17:09
  */
 @Slf4j
-@SpringBootApplication(exclude = {
-        ErrorMvcAutoConfiguration.class,
-        DataSourceAutoConfiguration.class,
-        MongoAutoConfiguration.class,
-        MongoDataAutoConfiguration.class
-})
+@SpringBootApplication(scanBasePackageClasses = MongoSessionInstance.class)
 @EnableConfigurationProperties
 public class Application {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         SpringApplication springApplication = new SpringApplication(Application.class);
         springApplication.run(args);

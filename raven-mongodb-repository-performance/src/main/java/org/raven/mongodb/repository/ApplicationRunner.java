@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
  * @author by yanfeng
  * date 2021/11/28 14:37
  */
-@Configuration
+@Component
 public class ApplicationRunner implements CommandLineRunner {
 
     private User3RepositoryImpl user3Repos;

@@ -8,7 +8,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import lombok.NonNull;
-import org.bson.BsonDocument;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.Sequence;
@@ -71,17 +71,17 @@ public class IncrementIdGeneration<TKey extends Number> implements IdGenerator<T
 
     public Long createIncId(final long count, final int iteration) {
 
-        MongoCollection<BsonDocument> collection = databaseSupplier.get().getCollection(sequence.getSequenceName(), BsonDocument.class);
+        MongoCollection<Document> collection = databaseSupplier.get().getCollection(sequence.getSequenceName());
 
         Bson filter = Filters.eq(sequence.getCollectionName(), collectionName);
         Bson updater = Updates.inc(sequence.getIncrementName(), count);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options = options.upsert(true).returnDocument(ReturnDocument.AFTER);
 
-        BsonDocument result = collection.findOneAndUpdate(filter, updater, options);
+        Document result = collection.findOneAndUpdate(filter, updater, options);
 
         if (result != null) {
-            return result.getInt64(sequence.getIncrementName()).longValue();
+            return result.get(sequence.getIncrementName(), Long.class);
         } else if (iteration <= 1) {
             return createIncId(count, (iteration + 1));
         } else {

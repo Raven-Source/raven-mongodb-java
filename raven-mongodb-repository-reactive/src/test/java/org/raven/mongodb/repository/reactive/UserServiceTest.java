@@ -398,10 +398,12 @@ public class UserServiceTest {
         User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb")).block().orElse(null);
         Assert.assertNotNull(getUo);
 
-        User_ObjectID uo1 = uoRep.findOne(new ObjectId(getUo.getId().toString())).block().orElse(null); //取不到数据
+        User_ObjectID uo1 = uoRep.findOne(new ObjectId(getUo.getId().toString())).block().orElse(null); //有数据
         User_ObjectID uo3 = uoRep.findOne(Filters.eq("_id", "ObjectId(\"" + getUo.getId().toString() + "\")")).block().orElse(null); //取不到数据
         User_ObjectID uo5 = uoRep.findOne(Filters.eq("_id", getUo.getId())).block().orElse(null);//有数据
         Assert.assertNotNull(uo1);
+        Assert.assertNotNull(uo5);
+        Assert.assertNull(uo3);
         Assert.assertNotNull(uo1.getId());
 
         //根据ID获取一条实体数据

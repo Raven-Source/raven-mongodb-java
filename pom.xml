@@ -6,18 +6,18 @@
     <parent>
         <groupId>io.github.raven-source</groupId>
         <artifactId>raven-framework</artifactId>
-        <version>4.0.7</version>
+        <version>4.0.8</version>
     </parent>
 
     <artifactId>raven-mongodb</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
     <packaging>pom</packaging>
     <modules>
         <module>raven-mongodb-repository-core</module>
         <module>raven-mongodb-repository-spi</module>
         <module>raven-mongodb-repository-sync</module>
         <module>raven-mongodb-repository-reactive</module>
-        <module>raven-mongodb-repository-performance</module>
+<!--        <module>raven-mongodb-repository-performance</module>-->
         <module>raven-mongodb-repository-spring</module>
     </modules>
 
@@ -29,8 +29,8 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
 
-        <raven-framework.version>4.0.7</raven-framework.version>
-        <mongodb-driver.version>4.4.2</mongodb-driver.version>
+        <raven-framework.version>4.0.8</raven-framework.version>
+        <mongodb-driver.version>4.7.2</mongodb-driver.version>
 
         <raven-mongodb.version>${project.version}</raven-mongodb.version>
 
