@@ -91,6 +91,7 @@ public interface ReactiveMongoReadonlyRepository<TEntity, TKey>
      *
      * @param findOptions 查询条件
      * @param resultClass TResult Class
+     * @param <TResult> TResult
      * @return TResult
      */
     <TResult> Mono<Optional<TResult>> findOne(final FindOptions findOptions, final Class<TResult> resultClass);
@@ -100,6 +101,7 @@ public interface ReactiveMongoReadonlyRepository<TEntity, TKey>
      *
      * @param findOptions FindOptions
      * @param resultClass TResult Class
+     * @param <TResult> TResult
      * @return TResult
      */
     <TResult> Mono<List<TResult>> findList(final FindOptions findOptions, final Class<TResult> resultClass);
