@@ -88,6 +88,7 @@ public interface MongoReadonlyRepository<TEntity, TKey>
      *
      * @param findOptions FindOptions
      * @param resultClass TResult Class
+     * @param <TResult> TResult
      * @return TResult
      */
     <TResult> TResult findOne(final FindOptions findOptions, final Class<TResult> resultClass);
@@ -97,6 +98,7 @@ public interface MongoReadonlyRepository<TEntity, TKey>
      *
      * @param findOptions FindOptions
      * @param resultClass TResult Class
+     * @param <TResult> TResult
      * @return TResult
      */
     <TResult> List<TResult> findList(final FindOptions findOptions, final Class<TResult> resultClass);
