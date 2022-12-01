@@ -2,6 +2,7 @@ package org.raven.mongodb.repository.codec;
 
 import com.mongodb.MongoClientSettings;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.codecs.EnumCodecProvider;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -28,11 +29,11 @@ public class PojoCodecRegistry {
 
     private static CodecRegistry registry() {
 
-        CodecRegistry pojoCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
+//        CodecRegistry pojoCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
         //registry CodecProvider
 
-        ValueTypePropertyCodecProvider valueTypePropertyCodecProvider = new ValueTypePropertyCodecProvider(pojoCodecRegistry);
-        StringTypePropertyCodecProvider stringTypePropertyCodecProvider = new StringTypePropertyCodecProvider(pojoCodecRegistry);
+        ValueTypePropertyCodecProvider valueTypePropertyCodecProvider = new ValueTypePropertyCodecProvider();
+        StringTypePropertyCodecProvider stringTypePropertyCodecProvider = new StringTypePropertyCodecProvider();
 
         CodecRegistry customCodecRegistry = fromProviders(
                 PojoCodecProvider.builder().conventions(CustomConventions.DEFAULT_CONVENTIONS).automatic(true)
@@ -56,7 +57,14 @@ public class PojoCodecRegistry {
             field.setAccessible(true);
 
             List<CodecProvider> codecProviders = (List<CodecProvider>) field.get(Bson.DEFAULT_CODEC_REGISTRY);
-            codecProviders.add(codecProvider);
+            for (int i = 0; i < codecProviders.size(); i++) {
+                CodecProvider provider = codecProviders.get(i);
+                if (EnumCodecProvider.class.equals(provider.getClass())) {
+
+                    codecProviders.add(i, codecProvider);
+                    break;
+                }
+            }
 
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);

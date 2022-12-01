@@ -3,6 +3,7 @@ package org.raven.mongodb.repository;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.raven.mongodb.repository.model.User;
@@ -34,9 +35,10 @@ public class FindAndModifyTest {
     @Test
     public void test() throws Exception {
 
-        int seed = 10;
+        int seed = 15;
 
-        userRepos.findOne(1L);
+        User user = userRepos.findOne(1L);
+        int age = user.getAge();
 
         List<CompletableFuture<?>> failures = new ArrayList<>(seed);
 
@@ -58,6 +60,9 @@ public class FindAndModifyTest {
 
         System.out.println(seed / (double) (end - start) * 1000);
 
+        user = userRepos.findOne(1L);
+
+        Assert.assertEquals(age + seed, user.getAge());
     }
 
 

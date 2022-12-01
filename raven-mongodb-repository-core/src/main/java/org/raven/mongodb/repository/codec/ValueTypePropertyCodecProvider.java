@@ -25,21 +25,26 @@ import java.math.BigInteger;
  */
 public final class ValueTypePropertyCodecProvider implements PropertyCodecProvider, CodecProvider {
 
-    private final CodecRegistry codecRegistry;
+    //    private final CodecRegistry codecRegistry;
     private final static Class<ValueType> valueTypeClass = ValueType.class;
 
     /**
-     * @param codecRegistry CodecRegistry
+     *
      */
-    public ValueTypePropertyCodecProvider(final CodecRegistry codecRegistry) {
-        this.codecRegistry = codecRegistry;
+    public ValueTypePropertyCodecProvider() {
     }
 
+//    /**
+//     * @param codecRegistry CodecRegistry
+//     */
+//    public ValueTypePropertyCodecProvider(final CodecRegistry codecRegistry) {
+//        this.codecRegistry = codecRegistry;
+//    }
 
     /**
-     * @param type TypeWithTypeParameters
+     * @param type                  TypeWithTypeParameters
      * @param propertyCodecRegistry PropertyCodecRegistry
-     * @param <T> T
+     * @param <T>                   T
      * @return Codec
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -58,11 +63,7 @@ public final class ValueTypePropertyCodecProvider implements PropertyCodecProvid
     private <T> Codec<T> get(Class<T> clazz) {
 
         if (valueTypeClass.isAssignableFrom(clazz)) {
-            try {
-                return codecRegistry.get(clazz);
-            } catch (CodecConfigurationException e) {
-                return (Codec<T>) new ValueTypeCodec(clazz);
-            }
+            return (Codec<T>) new ValueTypeCodec(clazz);
         }
         return null;
     }

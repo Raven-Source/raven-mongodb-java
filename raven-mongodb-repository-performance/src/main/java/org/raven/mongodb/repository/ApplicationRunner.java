@@ -45,7 +45,7 @@ public class ApplicationRunner implements CommandLineRunner {
         rootLogger.setLevel(Level.OFF);
 
 
-        int seed = 100000;
+        int seed = 100;
         for (String arg : args) {
             if (arg != null) {
                 String[] val = arg.split("=");

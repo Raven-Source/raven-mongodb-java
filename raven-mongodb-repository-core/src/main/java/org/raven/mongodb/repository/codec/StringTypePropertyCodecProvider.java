@@ -21,21 +21,27 @@ import org.raven.commons.data.StringType;
  */
 public final class StringTypePropertyCodecProvider implements PropertyCodecProvider, CodecProvider {
 
-    private final CodecRegistry codecRegistry;
+    //    private final CodecRegistry codecRegistry;
     private final static Class<StringType> stringTypeClass = StringType.class;
 
     /**
-     * @param codecRegistry CodecRegistry
+     *
      */
-    public StringTypePropertyCodecProvider(final CodecRegistry codecRegistry) {
-        this.codecRegistry = codecRegistry;
+    public StringTypePropertyCodecProvider() {
     }
+
+//    /**
+//     * @param codecRegistry CodecRegistry
+//     */
+//    public StringTypePropertyCodecProvider(final CodecRegistry codecRegistry) {
+//        this.codecRegistry = codecRegistry;
+//    }
 
 
     /**
-     * @param type TypeWithTypeParameters
+     * @param type                  TypeWithTypeParameters
      * @param propertyCodecRegistry PropertyCodecRegistry
-     * @param <T> T
+     * @param <T>                   T
      * @return Codec
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -54,11 +60,7 @@ public final class StringTypePropertyCodecProvider implements PropertyCodecProvi
     private <T> Codec<T> get(Class<T> clazz) {
 
         if (stringTypeClass.isAssignableFrom(clazz)) {
-            try {
-                return codecRegistry.get(clazz);
-            } catch (CodecConfigurationException e) {
-                return (Codec<T>) new StringTypeCodec(clazz);
-            }
+            return (Codec<T>) new StringTypeCodec(clazz);
         }
         return null;
     }
