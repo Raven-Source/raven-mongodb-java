@@ -10,6 +10,7 @@ import org.raven.mongodb.repository.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -27,9 +28,11 @@ public class FindAndModifyTest {
         userRepos = new UserRepositoryImpl();
         user3Repos = new User3RepositoryImpl();
 
-//        User user = userRepos.get(1L);
-//        User3 user3 = new User3();
-//        user3.setAge(user.getAge());
+        User user = new User();
+        String uuid = UUID.randomUUID().toString();
+        user.setName(uuid);
+        user.setAge(123);
+        userRepos.insert(user);
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.raven.mongodb.repository.model.Mall;
+import org.raven.mongodb.repository.model.Status;
 import org.raven.mongodb.repository.model.User;
 import org.raven.mongodb.repository.query.UpdateBuilder;
 
@@ -56,6 +57,16 @@ public class UpdaterBuilderTest {
         Assert.assertEquals("{\"$set\": {\"a\": 1, \"b\": 2, \"Mall\": {\"_id\": \"001\", \"Name\": \"新世界\", \"Status\": 1}}, \"$unset\": {\"c\": \"\"}, \"$setOnInsert\": {\"d\": 4}, \"$rename\": {\"e\": \"ee\"}, \"$inc\": {\"f\": 6}, \"$mul\": {\"g\": 7}, \"$min\": {\"h\": 10}, \"$max\": {\"h\": 11}, \"$currentDate\": {\"j\": true, \"k\": {\"$type\": \"timestamp\"}}, \"$addToSet\": {\"l\": 12, \"m\": {\"$each\": [13, 14, 15]}}, \"$push\": {\"n\": 16, \"o\": {\"$each\": [17, 18, 19]}}, \"$pull\": {\"p\": 20}, \"$pullAll\": {\"q\": [21, 22]}, \"$pop\": {\"r\": -1, \"s\": 1}, \"$bit\": {\"t\": {\"and\": 10}}}"
                 , bson.toBsonDocument().toJson()
         );
+
+        UpdateBuilder<Mall> updateBuilder2 = new UpdateBuilder<>(Mall.class);
+        bson = updateBuilder2.set(Mall.Fields.status, Status.Delete).build();
+        log.info(bson.toBsonDocument().toJson());
+
+        Assert.assertEquals("{\"$set\": {\"Status\": -1}}"
+                , bson.toBsonDocument().toJson()
+        );
+
+
     }
 
 

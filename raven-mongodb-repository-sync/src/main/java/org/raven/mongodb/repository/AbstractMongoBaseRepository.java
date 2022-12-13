@@ -131,12 +131,14 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     //#endregion
 
     /**
+     *
      * @param findIterable findIterable
      * @param projection   projection
      * @param sort         sort
      * @param limit        limit
      * @param skip         skip
      * @param hint         hint
+     * @param <TResult> TResult
      * @return FindIterable
      */
     protected <TResult> FindIterable<TResult> findOptions(final FindIterable<TResult> findIterable,

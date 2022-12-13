@@ -41,7 +41,10 @@ public class PojoCodecRegistry {
                         .build()
                 , valueTypePropertyCodecProvider, stringTypePropertyCodecProvider);
 
-        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), customCodecRegistry);
+        CodecRegistry codecRegistry = fromRegistries(
+                fromProviders(valueTypePropertyCodecProvider, stringTypePropertyCodecProvider),
+                MongoClientSettings.getDefaultCodecRegistry(),
+                customCodecRegistry);
 
         modifyBson(customCodecRegistry);
 

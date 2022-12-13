@@ -136,6 +136,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
      * @param limit         limit
      * @param skip          skip
      * @param hint          hint
+     * @param <TResult> TResult
      * @return FindIterable
      */
     protected <TResult> FindPublisher<TResult> findOptions(final FindPublisher<TResult> findPublisher, final Bson projection, final Bson sort

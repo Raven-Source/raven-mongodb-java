@@ -16,11 +16,18 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.raven.mongodb.repository.model.Mall;
+import org.raven.mongodb.repository.model.Status;
 import org.raven.mongodb.repository.model.User;
+import org.raven.mongodb.repository.query.FilterBuilder;
+import org.raven.mongodb.repository.query.UpdateBuilder;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 @Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -32,6 +39,11 @@ public class MongoRepositoryTest {
     @Before
     public void a1_init() {
 
+        ILoggerFactory loggerContext = (ILoggerFactory) LoggerFactory.getILoggerFactory();
+
+        Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+        java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.ALL);
+
         ClassModel<User> classModel = ClassModelUtils.getClassModel(User.class);
 
         System.out.println(classModel.getName());
@@ -42,12 +54,8 @@ public class MongoRepositoryTest {
         userRepository.getCollection().createIndex(Indexes.descending("CreateDate"));
 
         MongoRepository<Mall, String> mallRepository = new MallRepositoryImpl();
+        userRepository.getDatabase().drop();
         mallRepository.getCollection().createIndex(Indexes.ascending("Mall_Name"), new IndexOptions().unique(true));
-
-//        DefaultMongoSession defaultMongoSession = ((DefaultMongoSession) MongoSessionInstance.mongoSession);
-//        Morphia morphia = new Morphia();
-//        MongoClient mongo = new MongoClient("127.0.0.1", 27017);
-//        Datastore datastore = morphia.createDatastore(mongo, "RepositoryTest");
 
     }
 
@@ -72,20 +80,6 @@ public class MongoRepositoryTest {
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getName(), uuid);
 
-
-        Mall mall = new Mall();
-        mall.setName("shopping mall");
-
-        MongoRepository<Mall, String> mall_repos = new MallRepositoryImpl();
-        mall_repos.insert(mall);
-        log.info("insert mall success");
-        try {
-            mall_repos.insert(mall);
-        } catch (MongoWriteException ex) {
-            log.info("insert mall fail: " + ex.getMessage());
-        } catch (Exception ex) {
-            throw ex;
-        }
 
         //Assert.assertNotNull(mall.getId());
 
@@ -195,5 +189,37 @@ public class MongoRepositoryTest {
         user = repos.findOne(user.getId());
         Assert.assertEquals(user.getMall().getName(), mall.getName());
 
+    }
+
+
+    @Test
+    public void a7_update() {
+
+        MongoRepository<Mall, String> mall_repos = new MallRepositoryImpl();
+
+        Mall mall = new Mall();
+        mall.setName("shopping mall");
+
+        mall_repos.insert(mall);
+        MongoWriteException mongoWriteException = null;
+        log.info("insert mall success");
+        try {
+            mall_repos.insert(mall);
+        } catch (MongoWriteException e) {
+            mongoWriteException = e;
+            log.info("insert mall fail: " + e.getMessage());
+        } catch (Exception e) {
+            throw e;
+        }
+
+        Assert.assertNotNull(mongoWriteException);
+
+        List<Mall> list = mall_repos.findList((Bson) null);
+
+        Bson filter = FilterBuilder.empty(Mall.class).eq(Mall.Fields.id, list.get(0).getId()).build();
+        Bson update = UpdateBuilder.empty(Mall.class).set(Mall.Fields.status, Status.Delete).build();
+
+        long c = mall_repos.updateOne(filter, update);
+        Assert.assertEquals(c, 1L);
     }
 }
