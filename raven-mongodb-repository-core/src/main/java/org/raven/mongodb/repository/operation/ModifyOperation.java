@@ -13,6 +13,7 @@ import org.raven.mongodb.repository.query.FilterBuilder;
 import org.raven.mongodb.repository.query.HintBuilder;
 import org.raven.mongodb.repository.query.UpdateBuilder;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -231,7 +232,10 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
             );
         }
         options.upsert(isUpsert);
-        options.writeConcern(writeConcern);
+
+        if (writeConcern != null) {
+            options.writeConcern(writeConcern);
+        }
 
         return this.updateOne(options);
     }
@@ -280,13 +284,15 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @param writeConcern writeConcern
      * @return UpdateResult
      */
-    default TUpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final WriteConcern writeConcern) {
+    default TUpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final @Nullable WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.filter(filter);
         options.update(update);
         options.hint(hint);
-        options.writeConcern(writeConcern);
+        if (writeConcern != null) {
+            options.writeConcern(writeConcern);
+        }
 
         return this.updateMany(options);
     }
@@ -543,7 +549,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
         DeleteOptions options = new DeleteOptions();
         options.hint(hint);
         options.filter(filter);
-        options.writeConcern(writeConcern);
+        if (writeConcern != null) {
+            options.writeConcern(writeConcern);
+        }
 
         return this.deleteOne(options);
     }
@@ -584,7 +592,9 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
         DeleteOptions options = new DeleteOptions();
         options.hint(hint);
         options.filter(filter);
-        options.writeConcern(writeConcern);
+        if (writeConcern != null) {
+            options.writeConcern(writeConcern);
+        }
 
         return this.deleteMany(options);
     }
@@ -602,23 +612,23 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
     ModifyProxy<TEntity, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> modifyProxy();
 
-    abstract class ModifyProxy<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
+    interface ModifyProxy<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
 
-        protected abstract EntityInformation<TEntity, TKey> getEntityInformation();
+        EntityInformation<TEntity, TKey> getEntityInformation();
 
-        protected abstract TInsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern);
+        TInsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern);
 
-        protected abstract TInsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern);
+        TInsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern);
 
-        protected abstract TUpdateResult doUpdate(@NonNull final UpdateOptions options, final UpdateType updateType);
+        TUpdateResult doUpdate(@NonNull final UpdateOptions options, final UpdateType updateType);
 
-        protected abstract TFindOneAndModifyResult doFindOneAndUpdate(final FindOneAndUpdateOptions options);
+        TFindOneAndModifyResult doFindOneAndUpdate(final FindOneAndUpdateOptions options);
 
-        protected abstract TFindOneAndModifyResult doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options);
+        TFindOneAndModifyResult doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options);
 
-        protected abstract TDeleteResult doDeleteOne(final DeleteOptions options);
+        TDeleteResult doDeleteOne(final DeleteOptions options);
 
-        protected abstract TDeleteResult doDeleteMany(final DeleteOptions options);
+        TDeleteResult doDeleteMany(final DeleteOptions options);
 
     }
 }

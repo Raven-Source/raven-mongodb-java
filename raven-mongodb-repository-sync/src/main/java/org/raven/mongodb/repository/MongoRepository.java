@@ -1,5 +1,6 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.client.ClientSession;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.repository.operation.ModifyOperation;
 
@@ -12,6 +13,8 @@ import java.util.Map;
  */
 public interface MongoRepository<TEntity extends Entity<TKey>, TKey>
         extends MongoReadonlyRepository<TEntity, TKey>
-        , ModifyOperation<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> {
+        , SyncModifyOperation<TEntity, TKey> {
+
+    SyncModifyOperation<TEntity, TKey> modifyWithClientSession(ClientSession clientSession);
 
 }

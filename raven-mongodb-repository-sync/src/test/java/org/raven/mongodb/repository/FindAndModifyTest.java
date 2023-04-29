@@ -3,6 +3,7 @@ package org.raven.mongodb.repository;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,14 +12,16 @@ import org.raven.mongodb.repository.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 /**
  * @author by yanfeng
  * date 2021/9/13 22:19
  */
+@Slf4j
 public class FindAndModifyTest {
-
 
     UserRepositoryImpl userRepos;
     User3RepositoryImpl user3Repos;
@@ -72,53 +75,74 @@ public class FindAndModifyTest {
     @Test
     public void test2() throws Exception {
 
-
-        int seed = 10;
+        int seed = 4;
 
         userRepos.findOne(1L);
 
-        List<CompletableFuture<?>> failures = new ArrayList<>(seed);
+        CompletableFuture<?>[] failures = new CompletableFuture[seed];
 
         long start = System.currentTimeMillis();
+        MongoSession mongoSession = MongoSessionInstance.mongoSession;
 
         for (int i = 0; i < seed; i++) {
 
-            CompletableFuture<User> future = CompletableFuture.supplyAsync(() -> {
+            int finalI = i;
 
-                MongoSession mongoSession = MongoSessionInstance.mongoSession;
-                ClientSession clientSession = null;
+            final ClientSession clientSession1 = mongoSession.getMongoClient().startSession();
 
-                try {
-                    // 开启事务
-                    clientSession = mongoSession.getMongoClient().startSession();
-                    clientSession.startTransaction();
+            Supplier<User> runnable = () -> {
+//                ClientSession clientSession2 = null;
 
-                    user3Repos.findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
+                // 开启事务
+
+//                    clientSession1.startTransaction();
+                System.out.println("startTransaction");
+
+//                    user3Repos.modifyWithClientSession(clientSession1).findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
 
 //                    // 回滚事务
 //                    clientSession.abortTransaction();
+//
+//                    clientSession2 = mongoSession.getMongoClient().startSession();
+//                    clientSession2.startTransaction();
+                User u = null;
+                u = userRepos
+                        .modifyWithClientSession(clientSession1)
+                        .findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
 
-                    User u = userRepos.findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
-                    clientSession.commitTransaction();
-                    return u;
-                } catch (Exception ex) {
-                    if (clientSession != null) {
-                        clientSession.abortTransaction();
-                    }
-                    return null;
-                } finally {
-                    if (clientSession != null) {
-                        clientSession.close();
-                    }
+
+                if (finalI % 2 == 0) {
+//                        clientSession1.abortTransaction();
+                    System.out.println("abortTransaction");
+                } else {
+//                        clientSession1.commitTransaction();
+                    System.out.println("commitTransaction");
                 }
 
+                return u;
+
+//                    clientSession2.commitTransaction();
+
+//                    clientSession1.commitTransaction();
+//                    return u;
+
+            };
+
+            CompletableFuture<User> future = CompletableFuture.supplyAsync(() -> {
+
+                try {
+                    return clientSession1.withTransaction(runnable::get);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    return null;
+                }
             });
 
-            failures.add(future);
+            failures[i] = future;
 
         }
 
-        CompletableFuture.allOf(failures.toArray(new CompletableFuture[0])).get();
+        CompletableFuture.allOf(failures).get();
 
         long end = System.currentTimeMillis();
 

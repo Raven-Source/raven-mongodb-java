@@ -11,7 +11,7 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class DeleteOptions {
+public class DeleteOptions implements Options {
 
     private Bson filter;
     private Bson hint;

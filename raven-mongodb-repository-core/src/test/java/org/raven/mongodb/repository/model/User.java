@@ -10,6 +10,7 @@ import org.raven.commons.data.Deletable;
 import org.raven.commons.data.MemberFormatType;
 import org.raven.commons.data.Versioned;
 import org.raven.commons.data.annotation.Contract;
+import org.raven.commons.data.annotation.Ignore;
 import org.raven.mongodb.repository.annotations.EntityListeners;
 import org.raven.mongodb.repository.interceptors.DeletableInterceptor;
 import org.raven.mongodb.repository.interceptors.VersionedEntityInterceptor;
@@ -32,7 +33,8 @@ public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
 
     private Long version = 0L;
 
-    @BsonIgnore
+//    @BsonIgnore
+    @Ignore
     private Status status;
 
     private Boolean deleted = Boolean.FALSE;

@@ -165,27 +165,27 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
 
             new FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>>() {
                 @Override
-                protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                public EntityInformation<TEntity, TKey> getEntityInformation() {
                     return ReactiveMongoReadonlyRepositoryImpl.this.entityInformation;
                 }
 
                 @Override
-                protected Mono<Optional<TEntity>> doFindOne(FindOptions options) {
+                public Mono<Optional<TEntity>> doFindOne(FindOptions options) {
                     return ReactiveMongoReadonlyRepositoryImpl.this.doFindOne(options);
                 }
 
                 @Override
-                protected Mono<List<TEntity>> doFindList(FindOptions options) {
+                public Mono<List<TEntity>> doFindList(FindOptions options) {
                     return ReactiveMongoReadonlyRepositoryImpl.this.doFindList(options);
                 }
 
                 @Override
-                protected Mono<Long> doCount(CountOptions options) {
+                public Mono<Long> doCount(CountOptions options) {
                     return ReactiveMongoReadonlyRepositoryImpl.this.doCount(options);
                 }
 
                 @Override
-                protected Mono<Boolean> doExists(ExistsOptions options) {
+                public Mono<Boolean> doExists(ExistsOptions options) {
                     return ReactiveMongoReadonlyRepositoryImpl.this.doExists(options);
                 }
             };

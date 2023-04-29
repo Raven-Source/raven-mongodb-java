@@ -10,7 +10,8 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class FindOneAndDeleteOptions {
+public class FindOneAndDeleteOptions implements Options {
+
     private Bson sort;
     private Bson filter;
     private Bson update;

@@ -1,17 +1,12 @@
 package org.raven.mongodb.repository;
 
-import com.mongodb.client.FindIterable;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.repository.annotations.PreFind;
-import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +20,49 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends AbstractMongoBaseRepository<TEntity, TKey>
         implements MongoReadonlyRepository<TEntity, TKey> {
 
+    private final SyncFindOperationImpl<TEntity, TKey> operation;
+
     //#region constructor
+
+    /**
+     * constructor
+     *
+     * @param mongoSession MongoSession
+     */
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession) {
+        this(mongoSession, null, null, null);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoSession   MongoSession
+     * @param collectionName collectionName
+     */
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
+        this(mongoSession, collectionName, null, null);
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoSession MongoSession
+     * @param mongoOptions MongoOptions
+     */
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
+        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    }
+
+    /**
+     * constructor
+     *
+     * @param mongoSession   MongoSession
+     * @param mongoOptions   MongoOptions
+     * @param collectionName collectionName
+     */
+    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+    }
 
     /**
      * constructor
@@ -39,258 +76,92 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
-    }
 
-    /**
-     * constructor
-     *
-     * @param mongoSession MongoSession
-     */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession) {
-        super(mongoSession);
-    }
-
-    /**
-     * constructor
-     *
-     * @param mongoSession   MongoSession
-     * @param collectionName collectionName
-     */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
-        super(mongoSession, collectionName);
-    }
-
-    /**
-     * constructor
-     *
-     * @param mongoSession MongoSession
-     * @param mongoOptions MongoOptions
-     */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
-        super(mongoSession, mongoOptions);
-    }
-
-
-    /**
-     * constructor
-     *
-     * @param mongoSession   MongoSession
-     * @param mongoOptions   MongoOptions
-     * @param collectionName collectionName
-     */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
-        super(mongoSession, mongoOptions, collectionName);
+        operation = new SyncFindOperationImpl<>(this::doFind, this::doCount, super.entityInformation, null);
     }
 
     //#endregion
-
-//    /**
-//     * 数量
-//     *
-//     * @param filter 查询条件
-//     * @return count
-//     */
-//    @Override
-//    public long count(final Bson filter) {
-//        return this.count(filter, (Bson) null, (ReadPreference) null);
-//    }
-//
-//    /**
-//     * 数量
-//     *
-//     * @param filter         查询条件
-//     * @param hint           hint索引
-//     * @param readPreference 访问设置
-//     * @return count
-//     */
-//    @Override
-//    public long count(final Bson filter, final Bson hint
-//            , final ReadPreference readPreference) {
-//
-//        return this.count(filter, 0, 0, hint, readPreference);
-//    }
-//
-//    /**
-//     * 数量
-//     *
-//     * @param filter         查询条件
-//     * @param limit          limit
-//     * @param skip           skip
-//     * @param hint           hint索引
-//     * @param readPreference 访问设置
-//     * @return count
-//     */
-//    @Override
-//    public long count(final Bson filter, int limit, int skip, final Bson hint
-//            , final ReadPreference readPreference) {
-//
-//        CountOptions options = (CountOptions) new CountOptions()
-//                .limit(limit)
-//                .skip(skip)
-//                .filter(filter)
-//                .hint(hint)
-//                .readPreference(readPreference);
-//
-//        return this.count(options);
-//    }
-//
-//    /**
-//     * 数量
-//     *
-//     * @param countOptions CountOptions
-//     * @return count
-//     */
-//    @Override
-//    public long count(final CountOptions countOptions) {
-//        return this.doCount(countOptions);
-//    }
-//
-//    /**
-//     * 是否存在
-//     *
-//     * @param filter conditions
-//     * @return exists
-//     */
-//    @Override
-//    public boolean exists(final Bson filter) {
-//        return this.exists(filter, null, null);
-//    }
-//
-//    /**
-//     * 是否存在
-//     *
-//     * @param filter         conditions
-//     * @param hint           hint
-//     * @param readPreference {{@link ReadPreference}}
-//     * @return exists
-//     */
-//    @Override
-//    public boolean exists(final Bson filter, final Bson hint
-//            , final ReadPreference readPreference) {
-//
-//        Bson _filter = filter;
-//        if (_filter == null) {
-//            _filter = Filters.empty();
-//        }
-//
-//        List<String> includeFields = new ArrayList<>(1);
-//        includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
-//
-//        return this.get(_filter, includeFields, null, hint, readPreference) != null;
-//    }
-//
-//    /**
-//     * 是否存在
-//     *
-//     * @param existsOptions ExistsOptions
-//     * @return exists
-//     */
-//    @Override
-//    public boolean exists(final ExistsOptions existsOptions) {
-//        return this.exists(existsOptions.filter(), existsOptions.hint(), existsOptions.readPreference());
-//    }
-
 
     //region ext
 
     @Override
     public <TResult> TResult findOne(FindOptions findOptions, Class<TResult> resultClass) {
-        return doFindOne(findOptions, resultClass);
+        return operation.findOne(findOptions, resultClass);
     }
 
     @Override
     public <TResult> List<TResult> findList(FindOptions findOptions, Class<TResult> resultClass) {
-        return doFindList(findOptions, resultClass);
+        return operation.findList(findOptions, resultClass);
     }
 
-    //#endregion
+    //endregion
 
     //region protected
 
-    protected TEntity doFindOne(final FindOptions options) {
-        return this.doFindOne(options, entityInformation.getEntityType());
+    public SyncFindOperation<TEntity, TKey> findWithClientSession(ClientSession clientSession) {
+        return operation.clone(clientSession);
     }
 
-    protected <TResult> TResult doFindOne(final FindOptions options, Class<TResult> resultClass) {
-        return this.doFind(options, resultClass).first();
-    }
+//    protected TEntity doFindOne(final FindOptions options) {
+//        return this.doFindOne(options, entityInformation.getEntityType());
+//    }
+//
+//    protected <TResult> TResult doFindOne(final FindOptions options, Class<TResult> resultClass) {
+//        return operation.doFindOne(options, resultClass);
+//    }
+//
+//    protected List<TEntity> doFindList(final FindOptions options) {
+//        return this.doFindList(options, entityInformation.getEntityType());
+//    }
+//
+//    protected <TResult> List<TResult> doFindList(final FindOptions options, Class<TResult> resultClass) {
+//        return operation.doFindList(options, resultClass);
+//    }
+//
+//    protected long doCount(final CountOptions options) {
+//        return operation.doCount(options);
+//    }
+//
+//    protected boolean doExists(final ExistsOptions options) {
+//        return operation.doExists(options);
+//    }
 
-    protected List<TEntity> doFindList(final FindOptions options) {
-        return this.doFindList(options, entityInformation.getEntityType());
-    }
+    //endregion
 
-    protected <TResult> List<TResult> doFindList(final FindOptions options, Class<TResult> resultClass) {
-        FindIterable<TResult> result = doFind(options, resultClass);
-
-        ArrayList<TResult> list = new ArrayList<>();
-        for (TResult entity : result) {
-            list.add(entity);
-        }
-
-        return list;
-    }
-
-    protected long doCount(final CountOptions options) {
-
-        if (options.filter() == null) {
-            options.filter(Filters.empty());
-        }
-
-        callGlobalInterceptors(PreFind.class, null, options);
-
-        return super.getCollection(options.readPreference()).countDocuments(options.filter(),
-                new com.mongodb.client.model.CountOptions()
-                        .hint(options.hint())
-                        .limit(options.limit())
-                        .skip(options.skip())
-        );
-    }
-
-    protected boolean doExists(final ExistsOptions options) {
-
-        Bson _filter = options.filter();
-        if (_filter == null) {
-            _filter = Filters.empty();
-        }
-
-        List<String> includeFields = new ArrayList<>(1);
-        includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
-
-        return this.findOne(_filter, includeFields, null, options.hint(), options.readPreference()) != null;
-    }
+    //region findProxy
 
     @Override
     public FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findProxy() {
-        return proxy;
+        return operation.proxy();
     }
 
-    private final FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy =
-            new FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean>() {
-                @Override
-                protected EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return MongoReadonlyRepositoryImpl.this.entityInformation;
-                }
-
-                @Override
-                protected TEntity doFindOne(FindOptions options) {
-                    return MongoReadonlyRepositoryImpl.this.doFindOne(options);
-                }
-
-                @Override
-                protected List<TEntity> doFindList(FindOptions options) {
-                    return MongoReadonlyRepositoryImpl.this.doFindList(options);
-                }
-
-                @Override
-                protected Long doCount(CountOptions options) {
-                    return MongoReadonlyRepositoryImpl.this.doCount(options);
-                }
-
-                @Override
-                protected Boolean doExists(ExistsOptions options) {
-                    return MongoReadonlyRepositoryImpl.this.doExists(options);
-                }
-            };
+//    private final FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy =
+//            new FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean>() {
+//                @Override
+//                public EntityInformation<TEntity, TKey> getEntityInformation() {
+//                    return MongoReadonlyRepositoryImpl.this.entityInformation;
+//                }
+//
+//                @Override
+//                public TEntity doFindOne(FindOptions options) {
+//                    return MongoReadonlyRepositoryImpl.this.doFindOne(options);
+//                }
+//
+//                @Override
+//                public List<TEntity> doFindList(FindOptions options) {
+//                    return MongoReadonlyRepositoryImpl.this.doFindList(options);
+//                }
+//
+//                @Override
+//                public Long doCount(CountOptions options) {
+//                    return MongoReadonlyRepositoryImpl.this.doCount(options);
+//                }
+//
+//                @Override
+//                public Boolean doExists(ExistsOptions options) {
+//                    return MongoReadonlyRepositoryImpl.this.doExists(options);
+//                }
+//            };
 
     //endregion
 

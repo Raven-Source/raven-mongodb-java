@@ -311,12 +311,12 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             new ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>>() {
 
                 @Override
-                protected EntityInformation<TEntity, TKey> getEntityInformation() {
+                public EntityInformation<TEntity, TKey> getEntityInformation() {
                     return entityInformation;
                 }
 
                 @Override
-                protected Mono<Optional<TKey>> doInsert(TEntity entity, WriteConcern writeConcern) {
+                public Mono<Optional<TKey>> doInsert(TEntity entity, WriteConcern writeConcern) {
                     return ReactiveMongoRepositoryImpl.this.doInsert(entity, writeConcern).map(x ->
                             Optional.ofNullable(
                                     x.wasAcknowledged()
@@ -327,7 +327,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                protected Mono<Map<Integer, TKey>> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                public Mono<Map<Integer, TKey>> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
 
                     return ReactiveMongoRepositoryImpl.this.doInsertBatch(entities, writeConcern).map(x -> {
 
@@ -346,31 +346,31 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                protected Mono<Long> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
+                public Mono<Long> doUpdate(@NonNull org.raven.mongodb.repository.UpdateOptions options, UpdateType updateType) {
                     return ReactiveMongoRepositoryImpl.this.doUpdate(options, updateType).map(x ->
                             x.wasAcknowledged() ? x.getModifiedCount() : 0
                     );
                 }
 
                 @Override
-                protected Mono<TEntity> doFindOneAndUpdate(org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
+                public Mono<TEntity> doFindOneAndUpdate(org.raven.mongodb.repository.FindOneAndUpdateOptions options) {
                     return ReactiveMongoRepositoryImpl.this.doFindOneAndUpdate(options);
                 }
 
                 @Override
-                protected Mono<TEntity> doFindOneAndDelete(@NonNull org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
+                public Mono<TEntity> doFindOneAndDelete(@NonNull org.raven.mongodb.repository.FindOneAndDeleteOptions options) {
                     return ReactiveMongoRepositoryImpl.this.doFindOneAndDelete(options);
                 }
 
                 @Override
-                protected Mono<Long> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
+                public Mono<Long> doDeleteOne(org.raven.mongodb.repository.DeleteOptions options) {
                     return ReactiveMongoRepositoryImpl.this.doDeleteOne(options).map(x ->
                             x.wasAcknowledged() ? x.getDeletedCount() : 0
                     );
                 }
 
                 @Override
-                protected Mono<Long> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
+                public Mono<Long> doDeleteMany(org.raven.mongodb.repository.DeleteOptions options) {
                     return ReactiveMongoRepositoryImpl.this.doDeleteMany(options).map(x ->
                             x.wasAcknowledged() ? x.getDeletedCount() : 0
                     );

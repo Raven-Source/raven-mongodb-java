@@ -14,6 +14,7 @@ import org.raven.mongodb.repository.query.FilterBuilder;
 import org.raven.mongodb.repository.query.HintBuilder;
 import org.raven.mongodb.repository.query.SortBuilder;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -258,13 +259,16 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
     default TListResult findList(final Bson filter, final List<String> includeFields, final Bson sort
             , final int limit, final int skip
             , final Bson hint
-            , final ReadPreference readPreference) {
+            , final @Nullable ReadPreference readPreference) {
 
         FindOptions options = new FindOptions();
         options.filter(filter);
         options.hint(hint);
         options.includeFields(includeFields);
-        options.readPreference(readPreference);
+
+        if (readPreference != null) {
+            options.readPreference(readPreference);
+        }
         options.limit(limit);
         options.skip(skip);
         options.sort(sort);
@@ -292,7 +296,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return count
      */
     default TCountResult count(Bson filter, Bson hint
-            , ReadPreference readPreference) {
+            , @Nullable ReadPreference readPreference) {
 
         return this.count(filter, 0, 0, hint, readPreference);
     }
@@ -309,14 +313,18 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return count
      */
     default TCountResult count(Bson filter, int limit, int skip, Bson hint
-            , ReadPreference readPreference) {
+            , @Nullable ReadPreference readPreference) {
 
         CountOptions options = (CountOptions) new CountOptions()
                 .limit(limit)
                 .skip(skip)
                 .filter(filter)
-                .hint(hint)
-                .readPreference(readPreference);
+                .hint(hint);
+
+        if (readPreference != null) {
+
+            options.readPreference(readPreference);
+        }
 
         return this.count(options);
     }
@@ -351,11 +359,16 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return exists
      */
     default TExistsResult exists(Bson filter, Bson hint
-            , ReadPreference readPreference) {
+            , @Nullable ReadPreference readPreference) {
         ExistsOptions options = (ExistsOptions) new ExistsOptions()
                 .filter(filter)
-                .hint(hint)
-                .readPreference(readPreference);
+                .hint(hint);
+
+        if (readPreference != null) {
+
+            options.readPreference(readPreference);
+        }
+
         return this.exists(options);
     }
 
@@ -437,7 +450,15 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
         return findProxy().doFindList(findOptions);
     }
 
-    default FindOptions createFindOptions(Function<FilterBuilder<TEntity>, Bson> filterBuilder, Function<FieldNest, List<String>> fieldNestList, Function<SortBuilder<TEntity>, Bson> sortBuilder, int limit, int skip, Function<HintBuilder<TEntity>, Bson> hintBuilder, ReadPreference readPreference) {
+    default FindOptions createFindOptions(
+            Function<FilterBuilder<TEntity>, Bson> filterBuilder,
+            Function<FieldNest, List<String>> fieldNestList,
+            Function<SortBuilder<TEntity>, Bson> sortBuilder,
+            int limit,
+            int skip,
+            Function<HintBuilder<TEntity>, Bson> hintBuilder,
+            @Nullable ReadPreference readPreference) {
+
         final FindOptions findOptions = new FindOptions();
 
         if (!Objects.isNull(filterBuilder)) {
@@ -472,7 +493,9 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
             );
         }
 
-        findOptions.readPreference(readPreference);
+        if (readPreference != null) {
+            findOptions.readPreference(readPreference);
+        }
         return findOptions;
     }
 
@@ -481,17 +504,17 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
 
     FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> findProxy();
 
-    abstract class FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
+    interface FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
 
-        protected abstract EntityInformation<TEntity, TKey> getEntityInformation();
+        EntityInformation<TEntity, TKey> getEntityInformation();
 
-        protected abstract TSingleResult doFindOne(final FindOptions options);
+        TSingleResult doFindOne(final FindOptions options);
 
-        protected abstract TListResult doFindList(final FindOptions options);
+        TListResult doFindList(final FindOptions options);
 
-        protected abstract TCountResult doCount(final CountOptions options);
+        TCountResult doCount(final CountOptions options);
 
-        protected abstract TExistsResult doExists(final ExistsOptions options);
+        TExistsResult doExists(final ExistsOptions options);
     }
 
 }

@@ -1,8 +1,6 @@
 package org.raven.mongodb.repository;
 
-import org.raven.mongodb.repository.operation.FindOperation;
-
-import java.util.List;
+import com.mongodb.client.ClientSession;
 
 /**
  * MongoReaderRepository
@@ -13,7 +11,9 @@ import java.util.List;
  */
 public interface MongoReadonlyRepository<TEntity, TKey>
         extends MongoBaseRepository<TEntity>,
-        FindOperation<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> {
+        SyncFindOperation<TEntity, TKey> {
+
+    SyncFindOperation<TEntity, TKey> findWithClientSession(ClientSession clientSession);
 
 //    /**
 //     * 数量
@@ -83,24 +83,24 @@ public interface MongoReadonlyRepository<TEntity, TKey>
 //     */
 //    boolean exists(ExistsOptions existsOptions);
 
-    /**
-     * 根据条件获取实体
-     *
-     * @param findOptions FindOptions
-     * @param resultClass TResult Class
-     * @param <TResult> TResult
-     * @return TResult
-     */
-    <TResult> TResult findOne(final FindOptions findOptions, final Class<TResult> resultClass);
-
-    /**
-     * 根据条件获取获取列表
-     *
-     * @param findOptions FindOptions
-     * @param resultClass TResult Class
-     * @param <TResult> TResult
-     * @return TResult
-     */
-    <TResult> List<TResult> findList(final FindOptions findOptions, final Class<TResult> resultClass);
+//    /**
+//     * 根据条件获取实体
+//     *
+//     * @param findOptions FindOptions
+//     * @param resultClass TResult Class
+//     * @param <TResult>   TResult
+//     * @return TResult
+//     */
+//    <TResult> TResult findOne(final FindOptions findOptions, final Class<TResult> resultClass);
+//
+//    /**
+//     * 根据条件获取获取列表
+//     *
+//     * @param findOptions FindOptions
+//     * @param resultClass TResult Class
+//     * @param <TResult>   TResult
+//     * @return TResult
+//     */
+//    <TResult> List<TResult> findList(final FindOptions findOptions, final Class<TResult> resultClass);
 
 }

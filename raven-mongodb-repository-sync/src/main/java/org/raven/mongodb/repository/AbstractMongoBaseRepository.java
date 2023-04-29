@@ -2,18 +2,32 @@ package org.raven.mongodb.repository;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
+import lombok.NonNull;
+import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.repository.annotations.PreDelete;
 import org.raven.mongodb.repository.annotations.PreFind;
+import org.raven.mongodb.repository.annotations.PreInsert;
+import org.raven.mongodb.repository.annotations.PreUpdate;
+import org.raven.mongodb.repository.contants.BsonConstant;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @param <TEntity> TEntity
@@ -131,14 +145,13 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     //#endregion
 
     /**
-     *
      * @param findIterable findIterable
      * @param projection   projection
      * @param sort         sort
      * @param limit        limit
      * @param skip         skip
      * @param hint         hint
-     * @param <TResult> TResult
+     * @param <TResult>    TResult
      * @return FindIterable
      */
     protected <TResult> FindIterable<TResult> findOptions(final FindIterable<TResult> findIterable,
@@ -166,7 +179,6 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
 
         if (hint != null) {
-//            Bson hintBson = new BsonDocument("$hint", hint.toBsonDocument());
             filter = filter.hint(hint);
         }
 
@@ -174,7 +186,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     }
 
-    protected <TResult> FindIterable<TResult> doFind(final FindOptions options, final Class<TResult> resultClass) {
+    protected <TResult> FindIterable<TResult> doFind(@Nullable final ClientSession session, final FindOptions options, final Class<TResult> resultClass) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -185,10 +197,245 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
         callGlobalInterceptors(PreFind.class, null, options);
 
-        FindIterable<TResult> result = getCollection(options.readPreference()).find(options.filter(), resultClass);
+        FindIterable<TResult> result;
+        if (session == null) {
+            result = getCollection(options.readPreference()).find(options.filter(), resultClass);
+        } else {
+            result = getCollection(options.readPreference()).find(session, options.filter(), resultClass);
+        }
         result = findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
 
         return result;
     }
+
+    protected long doCount(@Nullable final ClientSession session, final CountOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreFind.class, null, options);
+
+        com.mongodb.client.model.CountOptions countOptions = new com.mongodb.client.model.CountOptions()
+                .hint(options.hint())
+                .limit(options.limit())
+                .skip(options.skip());
+
+        if (session == null) {
+            return getCollection(options.readPreference()).countDocuments(options.filter(), countOptions);
+        } else {
+            return getCollection(options.readPreference()).countDocuments(session, options.filter(), countOptions);
+        }
+
+    }
+
+    //region protected
+
+    /**
+     * @param entity       Entity
+     * @param writeConcern {{@link WriteConcern}}
+     * @return {{@link InsertOneResult}}
+     */
+    protected InsertOneResult doInsert(@Nullable final ClientSession session, final TEntity entity, final WriteConcern writeConcern) {
+
+        if (entity.getId() == null && idGenerator != null) {
+            TKey id = idGenerator.generateId();
+            entity.setId(id);
+        }
+        callGlobalInterceptors(PreInsert.class, entity, null);
+
+        if (session == null) {
+            return getCollection(writeConcern).insertOne(entity);
+        } else {
+            return getCollection(writeConcern).insertOne(session, entity);
+        }
+    }
+
+    protected InsertManyResult doInsertBatch(@Nullable final ClientSession session, final List<TEntity> entities, final WriteConcern writeConcern) {
+
+        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        long count = entityStream.size();
+
+        if (count > 0 && idGenerator != null) {
+            List<TKey> ids = idGenerator.generateIdBatch(count);
+
+            for (int i = 0; i < count; i++) {
+                entityStream.get(i).setId(ids.get(i));
+            }
+        }
+
+        for (TEntity entity : entities) {
+            callGlobalInterceptors(PreInsert.class, entity, null);
+        }
+
+        if (session == null) {
+            return getCollection(writeConcern).insertMany(entities);
+        } else {
+            return getCollection(writeConcern).insertMany(session, entities);
+        }
+    }
+
+    protected UpdateResult doUpdate(@Nullable final ClientSession session,
+                                    @NonNull final UpdateOptions options,
+                                    final UpdateType updateType) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreUpdate.class, null, options);
+
+        com.mongodb.client.model.UpdateOptions updateOptions =
+                new com.mongodb.client.model.UpdateOptions()
+                        .hint(options.hint())
+                        .upsert(options.upsert());
+
+        if (updateType == UpdateType.ONE) {
+            if (session == null) {
+                return getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
+                        updateOptions
+                );
+            } else {
+                return getCollection(options.writeConcern()).updateOne(session, options.filter(), options.update(),
+                        updateOptions
+                );
+            }
+        } else {
+            if (session == null) {
+                return getCollection(options.writeConcern()).updateMany(options.filter(), options.update(),
+                        updateOptions
+                );
+            } else {
+                return getCollection(options.writeConcern()).updateMany(session, options.filter(), options.update(),
+                        updateOptions
+                );
+            }
+        }
+    }
+
+    protected TEntity doFindOneAndUpdate(@Nullable final ClientSession session, final FindOneAndUpdateOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreUpdate.class, null, options);
+
+        com.mongodb.client.model.FindOneAndUpdateOptions findOneAndUpdateOptions =
+                new com.mongodb.client.model.FindOneAndUpdateOptions()
+                        .returnDocument(options.returnDocument())
+                        .upsert(options.upsert())
+                        .hint(options.hint())
+                        .sort(options.sort());
+
+        if (session == null) {
+            return getCollection().findOneAndUpdate(options.filter(), options.update(),
+                    findOneAndUpdateOptions
+            );
+        } else {
+            return getCollection().findOneAndUpdate(session, options.filter(), options.update(),
+                    findOneAndUpdateOptions
+            );
+        }
+    }
+
+    protected TEntity doFindOneAndDelete(@Nullable final ClientSession session, @NonNull final FindOneAndDeleteOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreDelete.class, null, options);
+
+        com.mongodb.client.model.FindOneAndDeleteOptions findOneAndDeleteOptions =
+                new com.mongodb.client.model.FindOneAndDeleteOptions()
+                        .hint(options.hint())
+                        .sort(options.sort());
+
+        if (session == null) {
+            return getCollection().findOneAndDelete(options.filter(),
+                    findOneAndDeleteOptions
+            );
+        } else {
+            return getCollection().findOneAndDelete(session, options.filter(),
+                    findOneAndDeleteOptions
+            );
+        }
+    }
+
+    protected DeleteResult doDeleteOne(@Nullable final ClientSession session, final DeleteOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreDelete.class, null, options);
+
+        com.mongodb.client.model.DeleteOptions deleteOptions =
+                new com.mongodb.client.model.DeleteOptions()
+                        .hint(options.hint());
+
+        if (session == null) {
+
+            return getCollection(options.writeConcern()).deleteOne(options.filter(),
+                    deleteOptions
+            );
+        } else {
+
+            return getCollection(options.writeConcern()).deleteOne(session, options.filter(),
+                    deleteOptions
+            );
+        }
+    }
+
+    protected DeleteResult doDeleteMany(@Nullable final ClientSession session, final DeleteOptions options) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        com.mongodb.client.model.DeleteOptions deleteOptions =
+                new com.mongodb.client.model.DeleteOptions()
+                        .hint(options.hint());
+
+        callGlobalInterceptors(PreDelete.class, null, options);
+
+        if (session == null) {
+
+            return getCollection(options.writeConcern()).deleteMany(options.filter(),
+                    deleteOptions
+            );
+        } else {
+
+            return getCollection(options.writeConcern()).deleteMany(session, options.filter(),
+                    deleteOptions
+            );
+        }
+    }
+
+    /**
+     * createUpdateBson
+     *
+     * @param updateEntity Entity
+     * @param isUpsert     isUpsert
+     * @return Update Bson
+     */
+    protected Bson createUpdateBson(final TEntity updateEntity, final boolean isUpsert) {
+
+        BsonDocument bsDoc = entityInformation.toBsonDocument(updateEntity);
+        bsDoc.remove(BsonConstant.PRIMARY_KEY_NAME);
+
+        Bson update = new BsonDocument("$set", bsDoc);
+        if (isUpsert && idGenerator != null) {
+            TKey id = idGenerator.generateId();
+            update = Updates.combine(update, Updates.setOnInsert(BsonConstant.PRIMARY_KEY_NAME, id));
+        }
+
+        return update;
+
+    }
+
+    //endregion
+
 
 }
