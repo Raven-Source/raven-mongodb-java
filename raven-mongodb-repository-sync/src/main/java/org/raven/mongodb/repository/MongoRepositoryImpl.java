@@ -3,30 +3,13 @@ package org.raven.mongodb.repository;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.InsertManyResult;
-import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
-import lombok.NonNull;
-import org.bson.BsonDocument;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.repository.annotations.PreUpdate;
-import org.raven.mongodb.repository.annotations.PreInsert;
-import org.raven.mongodb.repository.contants.BsonConstant;
-//import org.raven.mongodb.repository.spi.IdGenerationType;
 import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @param <TEntity> TEntity

@@ -76,7 +76,7 @@ public class FindAndModifyTest {
     @Test
     public void test2() throws Exception {
 
-        int seed = 5000;
+        int seed = 100;
 
         userRepos.findOne(1L);
 
@@ -112,12 +112,13 @@ public class FindAndModifyTest {
                         .findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
 
 
-                if (finalI % 2 == 0) {
-//                        clientSession1.abortTransaction();
+                if (finalI % 3 == 0) {
+                    clientSession1.abortTransaction();
 //                    System.out.println("abortTransaction");
                 } else {
-//                        clientSession1.commitTransaction();
-//                    System.out.println("commitTransaction");
+                    clientSession1.commitTransaction();
+//                  ·
+//                  System.out.println("commitTransaction");
                 }
 
                 return u;
