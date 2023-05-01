@@ -4,7 +4,7 @@ import com.mongodb.WriteConcern;
 
 public class MongoSessionInstance {
 
-    private static final String url = "mongodb://127.0.0.1:27017/";
+    private static final String url = "mongodb://127.0.0.1:27017/?replicaSet=rs0";
 
     public static final MongoSession mongoSession = new DefaultMongoSession(url
             , "RepositoryTest", null, null);

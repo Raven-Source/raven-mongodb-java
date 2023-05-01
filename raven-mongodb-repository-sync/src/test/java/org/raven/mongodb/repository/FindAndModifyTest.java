@@ -1,6 +1,7 @@
 package org.raven.mongodb.repository;
 
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.TransactionBody;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class FindAndModifyTest {
     @Test
     public void test() throws Exception {
 
-        int seed = 15;
+        int seed = 5000;
 
         User user = userRepos.findOne(1L);
         int age = user.getAge();
@@ -75,7 +76,7 @@ public class FindAndModifyTest {
     @Test
     public void test2() throws Exception {
 
-        int seed = 4;
+        int seed = 5000;
 
         userRepos.findOne(1L);
 
@@ -90,13 +91,13 @@ public class FindAndModifyTest {
 
             final ClientSession clientSession1 = mongoSession.getMongoClient().startSession();
 
-            Supplier<User> runnable = () -> {
+            TransactionBody<User> runnable = () -> {
 //                ClientSession clientSession2 = null;
 
                 // 开启事务
 
 //                    clientSession1.startTransaction();
-                System.out.println("startTransaction");
+//                System.out.println("startTransaction");
 
 //                    user3Repos.modifyWithClientSession(clientSession1).findOneAndUpdate(Filters.eq("_id", 1), Updates.inc("Age", 1));
 
@@ -113,10 +114,10 @@ public class FindAndModifyTest {
 
                 if (finalI % 2 == 0) {
 //                        clientSession1.abortTransaction();
-                    System.out.println("abortTransaction");
+//                    System.out.println("abortTransaction");
                 } else {
 //                        clientSession1.commitTransaction();
-                    System.out.println("commitTransaction");
+//                    System.out.println("commitTransaction");
                 }
 
                 return u;
@@ -131,10 +132,10 @@ public class FindAndModifyTest {
             CompletableFuture<User> future = CompletableFuture.supplyAsync(() -> {
 
                 try {
-                    return clientSession1.withTransaction(runnable::get);
+                    return clientSession1.withTransaction(runnable);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                    return null;
+                    throw ex;
                 }
             });
 
