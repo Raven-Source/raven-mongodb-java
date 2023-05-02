@@ -7,6 +7,7 @@ import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -98,8 +99,12 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //region protected
 
-    public SyncFindOperation<TEntity, TKey> findWithClientSession(ClientSession clientSession) {
-        return operation.clone(clientSession);
+    public SyncFindOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
+        if (clientSession == null) {
+            return operation;
+        } else {
+            return operation.clone(clientSession);
+        }
     }
 
 //    protected TEntity doFindOne(final FindOptions options) {

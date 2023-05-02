@@ -1,5 +1,9 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.TransactionBody;
 import com.mongodb.client.model.Filters;
@@ -26,6 +30,12 @@ public class FindAndModifyTest {
 
     UserRepositoryImpl userRepos;
     User3RepositoryImpl user3Repos;
+
+    TransactionOptions txnOptions = TransactionOptions.builder()
+            .readPreference(ReadPreference.secondaryPreferred())
+            .readConcern(ReadConcern.MAJORITY)
+            .writeConcern(WriteConcern.W1)
+            .build();
 
     @Before
     public void init() {
@@ -76,7 +86,7 @@ public class FindAndModifyTest {
     @Test
     public void test2() throws Exception {
 
-        int seed = 100;
+        int seed = 2000;
 
         userRepos.findOne(1L);
 
@@ -133,7 +143,7 @@ public class FindAndModifyTest {
             CompletableFuture<User> future = CompletableFuture.supplyAsync(() -> {
 
                 try {
-                    return clientSession1.withTransaction(runnable);
+                    return clientSession1.withTransaction(runnable, txnOptions);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                     throw ex;

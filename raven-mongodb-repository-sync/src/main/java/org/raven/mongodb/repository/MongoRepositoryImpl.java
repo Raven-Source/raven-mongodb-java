@@ -9,6 +9,7 @@ import org.raven.mongodb.repository.spi.IdGenerator;
 import org.raven.mongodb.repository.spi.IdGeneratorProvider;
 import org.raven.mongodb.repository.spi.Sequence;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -136,8 +137,12 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //region protected
 
-    public SyncModifyOperation<TEntity, TKey> modifyWithClientSession(ClientSession clientSession) {
-        return operation.clone(clientSession);
+    public SyncModifyOperation<TEntity, TKey> modifyWithClientSession(@Nullable ClientSession clientSession) {
+        if (clientSession == null) {
+            return operation;
+        } else {
+            return operation.clone(clientSession);
+        }
     }
 
 //    /**

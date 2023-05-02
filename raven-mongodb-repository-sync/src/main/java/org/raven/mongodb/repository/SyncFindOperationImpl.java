@@ -31,10 +31,6 @@ public class SyncFindOperationImpl<TEntity, TKey> implements SyncFindOperation<T
         this.clientSession = clientSession;
     }
 
-    /**
-     * @param clientSession
-     * @return
-     */
     protected SyncFindOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
         return new SyncFindOperationImpl<>(this.doFindProxy, this.doCountProxy, this.entityInformation, clientSession);
     }
