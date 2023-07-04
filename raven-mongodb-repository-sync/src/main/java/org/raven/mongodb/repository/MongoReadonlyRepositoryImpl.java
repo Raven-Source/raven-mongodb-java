@@ -78,7 +78,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
 
-        operation = new SyncFindOperationImpl<>(this::doFind, this::doCount, super.entityInformation, null);
+        operation = new SyncFindOperationImpl<>(this, null);
     }
 
     //#endregion

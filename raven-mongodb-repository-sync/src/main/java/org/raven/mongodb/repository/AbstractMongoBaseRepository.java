@@ -44,6 +44,10 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     protected MongoDatabase mongoDatabase;
 
+    protected EntityInformation<TEntity, TKey> getEntityInformation(){
+        return entityInformation;
+    }
+
     /**
      * @return MongoDatabase
      */
@@ -232,6 +236,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     //region protected
 
     /**
+     * @param session      session
      * @param entity       Entity
      * @param writeConcern {{@link WriteConcern}}
      * @return {{@link InsertOneResult}}
@@ -292,23 +297,19 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
         if (updateType == UpdateType.ONE) {
             if (session == null) {
-                return getCollection(options.writeConcern()).updateOne(options.filter(), options.update(),
-                        updateOptions
-                );
+                return getCollection(options.writeConcern())
+                        .updateOne(options.filter(), options.update(), updateOptions);
             } else {
-                return getCollection(options.writeConcern()).updateOne(session, options.filter(), options.update(),
-                        updateOptions
-                );
+                return getCollection(options.writeConcern())
+                        .updateOne(session, options.filter(), options.update(), updateOptions);
             }
         } else {
             if (session == null) {
-                return getCollection(options.writeConcern()).updateMany(options.filter(), options.update(),
-                        updateOptions
-                );
+                return getCollection(options.writeConcern())
+                        .updateMany(options.filter(), options.update(), updateOptions);
             } else {
-                return getCollection(options.writeConcern()).updateMany(session, options.filter(), options.update(),
-                        updateOptions
-                );
+                return getCollection(options.writeConcern())
+                        .updateMany(session, options.filter(), options.update(), updateOptions);
             }
         }
     }
@@ -436,6 +437,5 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
     }
 
     //endregion
-
 
 }

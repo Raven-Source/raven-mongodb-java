@@ -77,17 +77,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
 
-        operation = new SyncModifyOperationImpl<>(
-                super::createUpdateBson,
-                super::doInsert,
-                super::doInsertBatch,
-                super::doUpdate,
-                super::doFindOneAndUpdate,
-                super::doFindOneAndDelete,
-                super::doDeleteOne,
-                super::doDeleteMany,
-                super.entityInformation,
-                null);
+        operation = new SyncModifyOperationImpl<>(this, null);
     }
 
     //#endregion
@@ -107,9 +97,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Long updateOne(final Bson filter, final TEntity updateEntity, final boolean isUpsert, final Bson hint, final WriteConcern writeConcern) {
 
-        Bson update = createUpdateBson(updateEntity, isUpsert);
-
-        return updateOne(filter, update, isUpsert, hint, writeConcern);
+        return operation.updateOne(filter, updateEntity, isUpsert, hint, writeConcern);
     }
 
     //#endregion
@@ -128,9 +116,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public TEntity findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
 
-        Bson update = createUpdateBson(entity, isUpsert);
-
-        return this.findOneAndUpdate(filter, update, isUpsert, sort, hint);
+        return operation.findOneAndUpdate(filter, entity, isUpsert, sort, hint);
     }
 
     //#endregion
@@ -183,7 +169,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     @Override
     public ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyProxy() {
-        return operation.proxy();
+        return operation.modifyProxy();
     }
 
 
