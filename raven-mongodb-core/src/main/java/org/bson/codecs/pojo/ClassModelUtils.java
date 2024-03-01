@@ -2,8 +2,8 @@ package org.bson.codecs.pojo;
 
 import lombok.NonNull;
 import org.bson.codecs.Codec;
-import org.raven.mongodb.repository.codec.PojoCodecRegistry;
-import org.raven.mongodb.repository.query.FieldNest;
+import org.raven.mongodb.codec.PojoCodecRegistry;
+import org.raven.mongodb.query.FieldNest;
 
 import java.util.Arrays;
 import java.util.LinkedList;
