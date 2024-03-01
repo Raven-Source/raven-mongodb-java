@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
  * date 2021/11/28 14:37
  */
 @Component
-public class ApplicationRunner implements CommandLineRunner {
+public class PerformanceTestRunner implements CommandLineRunner {
 
     private User3RepositoryImpl user3Repos;
 
@@ -44,7 +44,7 @@ public class ApplicationRunner implements CommandLineRunner {
         rootLogger.setLevel(Level.OFF);
 
 
-        int seed = 100;
+        int seed = 5000;
         for (String arg : args) {
             if (arg != null) {
                 String[] val = arg.split("=");
@@ -86,7 +86,7 @@ public class ApplicationRunner implements CommandLineRunner {
 
         long end = System.currentTimeMillis();
 
-        System.out.println("qps:" + seed / (double) (end - start) * 1000.0);
+        System.out.println("insert tps:" + seed / (double) (end - start) * 1000.0);
 
         System.out.println("end");
     }

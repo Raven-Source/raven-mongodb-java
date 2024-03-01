@@ -17,7 +17,7 @@
         <module>raven-mongodb-spi</module>
         <module>raven-mongodb-sync</module>
         <module>raven-mongodb-reactive</module>
-        <module>raven-mongodb-performance</module>
+        <module>raven-mongodb-test</module>
         <module>raven-mongodb-spring</module>
     </modules>
 
