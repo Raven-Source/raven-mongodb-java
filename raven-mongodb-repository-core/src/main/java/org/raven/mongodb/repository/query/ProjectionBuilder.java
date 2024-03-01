@@ -7,6 +7,8 @@ import org.raven.mongodb.repository.BsonUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
@@ -110,9 +112,25 @@ public class ProjectionBuilder<TEntity> {
         return this;
     }
 
+    public ProjectionBuilder<TEntity> condition(boolean condition, Consumer<ProjectionBuilder<TEntity>> projectionBuilderConsumer) {
+
+        if (condition) {
+            projectionBuilderConsumer.accept(this);
+        }
+        return this;
+    }
+
+    public ProjectionBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<ProjectionBuilder<TEntity>> projectionBuilderConsumer) {
+
+        if (supplier.getAsBoolean()) {
+            projectionBuilderConsumer.accept(this);
+        }
+        return this;
+    }
+
     public Bson build() {
 
-        if (bsons.size() == 0) {
+        if (bsons.isEmpty()) {
             return null;
         }
         if (bsons.size() == 1) {

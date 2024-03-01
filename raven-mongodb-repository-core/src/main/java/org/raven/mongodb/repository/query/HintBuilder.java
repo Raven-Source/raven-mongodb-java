@@ -9,6 +9,8 @@ import org.raven.mongodb.repository.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
@@ -59,8 +61,24 @@ public class HintBuilder<TEntity> {
         return this;
     }
 
+    public HintBuilder<TEntity> condition(boolean condition, Consumer<HintBuilder<TEntity>> hintBuilderConsumer) {
+
+        if (condition) {
+            hintBuilderConsumer.accept(this);
+        }
+        return this;
+    }
+
+    public HintBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<HintBuilder<TEntity>> hintBuilderConsumer) {
+
+        if (supplier.getAsBoolean()) {
+            hintBuilderConsumer.accept(this);
+        }
+        return this;
+    }
+
     public Bson build() {
-        if (bsons.size() == 0) {
+        if (bsons.isEmpty()) {
             return null;
         }
         if (bsons.size() == 1) {

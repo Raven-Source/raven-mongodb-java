@@ -102,7 +102,7 @@ public class FilterBuilderTest {
         bson = filterBuilder.or(filterBuilder2).build();
         log.info(bson.toBsonDocument().toJson());
 
-        Assert.assertEquals("{\"$or\": [{\"$and\": [{\"a\": \"1\"}, {\"_id\": {\"$ne\": 2}}, {\"Name\": \"adc\"}, {\"status\": 1}, {\"CreateDate\": {\"$gte\": {\"$date\": \"2000-10-01T02:00:00Z\"}}}, {\"Mall.Name\": 6}]}, {\"$and\": [{\"x\": {\"$ne\": 1}}, {\"y\": 2}]}]}",
+        Assert.assertEquals("{\"$or\": [{\"$and\": [{\"a\": \"1\"}, {\"_id\": {\"$ne\": 2}}, {\"Name\": \"adc\"}, {\"Status\": 1}, {\"CreateDate\": {\"$gte\": {\"$date\": \"2000-10-01T02:00:00Z\"}}}, {\"Mall.Name\": 6}]}, {\"$and\": [{\"x\": {\"$ne\": 1}}, {\"y\": 2}]}]}",
                 bson.toBsonDocument().toJson()
         );
 
@@ -110,12 +110,13 @@ public class FilterBuilderTest {
         bson = new FilterBuilder<>(User.class).build();
         log.info(bson.toBsonDocument().toJson());
 
-
+        filterBuilder = new FilterBuilder<>(User.class);
+        filterBuilder.condition(true, f -> f.eq(User.Fields.id, 2));
 
     }
 
     @Test
-    public void bsonDocTest(){
+    public void bsonDocTest() {
 
         FilterBuilder<BsonDocument> filterBuilder = new FilterBuilder<>(BsonDocument.class);
 
@@ -138,3 +139,4 @@ public class FilterBuilderTest {
 
 
 }
+

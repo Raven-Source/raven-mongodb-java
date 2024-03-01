@@ -8,6 +8,8 @@ import org.raven.mongodb.repository.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
@@ -63,8 +65,26 @@ public class SortBuilder<TEntity> {
         return this;
     }
 
+    public SortBuilder<TEntity> condition(boolean condition, Consumer<SortBuilder<TEntity>> sortBuilderConsumer) {
+        if (condition) {
+            sortBuilderConsumer.accept(this);
+        }
+
+        return this;
+
+    }
+
+    public SortBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<SortBuilder<TEntity>> sortBuilderConsumer) {
+        if (supplier.getAsBoolean()) {
+            sortBuilderConsumer.accept(this);
+        }
+
+        return this;
+
+    }
+
     public Bson build() {
-        if (bsons.size() == 0) {
+        if (bsons.isEmpty()) {
             return null;
         }
         if (bsons.size() == 1) {

@@ -4,6 +4,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.model.geojson.Geometry;
 import com.mongodb.client.model.geojson.Point;
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.BsonType;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
@@ -24,12 +26,25 @@ public class FilterBuilder<TEntity> {
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();
 
+    @Getter
+    @Setter
+    private Operator operator;
+
     public FilterBuilder(final Class<TEntity> entityClass) {
+        this(entityClass, Operator.AND);
+    }
+
+    public FilterBuilder(final Class<TEntity> entityClass, final Operator operator) {
         this.entityClass = entityClass;
+        this.operator = operator;
     }
 
     public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass) {
         return new FilterBuilder<>(entityClass);
+    }
+
+    public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass, final Operator operator) {
+        return new FilterBuilder<>(entityClass, operator);
     }
 
     public boolean isEmpty() {
@@ -95,37 +110,6 @@ public class FilterBuilder<TEntity> {
     public <TItem> FilterBuilder<TEntity> nin(final String fieldName, final Iterable<TItem> values) {
         assert fieldName != null;
         bsons.add(Filters.nin(getWriteName(fieldName), values));
-        return this;
-    }
-
-    public FilterBuilder<TEntity> or(final FilterBuilder<TEntity> that) {
-        assert that != null;
-
-        Bson bson = Filters.or(Filters.and(new ArrayList<>(bsons)), that.build());
-        bsons.clear();
-        bsons.add(bson);
-        return this;
-    }
-
-    public FilterBuilder<TEntity> and(final FilterBuilder<TEntity> that) {
-        assert that != null;
-        bsons.addAll(that.bsons);
-        return this;
-    }
-
-    public FilterBuilder<TEntity> not(final FilterBuilder<TEntity> that) {
-        assert that != null;
-        bsons.add(Filters.not(that.build()));
-        return this;
-    }
-
-
-    public FilterBuilder<TEntity> nor(final FilterBuilder<TEntity> that) {
-        assert that != null;
-
-        Bson bson = Filters.nor(Filters.and(new ArrayList<>(bsons)), that.build());
-        bsons.clear();
-        bsons.add(bson);
         return this;
     }
 
@@ -321,6 +305,40 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
+    public FilterBuilder<TEntity> or(final FilterBuilder<TEntity> that) {
+        assert that != null;
+
+        Bson bson = Filters.or(this.build(), that.build());
+        bsons.clear();
+        bsons.add(bson);
+        return this;
+    }
+
+    public FilterBuilder<TEntity> and(final FilterBuilder<TEntity> that) {
+        assert that != null;
+
+        Bson bson = Filters.and(this.build(), that.build());
+        bsons.clear();
+        bsons.add(bson);
+        return this;
+    }
+
+    public FilterBuilder<TEntity> not() {
+
+        Bson bson = Filters.not(this.build());
+        bsons.clear();
+        bsons.add(bson);
+        return this;
+    }
+
+    public FilterBuilder<TEntity> nor() {
+
+        Bson bson = Filters.nor(this.build());
+        bsons.clear();
+        bsons.add(bson);
+        return this;
+    }
+
     public FilterBuilder<TEntity> condition(boolean condition, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
         if (condition) {
             filterBuilderConsumer.accept(this);
@@ -344,23 +362,23 @@ public class FilterBuilder<TEntity> {
     }
 
     public Bson build() {
-        return build(Operator.AND);
+        return build(operator);
     }
 
 
     public Bson build(Operator operator) {
-        if (bsons.size() == 0) {
+        if (bsons.isEmpty()) {
             return Filters.empty();
         }
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {
             if (operator == Operator.OR) {
-                return Filters.or(bsons);
+                return Filters.or(new ArrayList<>(bsons));
             } else if (operator == Operator.NOR) {
-                return Filters.nor(bsons);
+                return Filters.nor(new ArrayList<>(bsons));
             } else {
-                return Filters.and(bsons);
+                return Filters.and(new ArrayList<>(bsons));
             }
         }
     }

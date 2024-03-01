@@ -26,18 +26,17 @@ public final class BsonUtils {
         return new BsonDocumentWrapper<>(entity, encoder);
     }
 
-    public static @Nullable
-    <TEntity> Bson projection(final Class<TEntity> entityClass,
-                              @Nullable final List<String> includeFields,
-                              @Nullable final List<String> excludeFields) {
+    public static @Nullable <TEntity> Bson projection(final Class<TEntity> entityClass,
+                                                      @Nullable final List<String> includeFields,
+                                                      @Nullable final List<String> excludeFields) {
 
         ProjectionBuilder<TEntity> projectionBuilder = ProjectionBuilder.empty(entityClass);
-        if (includeFields != null && includeFields.size() > 0) {
+        if (includeFields != null && !includeFields.isEmpty()) {
 
             projectionBuilder.include(includeFields);
         }
 
-        if (excludeFields != null && excludeFields.size() > 0) {
+        if (excludeFields != null && !excludeFields.isEmpty()) {
 
             projectionBuilder.exclude(excludeFields);
         }

@@ -99,7 +99,7 @@ public class FindAndModifyTest {
 
             int finalI = i;
 
-            final ClientSession clientSession1 = mongoSession.getMongoClient().startSession();
+            final ClientSession clientSession1 = mongoSession.startSession();
 
             TransactionBody<User> runnable = () -> {
 //                ClientSession clientSession2 = null;
@@ -126,10 +126,12 @@ public class FindAndModifyTest {
                     clientSession1.abortTransaction();
 //                    System.out.println("abortTransaction");
                 } else {
-                    clientSession1.commitTransaction();
-//                  ·
+//                    clientSession1.commitTransaction();
+//
 //                  System.out.println("commitTransaction");
                 }
+
+                clientSession1.close();
 
                 return u;
 

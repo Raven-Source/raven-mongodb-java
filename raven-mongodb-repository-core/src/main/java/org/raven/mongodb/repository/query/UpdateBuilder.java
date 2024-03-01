@@ -250,13 +250,13 @@ public class UpdateBuilder<TEntity> {
     }
 
     public Bson build() {
-        if (bsons.size() == 0) {
+        if (bsons.isEmpty()) {
             return null;
         }
         if (bsons.size() == 1) {
             return bsons.get(0);
         } else {
-            return Updates.combine(bsons);
+            return Updates.combine(new ArrayList<>(bsons));
         }
     }
 }

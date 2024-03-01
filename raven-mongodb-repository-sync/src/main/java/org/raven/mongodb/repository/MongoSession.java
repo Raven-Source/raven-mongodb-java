@@ -1,5 +1,7 @@
 package org.raven.mongodb.repository;
 
+import com.mongodb.ClientSessionOptions;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
@@ -18,5 +20,13 @@ public interface MongoSession {
      * @return {@link com.mongodb.client.MongoClient}
      */
     MongoClient getMongoClient();
+
+    default ClientSession startSession() {
+        return getMongoClient().startSession();
+    }
+
+    default ClientSession startSession(ClientSessionOptions options) {
+        return getMongoClient().startSession(options);
+    }
 
 }
