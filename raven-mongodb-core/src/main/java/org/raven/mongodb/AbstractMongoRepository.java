@@ -8,7 +8,6 @@ import org.raven.mongodb.annotations.PreInsert;
 import org.raven.mongodb.annotations.PreUpdate;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 import org.raven.mongodb.query.*;
-import org.raven.mongodb.repository.query.*;
 import org.raven.mongodb.support.EntityInformationSupport;
 
 import java.lang.annotation.Annotation;
