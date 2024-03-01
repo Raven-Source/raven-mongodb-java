@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>raven-mongodb-repository-performance</artifactId>
+    <artifactId>raven-mongodb-performance</artifactId>
 
     <properties>
         <raven-logger.version>2.0.3</raven-logger.version>
@@ -36,8 +36,8 @@
 
         <dependency>
             <groupId>io.github.raven-source</groupId>
-            <artifactId>raven-mongodb-repository-sync</artifactId>
-            <version>3.0.8</version>
+            <artifactId>raven-mongodb-sync</artifactId>
+            <version>${raven-mongodb.version}</version>
         </dependency>
 
     </dependencies>

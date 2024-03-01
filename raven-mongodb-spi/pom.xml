@@ -9,21 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>raven-mongodb-repository-spring</artifactId>
-
-    <properties>
-        <spring-context.version>5.3.8</spring-context.version>
-    </properties>
+    <artifactId>raven-mongodb-spi</artifactId>
 
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring-context.version}</version>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.2.22.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
     </dependencies>
+
 
 </project>

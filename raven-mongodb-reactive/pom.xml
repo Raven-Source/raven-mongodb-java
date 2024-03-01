@@ -12,14 +12,14 @@
     <description>raven mongodb repository</description>
     <url>https://github.com/Raven-Source/raven-mongodb-java</url>
 
-    <artifactId>raven-mongodb-repository-reactive</artifactId>
+    <artifactId>raven-mongodb-reactive</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
 
         <dependency>
             <groupId>io.github.raven-source</groupId>
-            <artifactId>raven-mongodb-repository-core</artifactId>
+            <artifactId>raven-mongodb-core</artifactId>
             <version>${raven-mongodb.version}</version>
         </dependency>
 
@@ -56,7 +56,7 @@
 
         <dependency>
             <groupId>io.github.raven-source</groupId>
-            <artifactId>raven-mongodb-repository-core</artifactId>
+            <artifactId>raven-mongodb-core</artifactId>
             <version>${raven-mongodb.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
