@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,13 +51,11 @@ public class PerformanceTestRunner implements CommandLineRunner {
                 String[] val = arg.split("=");
                 if (val.length >= 2) {
                     if (val[0].equals("seed")) {
-                       seed = Integer.parseInt(val[1]);
+                        seed = Integer.parseInt(val[1]);
                     }
                 }
             }
         }
-
-        System.out.println("start seed:" + seed);
 
         User user = userRepos.findOne(1L);
         if (user == null) {
@@ -69,12 +68,13 @@ public class PerformanceTestRunner implements CommandLineRunner {
         List<CompletableFuture<?>> failures = new ArrayList<>(seed);
 
         long start = System.currentTimeMillis();
+        System.out.println(String.format("start time: %d, seed: %d", start, seed));
 
         long id = user.getId();
         for (int i = 0; i < seed; i++) {
 
             CompletableFuture<User> future = CompletableFuture.supplyAsync(() ->
-                    userRepos.findOneAndUpdate(Filters.eq("_id", id), Updates.inc("Age", 1))
+                            userRepos.findOneAndUpdate(Filters.eq("_id", id), Updates.inc("Age", 1))
                     //, executorService
             );
 
@@ -85,9 +85,12 @@ public class PerformanceTestRunner implements CommandLineRunner {
         CompletableFuture.allOf(failures.toArray(new CompletableFuture[0])).get();
 
         long end = System.currentTimeMillis();
+        long elapsed = (end - start);
 
-        System.out.println("insert tps:" + seed / (double) (end - start) * 1000.0);
+        System.out.println("elapsed time: " + elapsed);
 
-        System.out.println("end");
+        System.out.println("insert tps: " + seed / (double) elapsed * 1000.0);
+
+        System.out.println("end time: " + end);
     }
 }
