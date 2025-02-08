@@ -249,6 +249,12 @@ public class UpdateBuilder<TEntity> {
         return this;
     }
 
+    public UpdateBuilder<TEntity> combine(List<Bson> that) {
+        bsons.addAll(that);
+
+        return this;
+    }
+
     public Bson build() {
         if (bsons.isEmpty()) {
             return null;

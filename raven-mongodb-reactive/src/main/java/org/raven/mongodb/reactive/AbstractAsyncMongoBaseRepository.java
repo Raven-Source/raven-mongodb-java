@@ -269,15 +269,15 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
         Mono<List<TEntity>> mono = Mono.just(entities);
 
-        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
-        long count = entityStream.size();
+        List<TEntity> needIdEntities = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        long count = needIdEntities.size();
 
         if (count > 0 && idGenerator != null) {
 
             mono = idGenerator.generateIdBatch(count).map(ids -> {
 
                 for (int i = 0; i < count; i++) {
-                    entityStream.get(i).setId(ids.get(i));
+                    needIdEntities.get(i).setId(ids.get(i));
                 }
 
                 return entities;

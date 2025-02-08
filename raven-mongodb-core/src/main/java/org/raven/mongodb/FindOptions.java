@@ -14,7 +14,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Accessors(fluent = true)
-public class FindOptions extends AbstractFindOptions {
+public class FindOptions extends AbstractFindOptions<FindOptions> {
 
     private List<String> includeFields;
     private List<String> excludeFields;

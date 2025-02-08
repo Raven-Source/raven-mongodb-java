@@ -33,7 +33,7 @@ public class User implements AutoIncr<Long>, Deletable, Versioned<Long> {
     private Long version = 0L;
 
 //    @BsonIgnore
-    @Ignore
+//    @Ignore
     private Status status;
 
     private Boolean deleted = Boolean.FALSE;

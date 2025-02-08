@@ -36,19 +36,19 @@ public class HintBuilder<TEntity> {
         return bsons.isEmpty();
     }
 
-    public HintBuilder<TEntity> ascending(final String... fieldNames) {
-        return ascending(asList(fieldNames));
+    public HintBuilder<TEntity> asc(final String... fieldNames) {
+        return asc(asList(fieldNames));
     }
 
-    public HintBuilder<TEntity> ascending(@NonNull final List<String> fieldNames) {
+    public HintBuilder<TEntity> asc(@NonNull final List<String> fieldNames) {
         return compoundIndex(fieldNames, new BsonInt32(1));
     }
 
-    public HintBuilder<TEntity> descending(final String... fieldNames) {
-        return descending(asList(fieldNames));
+    public HintBuilder<TEntity> desc(final String... fieldNames) {
+        return desc(asList(fieldNames));
     }
 
-    public HintBuilder<TEntity> descending(@NonNull final List<String> fieldNames) {
+    public HintBuilder<TEntity> desc(@NonNull final List<String> fieldNames) {
         return compoundIndex(fieldNames, new BsonInt32(-1));
     }
 
@@ -74,6 +74,18 @@ public class HintBuilder<TEntity> {
         if (supplier.getAsBoolean()) {
             hintBuilderConsumer.accept(this);
         }
+        return this;
+    }
+
+    public HintBuilder<TEntity> combine(HintBuilder<TEntity> hintBuilder) {
+        bsons.addAll(hintBuilder.bsons);
+
+        return this;
+    }
+
+    public HintBuilder<TEntity> combine(List<Bson> that) {
+        bsons.addAll(that);
+
         return this;
     }
 

@@ -17,13 +17,13 @@ public class SortBuilderTest {
     @Test
     public void sortTest() {
 
-        SortBuilder<User> sortBuilder = new SortBuilder<>(User.class);
+        SortBuilder<User> sortBuilder = SortBuilder.empty(User.class);
         sortBuilder
-                .ascending("a")
-                .descending("b")
-                .ascending("c", "d")
-                .descending("e", "f")
-                .ascending("createDate");
+                .asc("a")
+                .desc("b")
+                .asc("c", "d")
+                .desc("e", "f")
+                .asc("createDate");
 
 
         Bson bson = sortBuilder.build();

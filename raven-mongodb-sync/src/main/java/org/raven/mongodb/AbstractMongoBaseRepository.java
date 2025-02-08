@@ -258,14 +258,14 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     protected InsertManyResult doInsertBatch(@Nullable final ClientSession session, final List<TEntity> entities, final WriteConcern writeConcern) {
 
-        List<TEntity> entityStream = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
-        long count = entityStream.size();
+        List<TEntity> needIdEntities = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+        long count = needIdEntities.size();
 
         if (count > 0 && idGenerator != null) {
             List<TKey> ids = idGenerator.generateIdBatch(count);
 
             for (int i = 0; i < count; i++) {
-                entityStream.get(i).setId(ids.get(i));
+                needIdEntities.get(i).setId(ids.get(i));
             }
         }
 

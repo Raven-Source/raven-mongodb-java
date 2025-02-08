@@ -9,29 +9,29 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.raven.mongodb.contants.BsonConstant;
-import org.raven.mongodb.model.Mall;
-import org.raven.mongodb.model.User;
-import org.raven.mongodb.model.User2;
+import org.raven.mongodb.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class MongoReadonlyRepositoryTest {
-    private int size = 90;
-    MongoRepository<User, Long> repos = new UserRepositoryImpl();
+    private int seed = 90;
+    MongoRepository<User, Long> userRepository = new UserRepositoryImpl();
+
+    MongoRepository<Orders, Long> ordersRepository = new OrdersRepositoryImpl();
 
     @Before
     public void init() throws Exception {
 
-        repos.getDatabase().drop();
-        repos.getCollection().createIndex(Indexes.ascending("Mall._id"));
-        repos.getCollection().createIndex(Indexes.descending("CreateDate"));
+        userRepository.getDatabase().drop();
+        userRepository.getCollection().createIndex(Indexes.ascending("Mall._id"));
+        userRepository.getCollection().createIndex(Indexes.descending("CreateDate"));
 
         Mall mall = null;
 
         ArrayList<User> list = new ArrayList<>();
-        for (int i = 1; i <= size; i++) {
+        for (int i = 1; i <= seed; i++) {
 
             mall = new Mall();
             mall.setId("m" + (i / 3));
@@ -44,7 +44,7 @@ public class MongoReadonlyRepositoryTest {
             list.add(user);
         }
 
-        val result = repos.insertBatch(list);
+        val result = userRepository.insertBatch(list);
         System.out.println(result);
     }
 
@@ -60,27 +60,27 @@ public class MongoReadonlyRepositoryTest {
 
         List<User> list = null;
 
-        list = repos.findList(FindOptions.Empty());
+        list = userRepository.findList(FindOptions.Empty());
         Assert.assertNotEquals(list.size(), 0);
 
-        list = repos.findList(Filters.gte("_id", 1));
+        list = userRepository.findList(Filters.gte("_id", 1));
         Assert.assertNotEquals(list.size(), 0);
 
         for (User user : list) {
             Assert.assertNotNull(user.getName());
         }
 
-        list = repos.findList(Filters.eq("_id", 1));
+        list = userRepository.findList(Filters.eq("_id", 1));
         Assert.assertEquals(list.size(), 1);
 
 
-        list = repos.findList(null, null, Sorts.descending("_id"), 1, 0);
+        list = userRepository.findList(null, null, Sorts.descending("_id"), 1, 0);
         Assert.assertNotNull(list.get(0));
         Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0).getId().longValue(), size);
+        Assert.assertEquals(list.get(0).getId().longValue(), seed);
 
-        list = repos.findList(Filters.eq("Mall._id", "m3"), null
-                , Sorts.descending("CreateDate"), size, 0
+        list = userRepository.findList(Filters.eq("Mall._id", "m3"), null
+                , Sorts.descending("CreateDate"), seed, 0
                 , Indexes.descending("CreateDate"), null);
 
         Assert.assertEquals(list.size(), 3);
@@ -91,14 +91,14 @@ public class MongoReadonlyRepositoryTest {
     public void get() {
 
         User user = null;
-        for (long i = 1; i <= size; i++) {
-            user = repos.findOne(i);
+        for (long i = 1; i <= seed; i++) {
+            user = userRepository.findOne(i);
             Assert.assertNotNull(user);
 
-            user = repos.findOne(Filters.eq("Name", user.getName()));
+            user = userRepository.findOne(Filters.eq("Name", user.getName()));
             Assert.assertNotNull(user);
 
-            user = repos.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
+            user = userRepository.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
                 add("_id");
             }});
             Assert.assertNull(user.getName());
@@ -115,19 +115,38 @@ public class MongoReadonlyRepositoryTest {
         Assert.assertNotNull(user2);
 
         FindOptions findOptions = (FindOptions) FindOptions.Empty().filter(Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id));
-        user2 = repos.findOne(findOptions, User2.class);
-        user = repos.findOne(id);
+        user2 = userRepository.findOne(findOptions, User2.class);
+        user = userRepository.findOne(id);
         Assert.assertEquals(user.getName(), user2.getName());
 
+
+        Orders orders;
+        orders = ordersRepository.findOne(1L);
+
+        orders = ordersRepository.findOne(
+                f -> f
+                        .eq(Orders.Fields.status, Status.Normal)
+                        .build()
+        );
+
+        Long itemsId = orders.getItemsId();
+        ordersRepository.updateOne(
+                f -> f
+                        .eq(Orders.Fields.itemsId, itemsId)
+                        .build(),
+                u -> u
+                        .set(Orders.Fields.status, Status.Delete)
+                        .build()
+        );
     }
 
     @Test
     public void countTest() {
-        long count = repos.count((Bson) null);
-        Assert.assertEquals(count, size);
+        long count = userRepository.count((Bson) null);
+        Assert.assertEquals(count, seed);
 
-        count = repos.count(new CountOptions().skip(5));
-        Assert.assertEquals(count, size - 5);
+        count = userRepository.count(new CountOptions().skip(5));
+        Assert.assertEquals(count, seed - 5);
 
     }
 

@@ -17,13 +17,13 @@ public class HintBuilderTest {
     @Test
     public void updaterTest() {
 
-        HintBuilder<User> updateBuilder = new HintBuilder<>(User.class);
+        HintBuilder<User> updateBuilder = HintBuilder.empty(User.class);
         updateBuilder
-                .ascending("a")
-                .descending("b")
-                .ascending("c", "d")
-                .descending("e", "f")
-                .ascending("createDate");
+                .asc("a")
+                .desc("b")
+                .asc("c", "d")
+                .desc("e", "f")
+                .asc("createDate");
 
 
         Bson bson = updateBuilder.build();

@@ -35,19 +35,19 @@ public class SortBuilder<TEntity> {
         return bsons.isEmpty();
     }
 
-    public SortBuilder<TEntity> ascending(final String... fieldNames) {
-        return ascending(asList(fieldNames));
+    public SortBuilder<TEntity> asc(final String... fieldNames) {
+        return asc(asList(fieldNames));
     }
 
-    public SortBuilder<TEntity> ascending(@NonNull final List<String> fieldNames) {
+    public SortBuilder<TEntity> asc(@NonNull final List<String> fieldNames) {
         return orderBy(fieldNames, new BsonInt32(1));
     }
 
-    public SortBuilder<TEntity> descending(final String... fieldNames) {
-        return descending(asList(fieldNames));
+    public SortBuilder<TEntity> desc(final String... fieldNames) {
+        return desc(asList(fieldNames));
     }
 
-    public SortBuilder<TEntity> descending(@NonNull final List<String> fieldNames) {
+    public SortBuilder<TEntity> desc(@NonNull final List<String> fieldNames) {
         return orderBy(fieldNames, new BsonInt32(-1));
     }
 
@@ -81,6 +81,18 @@ public class SortBuilder<TEntity> {
 
         return this;
 
+    }
+
+    public SortBuilder<TEntity> combine(SortBuilder<TEntity> sortBuilder) {
+        bsons.addAll(sortBuilder.bsons);
+
+        return this;
+    }
+
+    public SortBuilder<TEntity> combine(List<Bson> that) {
+        bsons.addAll(that);
+
+        return this;
     }
 
     public Bson build() {

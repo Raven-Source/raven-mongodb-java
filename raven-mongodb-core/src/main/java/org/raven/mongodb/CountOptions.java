@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Accessors(fluent = true)
-public class CountOptions extends AbstractFindOptions {
+public class CountOptions extends AbstractFindOptions<CountOptions> {
 
     private int limit;
     private int skip;

@@ -11,9 +11,26 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public abstract class AbstractFindOptions implements Options {
+@SuppressWarnings("unchecked")
+public abstract class AbstractFindOptions<P extends AbstractFindOptions<P>> implements Options {
 
     private ReadPreference readPreference;
     private Bson hint;
     private Bson filter;
+
+    public P readPreference(ReadPreference readPreference) {
+        this.readPreference = readPreference;
+        return (P) this;
+    }
+
+    public P hint(Bson hint) {
+        this.hint = hint;
+        return (P) this;
+    }
+
+    public P filter(Bson filter) {
+        this.filter = filter;
+        return (P) this;
+    }
+
 }

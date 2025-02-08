@@ -5,6 +5,7 @@ import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.model.geojson.Geometry;
 import com.mongodb.client.model.geojson.Point;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.bson.BsonType;
 import org.bson.codecs.pojo.ClassModelUtils;
@@ -305,19 +306,25 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public FilterBuilder<TEntity> or(final FilterBuilder<TEntity> that) {
-        assert that != null;
+    public FilterBuilder<TEntity> and(@NonNull final FilterBuilder<TEntity> that) {
+        return and(that.build());
+    }
 
-        Bson bson = Filters.or(this.build(), that.build());
+    public FilterBuilder<TEntity> and(@NonNull final Bson that) {
+
+        Bson bson = Filters.and(this.build(), that);
         bsons.clear();
         bsons.add(bson);
         return this;
     }
 
-    public FilterBuilder<TEntity> and(final FilterBuilder<TEntity> that) {
-        assert that != null;
+    public FilterBuilder<TEntity> or(@NonNull final FilterBuilder<TEntity> that) {
+        return or(that.build());
+    }
 
-        Bson bson = Filters.and(this.build(), that.build());
+    public FilterBuilder<TEntity> or(@NonNull final Bson that) {
+
+        Bson bson = Filters.or(this.build(), that);
         bsons.clear();
         bsons.add(bson);
         return this;
@@ -339,7 +346,9 @@ public class FilterBuilder<TEntity> {
         return this;
     }
 
-    public FilterBuilder<TEntity> condition(boolean condition, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
+    public FilterBuilder<TEntity> condition(boolean condition
+            , @NonNull Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
+
         if (condition) {
             filterBuilderConsumer.accept(this);
         }
@@ -348,13 +357,27 @@ public class FilterBuilder<TEntity> {
 
     }
 
-    public FilterBuilder<TEntity> condition(BooleanSupplier supplier, Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
+    public FilterBuilder<TEntity> condition(BooleanSupplier supplier
+            , @NonNull Consumer<FilterBuilder<TEntity>> filterBuilderConsumer) {
+
         if (supplier.getAsBoolean()) {
             filterBuilderConsumer.accept(this);
         }
 
         return this;
 
+    }
+
+    public FilterBuilder<TEntity> combine(FilterBuilder<TEntity> filterBuilder) {
+        bsons.addAll(filterBuilder.bsons);
+
+        return this;
+    }
+
+    public FilterBuilder<TEntity> combine(List<Bson> that) {
+        bsons.addAll(that);
+
+        return this;
     }
 
     public String getWriteName(final String fieldName) {

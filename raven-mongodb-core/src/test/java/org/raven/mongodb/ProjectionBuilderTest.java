@@ -16,7 +16,7 @@ public class ProjectionBuilderTest {
     @Test
     public void projectionTest() {
 
-        ProjectionBuilder<User> projectionBuilder = new ProjectionBuilder<>(User.class);
+        ProjectionBuilder<User> projectionBuilder = ProjectionBuilder.empty(User.class);
 
         projectionBuilder.include(User.Fields.mall, User.Fields.name);
         projectionBuilder.exclude(User.Fields.createDate, User.Fields.version);
