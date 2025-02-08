@@ -126,6 +126,7 @@ public class MongoReadonlyRepositoryTest {
         orders = ordersRepository.findOne(
                 f -> f
                         .eq(Orders.Fields.status, Status.Normal)
+                        .gt(Orders.Fields.price, 1.0)
                         .build()
         );
 
@@ -133,6 +134,7 @@ public class MongoReadonlyRepositoryTest {
         ordersRepository.updateOne(
                 f -> f
                         .eq(Orders.Fields.itemsId, itemsId)
+                        .ne(Orders.Fields.isPay, false)
                         .build(),
                 u -> u
                         .set(Orders.Fields.status, Status.Delete)

@@ -107,6 +107,7 @@ orders = ordersRepository.findOne(1L);
 // 根据条件查询
 orders = ordersRepository.findOne(
         f -> f.eq(Orders.Fields.status, Status.Normal)
+                .gt(Orders.Fields.price, 1.0)
                 .build()
 );
 
@@ -114,6 +115,7 @@ orders = ordersRepository.findOne(
 Long itemsId = orders.getItemsId();
 ordersRepository.updateOne(
         f -> f.eq(Orders.Fields.itemsId, itemsId)
+                .ne(Orders.Fields.isPay, false)
                 .build(),
         u -> u.set(Orders.Fields.status, Status.Delete)
                 .build()
