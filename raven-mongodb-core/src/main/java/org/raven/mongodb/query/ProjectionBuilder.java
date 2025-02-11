@@ -25,12 +25,17 @@ public class ProjectionBuilder<TEntity> implements BsonBuilder {
         this.entityClass = entityClass;
     }
 
-    public static <TEntity> ProjectionBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+    public static <TEntity> ProjectionBuilder<TEntity> create(final Class<TEntity> entityClass) {
         return new ProjectionBuilder<>(entityClass);
     }
 
+    @Deprecated
+    public static <TEntity> ProjectionBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return create(entityClass);
+    }
+
     public ProjectionBuilder<TEntity> newBuilder() {
-        return new ProjectionBuilder<>(this.entityClass);
+        return create(this.entityClass);
     }
 
     public boolean isEmpty() {

@@ -25,12 +25,17 @@ public class UpdateBuilder<TEntity> implements BsonBuilder {
         this.entityClass = entityClass;
     }
 
-    public static <TEntity> UpdateBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+    public static <TEntity> UpdateBuilder<TEntity> create(final Class<TEntity> entityClass) {
         return new UpdateBuilder<>(entityClass);
     }
 
+    @Deprecated
+    public static <TEntity> UpdateBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return create(entityClass);
+    }
+
     public UpdateBuilder<TEntity> newBuilder() {
-        return new UpdateBuilder<>(this.entityClass);
+        return create(this.entityClass);
     }
 
     public boolean isEmpty() {

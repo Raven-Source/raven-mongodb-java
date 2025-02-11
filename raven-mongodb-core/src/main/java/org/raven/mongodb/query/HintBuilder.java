@@ -28,12 +28,17 @@ public class HintBuilder<TEntity> implements BsonBuilder {
         this.entityClass = entityClass;
     }
 
-    public static <TEntity> HintBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+    public static <TEntity> HintBuilder<TEntity> create(final Class<TEntity> entityClass) {
         return new HintBuilder<>(entityClass);
     }
 
+    @Deprecated
+    public static <TEntity> HintBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return create(entityClass);
+    }
+
     public HintBuilder<TEntity> newBuilder() {
-        return new HintBuilder<>(this.entityClass);
+        return create(this.entityClass);
     }
 
     public boolean isEmpty() {

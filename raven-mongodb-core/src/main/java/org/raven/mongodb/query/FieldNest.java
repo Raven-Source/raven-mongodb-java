@@ -18,8 +18,13 @@ public class FieldNest {
         fields = new ArrayList<>();
     }
 
-    public static FieldNest empty() {
+    public static FieldNest create() {
         return new FieldNest();
+    }
+
+    @Deprecated
+    public static FieldNest empty() {
+        return create();
     }
 
     public FieldNest link(String... fields) {

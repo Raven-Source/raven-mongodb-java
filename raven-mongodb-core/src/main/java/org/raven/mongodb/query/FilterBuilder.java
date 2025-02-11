@@ -40,16 +40,26 @@ public class FilterBuilder<TEntity> implements BsonBuilder {
         this.operator = operator;
     }
 
-    public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+    public static <TEntity> FilterBuilder<TEntity> create(final Class<TEntity> entityClass) {
         return new FilterBuilder<>(entityClass);
     }
 
-    public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass, final Operator operator) {
+    public static <TEntity> FilterBuilder<TEntity> create(final Class<TEntity> entityClass, final Operator operator) {
         return new FilterBuilder<>(entityClass, operator);
     }
 
+    @Deprecated
+    public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return create(entityClass);
+    }
+
+    @Deprecated
+    public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass, final Operator operator) {
+        return create(entityClass, operator);
+    }
+
     public FilterBuilder<TEntity> newBuilder() {
-        return new FilterBuilder<>(this.entityClass, this.operator);
+        return create(this.entityClass, this.operator);
     }
 
     public boolean isEmpty() {

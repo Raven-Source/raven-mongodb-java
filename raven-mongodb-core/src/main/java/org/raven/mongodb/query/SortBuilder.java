@@ -27,12 +27,17 @@ public class SortBuilder<TEntity> implements BsonBuilder {
         this.entityClass = entityClass;
     }
 
-    public static <TEntity> SortBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+    public static <TEntity> SortBuilder<TEntity> create(final Class<TEntity> entityClass) {
         return new SortBuilder<>(entityClass);
     }
 
+    @Deprecated
+    public static <TEntity> SortBuilder<TEntity> empty(final Class<TEntity> entityClass) {
+        return create(entityClass);
+    }
+
     public SortBuilder<TEntity> newBuilder() {
-        return new SortBuilder<>(this.entityClass);
+        return create(this.entityClass);
     }
 
     public boolean isEmpty() {
