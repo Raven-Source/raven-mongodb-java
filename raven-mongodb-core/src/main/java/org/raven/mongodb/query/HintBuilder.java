@@ -32,11 +32,6 @@ public class HintBuilder<TEntity> implements BsonBuilder {
         return new HintBuilder<>(entityClass);
     }
 
-    @Deprecated
-    public static <TEntity> HintBuilder<TEntity> empty(final Class<TEntity> entityClass) {
-        return create(entityClass);
-    }
-
     public HintBuilder<TEntity> newBuilder() {
         return create(this.entityClass);
     }

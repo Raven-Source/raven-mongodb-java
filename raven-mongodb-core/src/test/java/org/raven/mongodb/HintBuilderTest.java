@@ -17,7 +17,7 @@ public class HintBuilderTest {
     @Test
     public void updaterTest() {
 
-        HintBuilder<User> updateBuilder = HintBuilder.empty(User.class);
+        HintBuilder<User> updateBuilder = HintBuilder.create(User.class);
         updateBuilder
                 .asc("a")
                 .desc("b")

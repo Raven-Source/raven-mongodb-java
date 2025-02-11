@@ -30,7 +30,7 @@ public final class BsonUtils {
                                                       @Nullable final List<String> includeFields,
                                                       @Nullable final List<String> excludeFields) {
 
-        ProjectionBuilder<TEntity> projectionBuilder = ProjectionBuilder.empty(entityClass);
+        ProjectionBuilder<TEntity> projectionBuilder = ProjectionBuilder.create(entityClass);
         if (includeFields != null && !includeFields.isEmpty()) {
 
             projectionBuilder.include(includeFields);

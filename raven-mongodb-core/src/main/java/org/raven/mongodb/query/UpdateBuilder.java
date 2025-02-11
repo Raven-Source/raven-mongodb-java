@@ -29,11 +29,6 @@ public class UpdateBuilder<TEntity> implements BsonBuilder {
         return new UpdateBuilder<>(entityClass);
     }
 
-    @Deprecated
-    public static <TEntity> UpdateBuilder<TEntity> empty(final Class<TEntity> entityClass) {
-        return create(entityClass);
-    }
-
     public UpdateBuilder<TEntity> newBuilder() {
         return create(this.entityClass);
     }

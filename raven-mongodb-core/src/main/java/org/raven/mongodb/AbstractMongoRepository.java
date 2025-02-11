@@ -63,22 +63,22 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
     }
 
     protected FilterBuilder<TEntity> filterBuilder() {
-        return FilterBuilder.empty(entityInformation.getEntityType());
+        return FilterBuilder.create(entityInformation.getEntityType());
     }
 
     protected UpdateBuilder<TEntity> updateBuilder() {
-        return UpdateBuilder.empty(entityInformation.getEntityType());
+        return UpdateBuilder.create(entityInformation.getEntityType());
     }
 
     protected SortBuilder<TEntity> sortBuilder() {
-        return SortBuilder.empty(entityInformation.getEntityType());
+        return SortBuilder.create(entityInformation.getEntityType());
     }
 
     protected HintBuilder<TEntity> hintBuilder() {
-        return HintBuilder.empty(entityInformation.getEntityType());
+        return HintBuilder.create(entityInformation.getEntityType());
     }
 
     protected ProjectionBuilder<TEntity> projectionBuilder() {
-        return ProjectionBuilder.empty(entityInformation.getEntityType());
+        return ProjectionBuilder.create(entityInformation.getEntityType());
     }
 }

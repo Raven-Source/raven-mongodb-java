@@ -90,7 +90,7 @@ public final class ClassModelUtils {
      */
     private static <T> String getWriteName(final Class<T> entityClass, @NonNull final LinkedList<String> properties) {
 
-        FieldNest fieldNest = FieldNest.empty();
+        FieldNest fieldNest = FieldNest.create();
         doWriteName(entityClass, fieldNest, properties);
 
         return fieldNest.build();

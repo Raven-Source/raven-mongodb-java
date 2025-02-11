@@ -25,7 +25,7 @@ public class UpdaterBuilderTest {
         mall.setId("001");
         mall.setName("新世界");
 
-        UpdateBuilder<User> updateBuilder = UpdateBuilder.empty(User.class);
+        UpdateBuilder<User> updateBuilder = UpdateBuilder.create(User.class);
         updateBuilder
                 .set("a", 1)
                 .set("b", 2)
@@ -58,7 +58,7 @@ public class UpdaterBuilderTest {
                 , bson.toBsonDocument().toJson()
         );
 
-        UpdateBuilder<Mall> updateBuilder2 = UpdateBuilder.empty(Mall.class);
+        UpdateBuilder<Mall> updateBuilder2 = UpdateBuilder.create(Mall.class);
         bson = updateBuilder2.set(Mall.Fields.status, Status.Delete).build();
         log.info(bson.toBsonDocument().toJson());
 

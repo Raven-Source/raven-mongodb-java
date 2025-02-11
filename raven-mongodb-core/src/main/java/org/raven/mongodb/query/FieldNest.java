@@ -22,11 +22,6 @@ public class FieldNest {
         return new FieldNest();
     }
 
-    @Deprecated
-    public static FieldNest empty() {
-        return create();
-    }
-
     public FieldNest link(String... fields) {
 
         this.fields.addAll(Arrays.asList(fields));

@@ -218,17 +218,17 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
         final UpdateOptions options = new UpdateOptions();
         if (!Objects.isNull(filterBuilder)) {
             options.filter(
-                    filterBuilder.apply(FilterBuilder.empty(modifyProxy().getEntityInformation().getEntityType()))
+                    filterBuilder.apply(FilterBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(updateBuilder)) {
             options.update(
-                    updateBuilder.apply(UpdateBuilder.empty(modifyProxy().getEntityInformation().getEntityType()))
+                    updateBuilder.apply(UpdateBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(hintBuilder)) {
             options.hint(
-                    hintBuilder.apply(HintBuilder.empty(modifyProxy().getEntityInformation().getEntityType()))
+                    hintBuilder.apply(HintBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
             );
         }
         options.upsert(isUpsert);
@@ -317,17 +317,17 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
         if (!Objects.isNull(filterBuilder)) {
             options.filter(
-                    filterBuilder.apply(FilterBuilder.empty(modifyProxy().getEntityInformation().getEntityType()))
+                    filterBuilder.apply(FilterBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(updateBuilder)) {
             options.update(
-                    updateBuilder.apply(UpdateBuilder.empty(modifyProxy().getEntityInformation().getEntityType()))
+                    updateBuilder.apply(UpdateBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(hintBuilder)) {
             options.hint(
-                    hintBuilder.apply(HintBuilder.empty(modifyProxy().getEntityInformation().getEntityType()))
+                    hintBuilder.apply(HintBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
             );
         }
         options.writeConcern(writeConcern);

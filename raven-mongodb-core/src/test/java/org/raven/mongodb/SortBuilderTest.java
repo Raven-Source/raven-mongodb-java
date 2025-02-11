@@ -17,7 +17,7 @@ public class SortBuilderTest {
     @Test
     public void sortTest() {
 
-        SortBuilder<User> sortBuilder = SortBuilder.empty(User.class);
+        SortBuilder<User> sortBuilder = SortBuilder.create(User.class);
         sortBuilder
                 .asc("a")
                 .desc("b")

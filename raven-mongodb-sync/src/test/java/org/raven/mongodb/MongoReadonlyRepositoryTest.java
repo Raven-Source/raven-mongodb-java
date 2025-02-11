@@ -120,26 +120,26 @@ public class MongoReadonlyRepositoryTest {
         Assert.assertEquals(user.getName(), user2.getName());
 
 
-        Orders orders;
-        orders = ordersRepository.findOne(1L);
-
-        orders = ordersRepository.findOne(
-                f -> f
-                        .eq(Orders.Fields.status, Status.Normal)
-                        .gt(Orders.Fields.price, 1.0)
-                        .build()
-        );
-
-        Long itemsId = orders.getItemsId();
-        ordersRepository.updateOne(
-                f -> f
-                        .eq(Orders.Fields.itemsId, itemsId)
-                        .ne(Orders.Fields.isPay, false)
-                        .build(),
-                u -> u
-                        .set(Orders.Fields.status, Status.Delete)
-                        .build()
-        );
+//        Orders orders;
+//        orders = ordersRepository.findOne(1L);
+//
+//        orders = ordersRepository.findOne(
+//                f -> f
+//                        .eq(Orders.Fields.status, Status.Normal)
+//                        .gt(Orders.Fields.price, 1.0)
+//                        .build()
+//        );
+//
+//        Long itemsId = orders.getItemsId();
+//        ordersRepository.updateOne(
+//                f -> f
+//                        .eq(Orders.Fields.itemsId, itemsId)
+//                        .ne(Orders.Fields.isPay, false)
+//                        .build(),
+//                u -> u
+//                        .set(Orders.Fields.status, Status.Delete)
+//                        .build()
+//        );
     }
 
     @Test

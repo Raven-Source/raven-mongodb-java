@@ -27,13 +27,13 @@ public class FilterBuilderTest {
 
         FilterBuilder<User> filterBuilder;
 
-        filterBuilder = FilterBuilder.empty(User.class);
+        filterBuilder = FilterBuilder.create(User.class);
         filterBuilder.eq(User.Fields.id, "123");
 
         log.info(filterBuilder.build().toBsonDocument().toJson());
         Assert.assertEquals(BsonDocument.parse("{\"_id\": \"123\"}"), filterBuilder.build().toBsonDocument());
 
-        filterBuilder = FilterBuilder.empty(User.class);
+        filterBuilder = FilterBuilder.create(User.class);
         filterBuilder.eq(User.Fields.name, "c6e6a5391d30").eq(User.Fields.deleted, false);
 
         log.info(filterBuilder.build().toBsonDocument().toJson());
@@ -41,7 +41,7 @@ public class FilterBuilderTest {
         Assert.assertEquals(BsonDocument.parse("{\"$and\": [{\"Name\": \"c6e6a5391d30\"}, {\"Deleted\": false}]}"), filterBuilder.build().toBsonDocument());
 
 
-        filterBuilder = FilterBuilder.empty(User.class);
+        filterBuilder = FilterBuilder.create(User.class);
         filterBuilder.eq(User.Fields.mall + "." + Mall.Fields.id, "m1");
         filterBuilder.eq(User.Fields.mall + "." + Mall.Fields.status, Status.Normal);
 
@@ -49,13 +49,13 @@ public class FilterBuilderTest {
         Assert.assertEquals(BsonDocument.parse("{\"$and\": [{\"Mall._id\": \"m1\"}, {\"Mall.Status\": 1}]}"), filterBuilder.build().toBsonDocument());
 
 
-        filterBuilder = FilterBuilder.empty(User.class);
-        filterBuilder.eq(FieldNest.empty().link(User.Fields.mall, Mall.Fields.name).build(), "大悦城");
+        filterBuilder = FilterBuilder.create(User.class);
+        filterBuilder.eq(FieldNest.create().link(User.Fields.mall, Mall.Fields.name).build(), "大悦城");
 
         log.info(filterBuilder.build().toBsonDocument().toJson());
         Assert.assertEquals(BsonDocument.parse("{\"Mall.Name\": \"大悦城\"}"), filterBuilder.build().toBsonDocument());
 
-        filterBuilder = FilterBuilder.empty(User.class);
+        filterBuilder = FilterBuilder.create(User.class);
         filterBuilder = filterBuilder.eq("a", "1")
                 .ne("b", 2)
                 .gt("c", 3)
@@ -79,7 +79,7 @@ public class FilterBuilderTest {
         );
 
 
-        FilterBuilder<User> filterBuilder2 = FilterBuilder.empty(User.class)
+        FilterBuilder<User> filterBuilder2 = FilterBuilder.create(User.class)
                 .ne("x", 1)
                 .eq("y", 2);
 
@@ -91,7 +91,7 @@ public class FilterBuilderTest {
         );
 
 
-        filterBuilder = FilterBuilder.empty(User.class);
+        filterBuilder = FilterBuilder.create(User.class);
         filterBuilder = filterBuilder.eq("a", "1")
                 .ne("id", 2)
                 .eq("name", "adc")
@@ -107,10 +107,10 @@ public class FilterBuilderTest {
         );
 
 
-        bson = FilterBuilder.empty(User.class).build();
+        bson = FilterBuilder.create(User.class).build();
         log.info(bson.toBsonDocument().toJson());
 
-        filterBuilder = FilterBuilder.empty(User.class);
+        filterBuilder = FilterBuilder.create(User.class);
         filterBuilder.condition(true, f -> f.eq(User.Fields.id, 2));
 
     }
@@ -118,7 +118,7 @@ public class FilterBuilderTest {
     @Test
     public void bsonDocTest() {
 
-        FilterBuilder<BsonDocument> filterBuilder = FilterBuilder.empty(BsonDocument.class);// FilterBuilder.empty(BsonDocument.class);
+        FilterBuilder<BsonDocument> filterBuilder = FilterBuilder.create(BsonDocument.class);// FilterBuilder.empty(BsonDocument.class);
 
         filterBuilder.eq("a", "1")
                 .ne("b", 2)

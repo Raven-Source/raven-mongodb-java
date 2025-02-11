@@ -31,11 +31,6 @@ public class SortBuilder<TEntity> implements BsonBuilder {
         return new SortBuilder<>(entityClass);
     }
 
-    @Deprecated
-    public static <TEntity> SortBuilder<TEntity> empty(final Class<TEntity> entityClass) {
-        return create(entityClass);
-    }
-
     public SortBuilder<TEntity> newBuilder() {
         return create(this.entityClass);
     }

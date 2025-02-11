@@ -463,19 +463,19 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
 
         if (!Objects.isNull(filterBuilder)) {
             findOptions.filter(
-                    filterBuilder.apply(FilterBuilder.empty(findProxy().getEntityInformation().getEntityType()))
+                    filterBuilder.apply(FilterBuilder.create(findProxy().getEntityInformation().getEntityType()))
             );
         }
 
         if (!Objects.isNull(fieldNestList)) {
             findOptions.includeFields(
-                    fieldNestList.apply(FieldNest.empty())
+                    fieldNestList.apply(FieldNest.create())
             );
         }
 
         if (!Objects.isNull(sortBuilder)) {
             findOptions.sort(
-                    sortBuilder.apply(SortBuilder.empty(findProxy().getEntityInformation().getEntityType()))
+                    sortBuilder.apply(SortBuilder.create(findProxy().getEntityInformation().getEntityType()))
             );
         }
 
@@ -489,7 +489,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
 
         if (!Objects.isNull(hintBuilder)) {
             findOptions.hint(
-                    hintBuilder.apply(HintBuilder.empty(findProxy().getEntityInformation().getEntityType()))
+                    hintBuilder.apply(HintBuilder.create(findProxy().getEntityInformation().getEntityType()))
             );
         }
 

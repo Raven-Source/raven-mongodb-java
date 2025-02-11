@@ -29,11 +29,6 @@ public class ProjectionBuilder<TEntity> implements BsonBuilder {
         return new ProjectionBuilder<>(entityClass);
     }
 
-    @Deprecated
-    public static <TEntity> ProjectionBuilder<TEntity> empty(final Class<TEntity> entityClass) {
-        return create(entityClass);
-    }
-
     public ProjectionBuilder<TEntity> newBuilder() {
         return create(this.entityClass);
     }

@@ -216,8 +216,8 @@ public class MongoRepositoryTest {
 
         List<Mall> list = mall_repos.findList((Bson) null);
 
-        Bson filter = FilterBuilder.empty(Mall.class).eq(Mall.Fields.id, list.get(0).getId()).build();
-        Bson update = UpdateBuilder.empty(Mall.class).set(Mall.Fields.status, Status.Delete).build();
+        Bson filter = FilterBuilder.create(Mall.class).eq(Mall.Fields.id, list.get(0).getId()).build();
+        Bson update = UpdateBuilder.create(Mall.class).set(Mall.Fields.status, Status.Delete).build();
 
         long c = mall_repos.updateOne(filter, update);
         Assert.assertEquals(c, 1L);
