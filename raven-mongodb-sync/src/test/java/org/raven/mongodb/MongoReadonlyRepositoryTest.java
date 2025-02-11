@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class MongoReadonlyRepositoryTest {
-    private int seed = 90;
+    private final int seed = 90;
     MongoRepository<User, Long> userRepository = new UserRepositoryImpl();
 
     MongoRepository<Orders, Long> ordersRepository = new OrdersRepositoryImpl();
 
     @Before
-    public void init() throws Exception {
+    public void init() {
 
         userRepository.getDatabase().drop();
         userRepository.getCollection().createIndex(Indexes.ascending("Mall._id"));
