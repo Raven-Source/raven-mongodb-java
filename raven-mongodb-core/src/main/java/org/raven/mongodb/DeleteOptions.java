@@ -25,9 +25,9 @@ public class DeleteOptions implements Options {
 
 
     /**
-     * @return Empty
+     * @return DeleteOptions
      */
-    public static DeleteOptions Empty() {
+    public static DeleteOptions empty() {
         return new DeleteOptions();
     }
 }

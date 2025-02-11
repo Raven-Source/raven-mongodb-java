@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * @author yi.liang
  * date 2021/9/12 23:01
  */
-public class FilterBuilder<TEntity> {
+public class FilterBuilder<TEntity> implements BsonBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();
@@ -46,6 +46,10 @@ public class FilterBuilder<TEntity> {
 
     public static <TEntity> FilterBuilder<TEntity> empty(final Class<TEntity> entityClass, final Operator operator) {
         return new FilterBuilder<>(entityClass, operator);
+    }
+
+    public FilterBuilder<TEntity> newBuilder() {
+        return new FilterBuilder<>(this.entityClass, this.operator);
     }
 
     public boolean isEmpty() {
@@ -312,6 +316,11 @@ public class FilterBuilder<TEntity> {
 
     public FilterBuilder<TEntity> and(@NonNull final Bson that) {
 
+        if (isEmpty()) {
+            bsons.add(that);
+            return this;
+        }
+
         Bson bson = Filters.and(this.build(), that);
         bsons.clear();
         bsons.add(bson);
@@ -323,6 +332,11 @@ public class FilterBuilder<TEntity> {
     }
 
     public FilterBuilder<TEntity> or(@NonNull final Bson that) {
+
+        if (isEmpty()) {
+            bsons.add(that);
+            return this;
+        }
 
         Bson bson = Filters.or(this.build(), that);
         bsons.clear();

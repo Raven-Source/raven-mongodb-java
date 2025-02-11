@@ -28,9 +28,9 @@ public class FindOneAndUpdateOptions extends UpdateOptions {
 
 
     /**
-     * @return Empty
+     * @return FindOneAndUpdateOptions
      */
-    public static FindOneAndUpdateOptions Empty() {
+    public static FindOneAndUpdateOptions empty() {
         return new FindOneAndUpdateOptions();
     }
 }

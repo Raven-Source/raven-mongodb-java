@@ -18,17 +18,13 @@ public class UpdateOptions implements Options {
     private Bson hint;
     private WriteConcern writeConcern;
 
-    /**
-     *
-     */
     public UpdateOptions() {
     }
 
-
     /**
-     * @return Empty
+     * @return UpdateOptions
      */
-    public static UpdateOptions Empty() {
+    public static UpdateOptions empty() {
         return new UpdateOptions();
     }
 }

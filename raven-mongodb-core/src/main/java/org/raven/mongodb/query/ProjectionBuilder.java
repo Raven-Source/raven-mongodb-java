@@ -16,7 +16,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
 /**
  * date 2022/11/5 17:12
  */
-public class ProjectionBuilder<TEntity> {
+public class ProjectionBuilder<TEntity> implements BsonBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();
@@ -27,6 +27,10 @@ public class ProjectionBuilder<TEntity> {
 
     public static <TEntity> ProjectionBuilder<TEntity> empty(final Class<TEntity> entityClass) {
         return new ProjectionBuilder<>(entityClass);
+    }
+
+    public ProjectionBuilder<TEntity> newBuilder() {
+        return new ProjectionBuilder<>(this.entityClass);
     }
 
     public boolean isEmpty() {

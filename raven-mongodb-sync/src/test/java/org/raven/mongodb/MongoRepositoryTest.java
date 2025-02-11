@@ -103,7 +103,7 @@ public class MongoRepositoryTest {
             Assert.assertNotEquals(user.getId().longValue(), 0);
         }
 
-        long count = repos.count(CountOptions.Empty());
+        long count = repos.count(CountOptions.empty());
         Assert.assertEquals(count, size);
 
     }
@@ -114,11 +114,11 @@ public class MongoRepositoryTest {
         new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
-        List<User> users = repos.findList(FindOptions.Empty().limit(10));
+        List<User> users = repos.findList(FindOptions.empty().limit(10));
 
         for (User user : users) {
             repos.updateOne(
-                    UpdateOptions.Empty()
+                    UpdateOptions.empty()
                             .filter(
                                     Filters.eq("_id", user.getId())
                             )
@@ -141,14 +141,14 @@ public class MongoRepositoryTest {
         new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
-        List<User> users = repos.findList(FindOptions.Empty().limit(1));
+        List<User> users = repos.findList(FindOptions.empty().limit(1));
         User user = users.get(0);
 
         int age = user.getAge();
         Long version = user.getVersion();
 
         user = repos.findOneAndUpdate(
-                (FindOneAndUpdateOptions) FindOneAndUpdateOptions.Empty()
+                (FindOneAndUpdateOptions) FindOneAndUpdateOptions.empty()
                         .filter(
                                 Filters.eq("_id", user.getId())
                         )
@@ -169,7 +169,7 @@ public class MongoRepositoryTest {
         new MongoRepositoryTest().a3_insertBatch();
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
-        List<User> users = repos.findList(FindOptions.Empty().limit(1));
+        List<User> users = repos.findList(FindOptions.empty().limit(1));
         User user = users.get(0);
 
         Mall mall = new Mall();
@@ -178,7 +178,7 @@ public class MongoRepositoryTest {
 
         Bson updates = Updates.set("Mall", mall);
         repos.updateOne(
-                UpdateOptions.Empty()
+                UpdateOptions.empty()
                         .filter(
                                 Filters.eq("_id", user.getId())
                         )

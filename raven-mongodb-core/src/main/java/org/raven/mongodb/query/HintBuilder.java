@@ -19,7 +19,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
  * @author yi.liang
  * date 2021/9/20 23:25
  */
-public class HintBuilder<TEntity> {
+public class HintBuilder<TEntity> implements BsonBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();
@@ -30,6 +30,10 @@ public class HintBuilder<TEntity> {
 
     public static <TEntity> HintBuilder<TEntity> empty(final Class<TEntity> entityClass) {
         return new HintBuilder<>(entityClass);
+    }
+
+    public HintBuilder<TEntity> newBuilder() {
+        return new HintBuilder<>(this.entityClass);
     }
 
     public boolean isEmpty() {

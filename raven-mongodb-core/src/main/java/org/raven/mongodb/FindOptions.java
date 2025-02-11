@@ -22,17 +22,14 @@ public class FindOptions extends AbstractFindOptions<FindOptions> {
     private int limit;
     private int skip;
 
-    /**
-     *
-     */
     public FindOptions() {
     }
 
 
     /**
-     * @return Empty
+     * @return FindOptions
      */
-    public static FindOptions Empty() {
+    public static FindOptions empty() {
         return new FindOptions();
     }
 

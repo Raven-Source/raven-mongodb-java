@@ -47,7 +47,7 @@ public class ReactiveMongoReaderRepositoryTest {
         List<User> list = null;
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
-        list = repos.findList(FindOptions.Empty()).block();
+        list = repos.findList(FindOptions.empty()).block();
         Assert.assertNotEquals(list.size(), 0);
 
         list = repos.findList(Filters.gte("_id", 1)).block();

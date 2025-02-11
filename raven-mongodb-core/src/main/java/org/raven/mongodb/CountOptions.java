@@ -24,7 +24,7 @@ public class CountOptions extends AbstractFindOptions<CountOptions> {
     /**
      * @return CountOptions
      */
-    public static CountOptions Empty() {
+    public static CountOptions empty() {
         return new CountOptions();
     }
 

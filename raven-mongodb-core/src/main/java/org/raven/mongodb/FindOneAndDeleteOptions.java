@@ -26,9 +26,9 @@ public class FindOneAndDeleteOptions implements Options {
 
 
     /**
-     * @return Empty
+     * @return FindOneAndDeleteOptions
      */
-    public static FindOneAndDeleteOptions Empty() {
+    public static FindOneAndDeleteOptions empty() {
         return new FindOneAndDeleteOptions();
     }
 }

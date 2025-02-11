@@ -16,7 +16,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
  * @author yi.liang
  * date 2021/9/13 20:55
  */
-public class UpdateBuilder<TEntity> {
+public class UpdateBuilder<TEntity> implements BsonBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();
@@ -27,6 +27,10 @@ public class UpdateBuilder<TEntity> {
 
     public static <TEntity> UpdateBuilder<TEntity> empty(final Class<TEntity> entityClass) {
         return new UpdateBuilder<>(entityClass);
+    }
+
+    public UpdateBuilder<TEntity> newBuilder() {
+        return new UpdateBuilder<>(this.entityClass);
     }
 
     public boolean isEmpty() {
