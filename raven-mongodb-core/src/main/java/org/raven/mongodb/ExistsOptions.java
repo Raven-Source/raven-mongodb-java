@@ -7,7 +7,6 @@ import lombok.experimental.Accessors;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

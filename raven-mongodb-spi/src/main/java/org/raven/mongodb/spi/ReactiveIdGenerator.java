@@ -6,7 +6,6 @@ import java.util.List;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 public interface ReactiveIdGenerator<TKey> {
 

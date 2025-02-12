@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
  * @param <TEntity> TEntity
  * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 @SuppressWarnings({"unchecked"})
 public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TKey>, TKey>

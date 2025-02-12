@@ -21,7 +21,6 @@ import java.math.BigInteger;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 public final class ValueTypePropertyCodecProvider implements PropertyCodecProvider, CodecProvider {
 

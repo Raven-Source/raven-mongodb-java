@@ -6,7 +6,6 @@ import org.raven.mongodb.spi.Sequence;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 @Getter
 @Setter

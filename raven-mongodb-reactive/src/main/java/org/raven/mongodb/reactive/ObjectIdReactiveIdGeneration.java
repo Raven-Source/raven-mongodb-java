@@ -11,7 +11,6 @@ import java.util.Objects;
 
 /**
  * @author yi.liang
- * @since JDK11
  * date 2021.07.26 18:31
  */
 @SuppressWarnings({"unchecked"})

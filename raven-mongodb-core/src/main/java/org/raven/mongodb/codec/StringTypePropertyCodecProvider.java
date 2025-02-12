@@ -17,7 +17,6 @@ import org.raven.commons.data.StringType;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 public final class StringTypePropertyCodecProvider implements PropertyCodecProvider, CodecProvider {
 

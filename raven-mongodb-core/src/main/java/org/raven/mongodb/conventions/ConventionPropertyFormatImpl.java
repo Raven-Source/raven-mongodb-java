@@ -15,7 +15,6 @@ import java.lang.annotation.Annotation;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 final class ConventionPropertyFormatImpl implements Convention {
 

@@ -10,7 +10,6 @@ import lombok.NonNull;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 public class DefaultReactiveMongoSession implements ReactiveMongoSession {
 

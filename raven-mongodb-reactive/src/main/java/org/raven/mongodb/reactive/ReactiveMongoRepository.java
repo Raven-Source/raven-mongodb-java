@@ -12,7 +12,6 @@ import java.util.Optional;
  * @param <TEntity> TEntity
  * @param <TKey>    TKey
  * @author yi.liang
- * @since JDK11
  */
 public interface ReactiveMongoRepository<TEntity extends Entity<TKey>, TKey>
         extends ReactiveMongoReadonlyRepository<TEntity, TKey>

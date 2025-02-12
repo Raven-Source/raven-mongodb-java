@@ -11,7 +11,6 @@ import static org.bson.codecs.pojo.Conventions.CLASS_AND_PROPERTY_CONVENTION;
 
 /**
  * @author yi.liang
- * @since JDK11
  * date 2021.07.25 20:01
  */
 public final class CustomConventions {

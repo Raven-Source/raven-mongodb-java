@@ -7,7 +7,6 @@ import com.mongodb.client.MongoDatabase;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 public interface MongoSession {
 

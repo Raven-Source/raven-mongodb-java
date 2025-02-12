@@ -7,7 +7,6 @@ import org.raven.commons.data.Versioned;
 
 /**
  * @author yi.liang
- * @since JDK11
  */
 @SuppressWarnings({"unchecked"})
 public abstract class BsonConstant {
