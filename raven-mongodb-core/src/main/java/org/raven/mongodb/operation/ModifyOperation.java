@@ -4,7 +4,6 @@ import com.mongodb.Function;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReturnDocument;
-import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
@@ -620,11 +619,11 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
         TInsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern);
 
-        TUpdateResult doUpdate(@NonNull final UpdateOptions options, final UpdateType updateType);
+        TUpdateResult doUpdate(final UpdateOptions options, final UpdateType updateType);
 
         TFindOneAndModifyResult doFindOneAndUpdate(final FindOneAndUpdateOptions options);
 
-        TFindOneAndModifyResult doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options);
+        TFindOneAndModifyResult doFindOneAndDelete(final FindOneAndDeleteOptions options);
 
         TDeleteResult doDeleteOne(final DeleteOptions options);
 

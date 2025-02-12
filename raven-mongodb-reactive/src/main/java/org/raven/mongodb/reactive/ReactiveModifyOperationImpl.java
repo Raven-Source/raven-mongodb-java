@@ -56,6 +56,7 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
         );
 
     }
+
     /**
      * 找到并更新
      *
@@ -82,8 +83,8 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doInsertBatch(this.clientSession, entities, writeConcern);
     }
 
-    protected Mono<UpdateResult> doUpdate(@NonNull final UpdateOptions options,
-                                    final UpdateType updateType) {
+    protected Mono<UpdateResult> doUpdate(final UpdateOptions options,
+                                          final UpdateType updateType) {
         return baseRepository.doUpdate(this.clientSession, options, updateType);
     }
 
@@ -91,7 +92,7 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doFindOneAndUpdate(this.clientSession, options);
     }
 
-    protected Mono<TEntity> doFindOneAndDelete(@NonNull final FindOneAndDeleteOptions options) {
+    protected Mono<TEntity> doFindOneAndDelete(final FindOneAndDeleteOptions options) {
         return baseRepository.doFindOneAndDelete(this.clientSession, options);
     }
 
@@ -148,7 +149,7 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Mono<Long> doUpdate(@NonNull UpdateOptions options, UpdateType updateType) {
+                public Mono<Long> doUpdate(UpdateOptions options, UpdateType updateType) {
                     return ReactiveModifyOperationImpl.this.doUpdate(options, updateType).map(x ->
                             x.wasAcknowledged() ? x.getModifiedCount() : 0
                     );
@@ -160,7 +161,7 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Mono<TEntity> doFindOneAndDelete(@NonNull FindOneAndDeleteOptions options) {
+                public Mono<TEntity> doFindOneAndDelete(FindOneAndDeleteOptions options) {
                     return ReactiveModifyOperationImpl.this.doFindOneAndDelete(options);
                 }
 

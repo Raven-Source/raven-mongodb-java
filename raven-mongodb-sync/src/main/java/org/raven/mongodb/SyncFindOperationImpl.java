@@ -3,6 +3,7 @@ package org.raven.mongodb;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
+import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.contants.BsonConstant;
@@ -77,7 +78,7 @@ public class SyncFindOperationImpl<TEntity extends Entity<TKey>, TKey> implement
         return baseRepository.doCount(clientSession, options);
     }
 
-    protected boolean doExists(final ExistsOptions options) {
+    protected boolean doExists(@NonNull final ExistsOptions options) {
 
         Bson _filter = options.filter();
         if (_filter == null) {

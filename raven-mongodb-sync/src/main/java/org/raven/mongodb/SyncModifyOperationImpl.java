@@ -171,7 +171,7 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Long doUpdate(@NonNull UpdateOptions options, UpdateType updateType) {
+                public Long doUpdate(UpdateOptions options, UpdateType updateType) {
                     UpdateResult updateResult = SyncModifyOperationImpl.this.doUpdate(options, updateType);
                     return updateResult.wasAcknowledged() ? updateResult.getModifiedCount() : 0;
                 }
@@ -182,7 +182,7 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public TEntity doFindOneAndDelete(@NonNull FindOneAndDeleteOptions options) {
+                public TEntity doFindOneAndDelete(FindOneAndDeleteOptions options) {
                     return SyncModifyOperationImpl.this.doFindOneAndDelete(options);
                 }
 

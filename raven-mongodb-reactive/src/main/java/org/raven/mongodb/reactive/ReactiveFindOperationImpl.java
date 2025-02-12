@@ -2,6 +2,7 @@ package org.raven.mongodb.reactive;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.ClientSession;
+import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.CountOptions;
@@ -74,7 +75,7 @@ public class ReactiveFindOperationImpl<TEntity extends Entity<TKey>, TKey> imple
         return baseRepository.doCount(clientSession, options);
     }
 
-    protected Mono<Boolean> doExists(final ExistsOptions options) {
+    protected Mono<Boolean> doExists(@NonNull final ExistsOptions options) {
 
         Bson _filter = options.filter();
         if (_filter == null) {

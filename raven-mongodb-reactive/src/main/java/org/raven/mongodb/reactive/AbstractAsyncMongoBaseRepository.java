@@ -47,7 +47,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
     protected MongoDatabase mongoDatabase;
 
-    protected EntityInformation<TEntity, TKey> getEntityInformation(){
+    protected EntityInformation<TEntity, TKey> getEntityInformation() {
         return entityInformation;
     }
 
@@ -159,7 +159,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
      * @param <TResult>     TResult
      * @return FindIterable
      */
-    protected <TResult> FindPublisher<TResult> findOptions(final FindPublisher<TResult> findPublisher, final Bson projection, final Bson sort
+    protected <TResult> FindPublisher<TResult> findOptions(final FindPublisher<TResult> findPublisher
+            , final Bson projection, final Bson sort
             , final int limit, final int skip, final Bson hint) {
 
         FindPublisher<TResult> filter = findPublisher;
@@ -187,7 +188,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
     }
 
-    protected <TResult> FindPublisher<TResult> doFind(@Nullable final ClientSession session, final FindOptions options, final Class<TResult> resultClass) {
+    protected <TResult> FindPublisher<TResult> doFind(@Nullable final ClientSession session
+            , @NonNull final FindOptions options
+            , final Class<TResult> resultClass) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -210,7 +213,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
     }
 
 
-    protected Mono<Long> doCount(@Nullable final ClientSession session, final CountOptions options) {
+    protected Mono<Long> doCount(@Nullable final ClientSession session
+            , @NonNull final CountOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -235,7 +239,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
     }
 
 
-    protected Mono<InsertOneResult> doInsert(@Nullable final ClientSession session, final TEntity entity, final WriteConcern writeConcern) {
+    protected Mono<InsertOneResult> doInsert(@Nullable final ClientSession session
+            , final TEntity entity
+            , final WriteConcern writeConcern) {
 
         Mono<TEntity> mono = Mono.just(entity);
         if (entity.getId() == null && idGenerator != null) {
@@ -264,7 +270,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         });
     }
 
-    protected Mono<InsertManyResult> doInsertBatch(@Nullable final ClientSession session, final List<TEntity> entities, final WriteConcern writeConcern) {
+    protected Mono<InsertManyResult> doInsertBatch(@Nullable final ClientSession session
+            , final List<TEntity> entities
+            , final WriteConcern writeConcern) {
 
         Mono<List<TEntity>> mono = Mono.just(entities);
 
@@ -303,9 +311,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         });
     }
 
-    protected Mono<UpdateResult> doUpdate(@Nullable final ClientSession session,
-                                          @NonNull final UpdateOptions options,
-                                          final UpdateType updateType) {
+    protected Mono<UpdateResult> doUpdate(@Nullable final ClientSession session
+            , @NonNull final UpdateOptions options
+            , final UpdateType updateType) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -348,7 +356,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         }
     }
 
-    protected Mono<TEntity> doFindOneAndUpdate(@Nullable final ClientSession session, final FindOneAndUpdateOptions options) {
+    protected Mono<TEntity> doFindOneAndUpdate(@Nullable final ClientSession session
+            , @NonNull final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -377,7 +386,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         }
     }
 
-    protected Mono<TEntity> doFindOneAndDelete(@Nullable final ClientSession session, @NonNull final FindOneAndDeleteOptions options) {
+    protected Mono<TEntity> doFindOneAndDelete(@Nullable final ClientSession session
+            , @NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -403,7 +413,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         }
     }
 
-    protected Mono<DeleteResult> doDeleteOne(@Nullable final ClientSession session, final DeleteOptions options) {
+    protected Mono<DeleteResult> doDeleteOne(@Nullable final ClientSession session
+            , @NonNull final DeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -428,7 +439,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         }
     }
 
-    protected Mono<DeleteResult> doDeleteMany(@Nullable final ClientSession session, final DeleteOptions options) {
+    protected Mono<DeleteResult> doDeleteMany(@Nullable final ClientSession session
+            , @NonNull final DeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());

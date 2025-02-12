@@ -44,7 +44,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     protected MongoDatabase mongoDatabase;
 
-    protected EntityInformation<TEntity, TKey> getEntityInformation(){
+    protected EntityInformation<TEntity, TKey> getEntityInformation() {
         return entityInformation;
     }
 
@@ -190,7 +190,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     }
 
-    protected <TResult> FindIterable<TResult> doFind(@Nullable final ClientSession session, final FindOptions options, final Class<TResult> resultClass) {
+    protected <TResult> FindIterable<TResult> doFind(@Nullable final ClientSession session
+            , @NonNull final FindOptions options
+            , final Class<TResult> resultClass) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -212,7 +214,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         return result;
     }
 
-    protected long doCount(@Nullable final ClientSession session, final CountOptions options) {
+    protected long doCount(@Nullable final ClientSession session
+            , @NonNull final CountOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -241,7 +244,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @param writeConcern {{@link WriteConcern}}
      * @return {{@link InsertOneResult}}
      */
-    protected InsertOneResult doInsert(@Nullable final ClientSession session, final TEntity entity, final WriteConcern writeConcern) {
+    protected InsertOneResult doInsert(@Nullable final ClientSession session
+            , final TEntity entity
+            , final WriteConcern writeConcern) {
 
         if (entity.getId() == null && idGenerator != null) {
             TKey id = idGenerator.generateId();
@@ -256,7 +261,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected InsertManyResult doInsertBatch(@Nullable final ClientSession session, final List<TEntity> entities, final WriteConcern writeConcern) {
+    protected InsertManyResult doInsertBatch(@Nullable final ClientSession session
+            , final List<TEntity> entities
+            , final WriteConcern writeConcern) {
 
         List<TEntity> needIdEntities = entities.stream().filter(x -> x.getId() == null).collect(Collectors.toList());
         long count = needIdEntities.size();
@@ -280,9 +287,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected UpdateResult doUpdate(@Nullable final ClientSession session,
-                                    @NonNull final UpdateOptions options,
-                                    final UpdateType updateType) {
+    protected UpdateResult doUpdate(@Nullable final ClientSession session
+            , @NonNull final UpdateOptions options
+            , final UpdateType updateType) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -314,7 +321,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected TEntity doFindOneAndUpdate(@Nullable final ClientSession session, final FindOneAndUpdateOptions options) {
+    protected TEntity doFindOneAndUpdate(@Nullable final ClientSession session
+            , @NonNull final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -340,7 +348,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected TEntity doFindOneAndDelete(@Nullable final ClientSession session, @NonNull final FindOneAndDeleteOptions options) {
+    protected TEntity doFindOneAndDelete(@Nullable final ClientSession session
+            , @NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -364,7 +373,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected DeleteResult doDeleteOne(@Nullable final ClientSession session, final DeleteOptions options) {
+    protected DeleteResult doDeleteOne(@Nullable final ClientSession session
+            , @NonNull final DeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -389,7 +399,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected DeleteResult doDeleteMany(@Nullable final ClientSession session, final DeleteOptions options) {
+    protected DeleteResult doDeleteMany(@Nullable final ClientSession session
+            , @NonNull final DeleteOptions options) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
