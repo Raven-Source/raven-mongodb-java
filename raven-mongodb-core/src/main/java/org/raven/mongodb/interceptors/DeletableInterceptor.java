@@ -47,7 +47,7 @@ public class DeletableInterceptor implements EntityInterceptor {
      */
     private Bson filterProcess(final Bson filter, final EntityInformation<?, ?> entityInformation) {
 
-        PropertyModel<?> propertyModel = entityInformation.getClassModel().getPropertyModel(Deletable.DEL);
+        PropertyModel<?> propertyModel = entityInformation.getClassModel().getPropertyModel(Deletable.DELETED);
 
         Bson delBson = Filters.eq(propertyModel.getWriteName(), false);
 
