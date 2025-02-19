@@ -138,7 +138,7 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     @Override
     public FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findExecutor() {
-        return operation.instance();
+        return operation.findExecutor();
     }
 
 //    private final FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy =
