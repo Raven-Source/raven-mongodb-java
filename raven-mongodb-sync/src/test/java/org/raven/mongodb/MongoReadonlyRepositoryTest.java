@@ -60,7 +60,7 @@ public class MongoReadonlyRepositoryTest {
 
         List<User> list = null;
 
-        list = userRepository.findList(FindOptions.empty());
+        list = userRepository.findList(FindOptions.create());
         Assert.assertNotEquals(list.size(), 0);
 
         list = userRepository.findList(Filters.gte("_id", 1));
@@ -114,7 +114,7 @@ public class MongoReadonlyRepositoryTest {
         });
         Assert.assertNotNull(user2);
 
-        FindOptions findOptions = FindOptions.empty().filter(Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id));
+        FindOptions findOptions = FindOptions.create().filter(Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id));
         user2 = userRepository.findOne(findOptions, User2.class);
         user = userRepository.findOne(id);
         Assert.assertEquals(user.getName(), user2.getName());

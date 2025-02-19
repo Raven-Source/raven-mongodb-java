@@ -5,7 +5,7 @@ import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.raven.mongodb.model.User;
-import org.raven.mongodb.query.ProjectionBuilder;
+import org.raven.mongodb.builders.ProjectionBuilder;
 
 /**
  * date 2022/11/5 17:26

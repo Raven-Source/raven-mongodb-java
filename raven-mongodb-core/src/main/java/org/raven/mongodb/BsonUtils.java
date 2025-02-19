@@ -7,7 +7,7 @@ import org.bson.BsonValue;
 import org.bson.codecs.Encoder;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.raven.mongodb.query.ProjectionBuilder;
+import org.raven.mongodb.builders.ProjectionBuilder;
 
 import javax.annotation.Nullable;
 import java.util.List;

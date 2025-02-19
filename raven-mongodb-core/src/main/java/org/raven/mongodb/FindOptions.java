@@ -28,7 +28,7 @@ public class FindOptions extends AbstractFindOptions<FindOptions> {
     /**
      * @return FindOptions
      */
-    public static FindOptions empty() {
+    public static FindOptions create() {
         return new FindOptions();
     }
 

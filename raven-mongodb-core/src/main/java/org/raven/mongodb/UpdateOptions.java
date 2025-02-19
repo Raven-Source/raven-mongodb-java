@@ -11,12 +11,9 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class UpdateOptions implements Options {
-    private Bson filter;
+public class UpdateOptions extends AbstractModifyOptions<UpdateOptions> implements Options {
     private Bson update;
     private boolean upsert;
-    private Bson hint;
-    private WriteConcern writeConcern;
 
     public UpdateOptions() {
     }
@@ -24,7 +21,7 @@ public class UpdateOptions implements Options {
     /**
      * @return UpdateOptions
      */
-    public static UpdateOptions empty() {
+    public static UpdateOptions create() {
         return new UpdateOptions();
     }
 }

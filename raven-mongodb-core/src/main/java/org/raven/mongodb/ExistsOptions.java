@@ -20,7 +20,7 @@ public class ExistsOptions extends AbstractFindOptions<ExistsOptions> {
     /**
      * @return ExistsOptions
      */
-    public static ExistsOptions empty() {
+    public static ExistsOptions create() {
         return new ExistsOptions();
     }
 }

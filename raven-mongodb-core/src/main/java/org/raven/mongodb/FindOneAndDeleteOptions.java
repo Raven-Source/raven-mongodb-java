@@ -10,13 +10,9 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class FindOneAndDeleteOptions implements Options {
+public class FindOneAndDeleteOptions extends AbstractFilterOptions<FindOneAndDeleteOptions> implements Options {
 
     private Bson sort;
-    private Bson filter;
-    private Bson update;
-    private Boolean upsert;
-    private Bson hint;
 
     /**
      *
@@ -28,7 +24,7 @@ public class FindOneAndDeleteOptions implements Options {
     /**
      * @return FindOneAndDeleteOptions
      */
-    public static FindOneAndDeleteOptions empty() {
+    public static FindOneAndDeleteOptions create() {
         return new FindOneAndDeleteOptions();
     }
 }

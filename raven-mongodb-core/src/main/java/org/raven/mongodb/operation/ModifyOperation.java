@@ -8,9 +8,9 @@ import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
 import org.raven.mongodb.contants.BsonConstant;
-import org.raven.mongodb.query.FilterBuilder;
-import org.raven.mongodb.query.HintBuilder;
-import org.raven.mongodb.query.UpdateBuilder;
+import org.raven.mongodb.builders.FilterBuilder;
+import org.raven.mongodb.builders.HintBuilder;
+import org.raven.mongodb.builders.UpdateBuilder;
 
 import javax.annotation.Nullable;
 import java.util.List;

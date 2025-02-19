@@ -30,7 +30,7 @@ public class FindOneAndUpdateOptions extends UpdateOptions {
     /**
      * @return FindOneAndUpdateOptions
      */
-    public static FindOneAndUpdateOptions empty() {
+    public static FindOneAndUpdateOptions create() {
         return new FindOneAndUpdateOptions();
     }
 }

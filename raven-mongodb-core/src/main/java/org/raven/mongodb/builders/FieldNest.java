@@ -1,4 +1,4 @@
-package org.raven.mongodb.query;
+package org.raven.mongodb.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;

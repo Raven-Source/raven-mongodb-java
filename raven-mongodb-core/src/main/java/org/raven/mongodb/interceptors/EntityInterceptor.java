@@ -11,7 +11,7 @@ import org.raven.mongodb.UpdateOptions;
  */
 public interface EntityInterceptor {
 
-    default void preFind(final AbstractFindOptions options,
+    default void preFind(final AbstractFindOptions<?> options,
                          final EntityInformation<?, ?> entityInformation) {
     }
 

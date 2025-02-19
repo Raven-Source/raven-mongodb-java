@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.raven.mongodb.model.Mall;
 import org.raven.mongodb.model.Status;
 import org.raven.mongodb.model.User;
-import org.raven.mongodb.query.UpdateBuilder;
+import org.raven.mongodb.builders.UpdateBuilder;
 
 import java.util.Arrays;
 

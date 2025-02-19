@@ -8,9 +8,9 @@ import org.junit.Test;
 import org.raven.mongodb.model.Mall;
 import org.raven.mongodb.model.Status;
 import org.raven.mongodb.model.User;
-import org.raven.mongodb.query.FieldNest;
-import org.raven.mongodb.query.FilterBuilder;
-import org.raven.mongodb.query.Operator;
+import org.raven.mongodb.builders.FieldNest;
+import org.raven.mongodb.builders.FilterBuilder;
+import org.raven.mongodb.builders.Operator;
 
 import java.util.Date;
 

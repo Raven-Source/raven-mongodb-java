@@ -1,9 +1,7 @@
 package org.raven.mongodb;
 
-import com.mongodb.WriteConcern;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.bson.conversions.Bson;
 
 /**
  * @author yi.liang
@@ -11,11 +9,7 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class DeleteOptions implements Options {
-
-    private Bson filter;
-    private Bson hint;
-    private WriteConcern writeConcern;
+public class DeleteOptions extends AbstractModifyOptions<DeleteOptions> implements Options {
 
     /**
      *
@@ -27,7 +21,7 @@ public class DeleteOptions implements Options {
     /**
      * @return DeleteOptions
      */
-    public static DeleteOptions empty() {
+    public static DeleteOptions create() {
         return new DeleteOptions();
     }
 }

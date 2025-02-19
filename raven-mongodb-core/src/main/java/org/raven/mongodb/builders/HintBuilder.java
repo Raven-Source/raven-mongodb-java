@@ -1,4 +1,4 @@
-package org.raven.mongodb.query;
+package org.raven.mongodb.builders;
 
 import lombok.NonNull;
 import org.bson.BsonDocument;

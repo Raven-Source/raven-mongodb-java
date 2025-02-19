@@ -68,7 +68,7 @@ public class ReactiveMongoRepositoryTest {
             Assert.assertNotEquals(user.getId().longValue(), 0);
         }
 
-        long count = repos.count(CountOptions.empty()).block();
+        long count = repos.count(CountOptions.create()).block();
         Assert.assertEquals(count, size);
 
     }

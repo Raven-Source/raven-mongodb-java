@@ -7,7 +7,7 @@ import org.raven.mongodb.annotations.PreFind;
 import org.raven.mongodb.annotations.PreInsert;
 import org.raven.mongodb.annotations.PreUpdate;
 import org.raven.mongodb.interceptors.EntityInterceptor;
-import org.raven.mongodb.query.*;
+import org.raven.mongodb.builders.*;
 import org.raven.mongodb.support.EntityInformationSupport;
 
 import java.lang.annotation.Annotation;
@@ -51,7 +51,7 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
                 log.debug("Calling interceptor method " + event.getSimpleName() + " on " + ei);
             }
             if (PreFind.class.equals(event)) {
-                ei.preFind((AbstractFindOptions) options, entityInformation);
+                ei.preFind((AbstractFindOptions<?>) options, entityInformation);
             } else if (PreInsert.class.equals(event)) {
                 ei.preInsert(entity, entityInformation);
             } else if (PreUpdate.class.equals(event)) {

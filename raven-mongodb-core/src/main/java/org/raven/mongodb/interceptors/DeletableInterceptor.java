@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class DeletableInterceptor implements EntityInterceptor {
 
     @Override
-    public void preFind(final AbstractFindOptions options,
+    public void preFind(final AbstractFindOptions<?> options,
                         final EntityInformation<?, ?> entityInformation) {
 
         if (Deletable.class.isAssignableFrom(entityInformation.getEntityType())) {
