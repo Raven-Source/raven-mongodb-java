@@ -1,4 +1,4 @@
-package org.raven.mongodb;
+package org.raven.mongodb.util;
 
 import lombok.NonNull;
 import org.bson.BsonDocument;
@@ -7,7 +7,7 @@ import org.bson.BsonValue;
 import org.bson.codecs.Encoder;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.raven.mongodb.builders.ProjectionBuilder;
+import org.raven.mongodb.criteria.ProjectionBuilder;
 
 import javax.annotation.Nullable;
 import java.util.List;

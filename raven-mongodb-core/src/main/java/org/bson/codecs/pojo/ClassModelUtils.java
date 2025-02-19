@@ -3,7 +3,7 @@ package org.bson.codecs.pojo;
 import lombok.NonNull;
 import org.bson.codecs.Codec;
 import org.raven.mongodb.codec.PojoCodecRegistry;
-import org.raven.mongodb.builders.FieldNest;
+import org.raven.mongodb.criteria.FieldNest;
 
 import java.util.Arrays;
 import java.util.LinkedList;

@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 import org.raven.commons.data.MemberFormatType;
 import org.raven.commons.data.annotation.Contract;
-import org.raven.mongodb.annotations.EntityListeners;
+import org.raven.mongodb.annotation.EntityListeners;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 import org.raven.mongodb.interceptors.VersionedEntityInterceptor;
 

@@ -1,4 +1,4 @@
-package org.raven.mongodb.builders;
+package org.raven.mongodb.criteria;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.TextSearchOptions;

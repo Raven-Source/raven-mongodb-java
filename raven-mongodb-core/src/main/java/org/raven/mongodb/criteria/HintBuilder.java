@@ -1,11 +1,11 @@
-package org.raven.mongodb.builders;
+package org.raven.mongodb.criteria;
 
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
-import org.raven.mongodb.BsonUtils;
+import org.raven.mongodb.util.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;

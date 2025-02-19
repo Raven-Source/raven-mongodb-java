@@ -1,4 +1,4 @@
-package org.raven.mongodb.annotations;
+package org.raven.mongodb.annotation;
 
 import org.raven.mongodb.interceptors.EntityInterceptor;
 

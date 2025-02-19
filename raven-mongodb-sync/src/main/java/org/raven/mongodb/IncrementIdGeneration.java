@@ -12,6 +12,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.Sequence;
+import org.raven.mongodb.util.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;

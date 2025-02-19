@@ -10,7 +10,7 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
-import org.raven.mongodb.BsonUtils;
+import org.raven.mongodb.util.BsonUtils;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
 import org.raven.mongodb.spi.Sequence;
 import reactor.core.publisher.Mono;

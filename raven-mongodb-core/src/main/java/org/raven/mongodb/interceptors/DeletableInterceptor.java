@@ -6,7 +6,7 @@ import org.bson.codecs.pojo.PropertyModel;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Deletable;
 import org.raven.mongodb.AbstractFindOptions;
-import org.raven.mongodb.BsonUtils;
+import org.raven.mongodb.util.BsonUtils;
 import org.raven.mongodb.EntityInformation;
 import org.raven.mongodb.UpdateOptions;
 

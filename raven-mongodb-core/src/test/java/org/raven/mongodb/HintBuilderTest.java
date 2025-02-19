@@ -5,7 +5,7 @@ import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.raven.mongodb.model.User;
-import org.raven.mongodb.builders.HintBuilder;
+import org.raven.mongodb.criteria.HintBuilder;
 
 /**
  * @author by yanfeng

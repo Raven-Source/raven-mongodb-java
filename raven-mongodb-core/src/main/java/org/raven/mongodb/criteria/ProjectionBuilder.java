@@ -1,8 +1,8 @@
-package org.raven.mongodb.builders;
+package org.raven.mongodb.criteria;
 
 import com.mongodb.client.model.Projections;
 import org.bson.conversions.Bson;
-import org.raven.mongodb.BsonUtils;
+import org.raven.mongodb.util.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package org.raven.mongodb.builders;
+package org.raven.mongodb.criteria;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,7 +1,7 @@
 package org.raven.mongodb.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.raven.mongodb.annotations.EntityListeners;
+import org.raven.mongodb.annotation.EntityListeners;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 
 import java.util.*;
