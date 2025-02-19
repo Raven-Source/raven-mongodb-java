@@ -10,7 +10,7 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class FindOneAndDeleteOptions extends AbstractFilterOptions<FindOneAndDeleteOptions> implements Options {
+public class FindOneAndDeleteOptions extends AbstractFilterOptions<FindOneAndDeleteOptions> implements CommandOptions {
 
     private Bson sort;
 

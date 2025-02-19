@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @SuppressWarnings("unchecked")
-public abstract class AbstractModifyOptions<P extends AbstractModifyOptions<P>> extends AbstractFilterOptions<P> implements Options {
+public abstract class AbstractModifyOptions<P extends AbstractModifyOptions<P>> extends AbstractFilterOptions<P> implements CommandOptions {
 
     private WriteConcern writeConcern;
 

@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(fluent = true)
-public class DeleteOptions extends AbstractModifyOptions<DeleteOptions> implements Options {
+public class DeleteOptions extends AbstractModifyOptions<DeleteOptions> implements CommandOptions {
 
     /**
      *

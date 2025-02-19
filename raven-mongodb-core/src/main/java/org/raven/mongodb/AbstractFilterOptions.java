@@ -11,7 +11,7 @@ import org.bson.conversions.Bson;
 @Data
 @Accessors(fluent = true)
 @SuppressWarnings("unchecked")
-public abstract class AbstractFilterOptions<P extends AbstractFilterOptions<P>> implements Options {
+public abstract class AbstractFilterOptions<P extends AbstractFilterOptions<P>> implements CommandOptions {
 
     private Bson hint;
     private Bson filter;

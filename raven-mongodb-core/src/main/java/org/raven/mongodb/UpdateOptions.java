@@ -1,6 +1,5 @@
 package org.raven.mongodb;
 
-import com.mongodb.WriteConcern;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.bson.conversions.Bson;
@@ -11,7 +10,7 @@ import org.bson.conversions.Bson;
  */
 @Data
 @Accessors(fluent = true)
-public class UpdateOptions extends AbstractModifyOptions<UpdateOptions> implements Options {
+public class UpdateOptions extends AbstractModifyOptions<UpdateOptions> implements CommandOptions {
     private Bson update;
     private boolean upsert;
 

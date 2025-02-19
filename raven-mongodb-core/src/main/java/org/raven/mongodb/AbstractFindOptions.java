@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @SuppressWarnings("unchecked")
-public abstract class AbstractFindOptions<P extends AbstractFindOptions<P>> extends AbstractFilterOptions<P> implements Options {
+public abstract class AbstractFindOptions<P extends AbstractFindOptions<P>> extends AbstractFilterOptions<P> implements CommandOptions {
 
     private ReadPreference readPreference;
 

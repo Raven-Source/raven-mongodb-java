@@ -45,7 +45,7 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
 
     protected void callGlobalInterceptors(final Class<? extends Annotation> event,
                                           Object entity,
-                                          final Options options) {
+                                          final CommandOptions options) {
         for (final EntityInterceptor ei : entityInformation.getInterceptors()) {
             if (log.isDebugEnabled()) {
                 log.debug("Calling interceptor method " + event.getSimpleName() + " on " + ei);
