@@ -3,6 +3,7 @@ package org.raven.mongodb;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.operation.FindExecutor;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.Sequence;
@@ -17,11 +18,11 @@ import java.util.List;
  * @param <TKey>    TKey
  * @author yi.liang
  */
-public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
+public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends AbstractMongoBaseRepository<TEntity, TKey>
-        implements MongoReadonlyRepository<TEntity, TKey> {
+        implements MongoQueryRepository<TEntity, TKey> {
 
-    private final SyncFindOperationImpl<TEntity, TKey> operation;
+    private final SyncReadOperationImpl<TEntity, TKey> operation;
 
     //#region constructor
 
@@ -30,7 +31,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession MongoSession
      */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession) {
+    public MongoQueryRepositoryImpl(final MongoSession mongoSession) {
         this(mongoSession, null, null, null);
     }
 
@@ -40,7 +41,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoSession   MongoSession
      * @param collectionName collectionName
      */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
+    public MongoQueryRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
         this(mongoSession, collectionName, null, null);
     }
 
@@ -50,7 +51,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoSession MongoSession
      * @param mongoOptions MongoOptions
      */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
+    public MongoQueryRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
         this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
@@ -61,7 +62,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoOptions   MongoOptions
      * @param collectionName collectionName
      */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+    public MongoQueryRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
@@ -73,12 +74,12 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param sequence            Sequence
      * @param idGeneratorProvider IdGeneratorProvider
      */
-    public MongoReadonlyRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
+    public MongoQueryRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
 
-        operation = new SyncFindOperationImpl<>(this, null);
+        operation = new SyncReadOperationImpl<>(this, null);
     }
 
     //#endregion
@@ -99,7 +100,7 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //region protected
 
-    public SyncFindOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
+    public SyncReadOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
         if (clientSession == null) {
             return operation;
         } else {
@@ -136,8 +137,8 @@ public class MongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //region findProxy
 
     @Override
-    public FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findProxy() {
-        return operation.proxy();
+    public FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findExecutor() {
+        return operation.instance();
     }
 
 //    private final FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy =

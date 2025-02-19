@@ -71,7 +71,7 @@ public class ReactiveMongoReaderRepositoryTest {
     @Test
     public void get() {
 
-        ReactiveMongoReadonlyRepository<User, Long> repos = new UserReactiveRepositoryImpl();
+        ReactiveMongoQueryRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         User user = null;
         for (long i = 1; i <= size; i++) {
             user = repos.findOne(i).block().orElse(null);

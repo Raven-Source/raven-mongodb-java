@@ -9,9 +9,9 @@ import org.raven.commons.data.Entity;
  * @author yi.liang
  */
 public interface MongoRepository<TEntity extends Entity<TKey>, TKey>
-        extends MongoReadonlyRepository<TEntity, TKey>
-        , SyncModifyOperation<TEntity, TKey> {
+        extends MongoQueryRepository<TEntity, TKey>
+        , SyncWriteOperation<TEntity, TKey> {
 
-    SyncModifyOperation<TEntity, TKey> modifyWithClientSession(ClientSession clientSession);
+    SyncWriteOperation<TEntity, TKey> modifyWithClientSession(ClientSession clientSession);
 
 }

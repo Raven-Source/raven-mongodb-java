@@ -103,4 +103,9 @@ public class HintBuilder<TEntity> implements BsonBuilder {
             return BsonUtils.combine(bsons);
         }
     }
+
+    @Override
+    public String toString() {
+        return build().toString();
+    }
 }

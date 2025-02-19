@@ -3,16 +3,14 @@ package org.raven.mongodb.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * @author yi.liang
  * date 2021/9/16 20:19
  */
-public class AnnotationUtils {
+public final class AnnotationUtils {
     private AnnotationUtils() {
     }
 

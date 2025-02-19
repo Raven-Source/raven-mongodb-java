@@ -9,11 +9,11 @@ import com.mongodb.client.ClientSession;
  * @param <TKey>    TKey
  * @author yi.liang
  */
-public interface MongoReadonlyRepository<TEntity, TKey>
+public interface MongoQueryRepository<TEntity, TKey>
         extends MongoBaseRepository<TEntity>,
-        SyncFindOperation<TEntity, TKey> {
+        SyncReadOperation<TEntity, TKey> {
 
-    SyncFindOperation<TEntity, TKey> findWithClientSession(ClientSession clientSession);
+    SyncReadOperation<TEntity, TKey> findWithClientSession(ClientSession clientSession);
 
 //    /**
 //     * 数量

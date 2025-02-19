@@ -1,6 +1,8 @@
 package org.raven.mongodb;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.bson.conversions.Bson;
 
@@ -8,7 +10,9 @@ import org.bson.conversions.Bson;
  * @author by yanfeng
  * date 2021/9/22 21:34
  */
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
 @Accessors(fluent = true)
 public class FindOneAndDeleteOptions extends AbstractFilterOptions<FindOneAndDeleteOptions> implements CommandOptions {
 

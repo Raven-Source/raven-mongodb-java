@@ -1,7 +1,7 @@
 package org.raven.mongodb.reactive;
 
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.operation.ModifyOperation;
+import org.raven.mongodb.operation.WriteOperation;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author yi.liang
  */
 public interface ReactiveMongoRepository<TEntity extends Entity<TKey>, TKey>
-        extends ReactiveMongoReadonlyRepository<TEntity, TKey>
-        , ModifyOperation<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> {
+        extends ReactiveMongoQueryRepository<TEntity, TKey>
+        , WriteOperation<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> {
 
 }

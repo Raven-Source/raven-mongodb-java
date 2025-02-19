@@ -10,6 +10,7 @@ import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
+import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.util.BsonUtils;
 import reactor.core.publisher.Mono;
 
@@ -19,22 +20,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
-        implements ReactiveModifyOperation<TEntity, TKey> {
+public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
+        implements ReactiveWriteOperation<TEntity, TKey> {
 
     private final AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository;
 
     private final @Nullable ClientSession clientSession;
 
 
-    public ReactiveModifyOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
-                                       @Nullable ClientSession clientSession) {
+    public ReactiveWriteOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
+                                      @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;
     }
 
-    protected ReactiveModifyOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
-        return new ReactiveModifyOperationImpl<>(this.baseRepository, clientSession);
+    protected ReactiveWriteOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
+        return new ReactiveWriteOperationImpl<>(this.baseRepository, clientSession);
     }
 
 
@@ -106,12 +107,12 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
 
     @Override
-    public ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyProxy() {
-        return proxy;
+    public ModifyExecutor<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyExecutor() {
+        return modifyExecutor;
     }
 
-    private final ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> proxy =
-            new ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>>() {
+    private final ModifyExecutor<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyExecutor =
+            new ModifyExecutor<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>>() {
 
                 @Override
                 public EntityInformation<TEntity, TKey> getEntityInformation() {
@@ -120,7 +121,7 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
                 @Override
                 public Mono<Optional<TKey>> doInsert(TEntity entity, WriteConcern writeConcern) {
-                    return ReactiveModifyOperationImpl.this.doInsert(entity, writeConcern).map(x ->
+                    return ReactiveWriteOperationImpl.this.doInsert(entity, writeConcern).map(x ->
                             Optional.ofNullable(
                                     x.wasAcknowledged()
                                             ? BsonUtils.convert(baseRepository.getEntityInformation().getIdType(), x.getInsertedId())
@@ -132,7 +133,7 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
                 @Override
                 public Mono<Map<Integer, TKey>> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
 
-                    return ReactiveModifyOperationImpl.this.doInsertBatch(entities, writeConcern).map(x -> {
+                    return ReactiveWriteOperationImpl.this.doInsertBatch(entities, writeConcern).map(x -> {
 
                         Map<Integer, TKey> integerTKeyMap = new HashMap<>();
                         if (x.wasAcknowledged()) {
@@ -150,31 +151,31 @@ public class ReactiveModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
                 @Override
                 public Mono<Long> doUpdate(UpdateOptions options, UpdateType updateType) {
-                    return ReactiveModifyOperationImpl.this.doUpdate(options, updateType).map(x ->
+                    return ReactiveWriteOperationImpl.this.doUpdate(options, updateType).map(x ->
                             x.wasAcknowledged() ? x.getModifiedCount() : 0
                     );
                 }
 
                 @Override
                 public Mono<TEntity> doFindOneAndUpdate(FindOneAndUpdateOptions options) {
-                    return ReactiveModifyOperationImpl.this.doFindOneAndUpdate(options);
+                    return ReactiveWriteOperationImpl.this.doFindOneAndUpdate(options);
                 }
 
                 @Override
                 public Mono<TEntity> doFindOneAndDelete(FindOneAndDeleteOptions options) {
-                    return ReactiveModifyOperationImpl.this.doFindOneAndDelete(options);
+                    return ReactiveWriteOperationImpl.this.doFindOneAndDelete(options);
                 }
 
                 @Override
                 public Mono<Long> doDeleteOne(DeleteOptions options) {
-                    return ReactiveModifyOperationImpl.this.doDeleteOne(options).map(x ->
+                    return ReactiveWriteOperationImpl.this.doDeleteOne(options).map(x ->
                             x.wasAcknowledged() ? x.getDeletedCount() : 0
                     );
                 }
 
                 @Override
                 public Mono<Long> doDeleteMany(DeleteOptions options) {
-                    return ReactiveModifyOperationImpl.this.doDeleteMany(options).map(x ->
+                    return ReactiveWriteOperationImpl.this.doDeleteMany(options).map(x ->
                             x.wasAcknowledged() ? x.getDeletedCount() : 0
                     );
                 }

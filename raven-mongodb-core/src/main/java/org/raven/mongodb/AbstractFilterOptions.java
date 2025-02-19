@@ -13,16 +13,16 @@ import org.bson.conversions.Bson;
 @SuppressWarnings("unchecked")
 public abstract class AbstractFilterOptions<P extends AbstractFilterOptions<P>> implements CommandOptions {
 
-    private Bson hint;
     private Bson filter;
-
-    public P hint(Bson hint) {
-        this.hint = hint;
-        return (P) this;
-    }
+    private Bson hint;
 
     public P filter(Bson filter) {
         this.filter = filter;
+        return (P) this;
+    }
+
+    public P hint(Bson hint) {
+        this.hint = hint;
         return (P) this;
     }
 

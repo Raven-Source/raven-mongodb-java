@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * date 2021/9/22 19:41
  */
 @Slf4j
-public class EntityInterceptorUtils {
+public final class EntityInterceptorUtils {
 
     private final static Map<Class<?>, EntityInterceptor> entityInterceptorCached = new ConcurrentHashMap<>();
 

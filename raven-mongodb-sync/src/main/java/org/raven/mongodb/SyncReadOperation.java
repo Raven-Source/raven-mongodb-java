@@ -1,10 +1,10 @@
 package org.raven.mongodb;
 
-import org.raven.mongodb.operation.FindOperation;
+import org.raven.mongodb.operation.ReadOperation;
 
 import java.util.List;
 
-public interface SyncFindOperation<TEntity, TKey> extends FindOperation<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> {
+public interface SyncReadOperation<TEntity, TKey> extends ReadOperation<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> {
 
     /**
      * 根据条件获取实体

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MongoReadonlyRepositoryTest {
+public class MongoQueryRepositoryTest {
     private final int seed = 90;
     MongoRepository<User, Long> userRepository = new UserRepositoryImpl();
 

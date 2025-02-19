@@ -1,14 +1,14 @@
 package org.raven.mongodb.reactive;
 
 import org.raven.mongodb.FindOptions;
-import org.raven.mongodb.operation.FindOperation;
+import org.raven.mongodb.operation.ReadOperation;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ReactiveFindOperation<TEntity, TKey>
-        extends FindOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> {
+public interface ReactiveReadOperation<TEntity, TKey>
+        extends ReadOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> {
 
     /**
      * 根据条件获取实体

@@ -24,7 +24,7 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 21:39
  */
-public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
+public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
 
     //#region insert
 
@@ -42,7 +42,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @return InsertOneResult
      */
     default TInsertOneResult insert(final TEntity entity, final WriteConcern writeConcern) {
-        return modifyProxy().doInsert(entity, writeConcern);
+        return modifyExecutor().doInsert(entity, writeConcern);
     }
 
     /**
@@ -60,7 +60,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      */
     default TInsertManyResult insertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
 
-        return modifyProxy().doInsertBatch(entities, writeConcern);
+        return modifyExecutor().doInsertBatch(entities, writeConcern);
     }
 
     //#endregion
@@ -221,17 +221,17 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
         final UpdateOptions options = new UpdateOptions();
         if (!Objects.isNull(filterBuilder)) {
             options.filter(
-                    filterBuilder.apply(FilterBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
+                    filterBuilder.apply(FilterBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(updateBuilder)) {
             options.update(
-                    updateBuilder.apply(UpdateBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
+                    updateBuilder.apply(UpdateBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(hintBuilder)) {
             options.hint(
-                    hintBuilder.apply(HintBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
+                    hintBuilder.apply(HintBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
             );
         }
         options.upsert(isUpsert);
@@ -252,7 +252,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      */
     default TUpdateResult updateOne(final UpdateOptions options) {
 
-        return modifyProxy().doUpdate(options, UpdateType.ONE);
+        return modifyExecutor().doUpdate(options, UpdateType.ONE);
     }
 
     /**
@@ -320,17 +320,17 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
 
         if (!Objects.isNull(filterBuilder)) {
             options.filter(
-                    filterBuilder.apply(FilterBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
+                    filterBuilder.apply(FilterBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(updateBuilder)) {
             options.update(
-                    updateBuilder.apply(UpdateBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
+                    updateBuilder.apply(UpdateBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
             );
         }
         if (!Objects.isNull(hintBuilder)) {
             options.hint(
-                    hintBuilder.apply(HintBuilder.create(modifyProxy().getEntityInformation().getEntityType()))
+                    hintBuilder.apply(HintBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
             );
         }
         options.writeConcern(writeConcern);
@@ -348,7 +348,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     default TUpdateResult updateMany(final UpdateOptions options) {
 
         options.upsert(false);
-        return modifyProxy().doUpdate(options, UpdateType.MANY);
+        return modifyExecutor().doUpdate(options, UpdateType.MANY);
     }
 
     //#endregion
@@ -413,7 +413,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
     default TFindOneAndModifyResult findOneAndUpdate(final FindOneAndUpdateOptions options) {
         options.returnDocument(ReturnDocument.AFTER);
 
-        return modifyProxy().doFindOneAndUpdate(options);
+        return modifyExecutor().doFindOneAndUpdate(options);
     }
 
     /**
@@ -499,7 +499,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      */
     default TFindOneAndModifyResult findOneAndDelete(final FindOneAndDeleteOptions option) {
 
-        return modifyProxy().doFindOneAndDelete(option);
+        return modifyExecutor().doFindOneAndDelete(option);
     }
 
     //#endregion
@@ -564,7 +564,7 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @return DeleteResult
      */
     default TDeleteResult deleteOne(final DeleteOptions options) {
-        return modifyProxy().doDeleteOne(options);
+        return modifyExecutor().doDeleteOne(options);
     }
 
     /**
@@ -607,31 +607,12 @@ public interface ModifyOperation<TEntity extends Entity<TKey>, TKey, TInsertOneR
      * @return DeleteResult
      */
     default TDeleteResult deleteMany(final DeleteOptions options) {
-        return modifyProxy().doDeleteMany(options);
+        return modifyExecutor().doDeleteMany(options);
     }
 
 
     //#endregion
 
-    ModifyProxy<TEntity, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> modifyProxy();
+    ModifyExecutor<TEntity, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> modifyExecutor();
 
-    interface ModifyProxy<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
-
-        EntityInformation<TEntity, TKey> getEntityInformation();
-
-        TInsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern);
-
-        TInsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern);
-
-        TUpdateResult doUpdate(final UpdateOptions options, final UpdateType updateType);
-
-        TFindOneAndModifyResult doFindOneAndUpdate(final FindOneAndUpdateOptions options);
-
-        TFindOneAndModifyResult doFindOneAndDelete(final FindOneAndDeleteOptions options);
-
-        TDeleteResult doDeleteOne(final DeleteOptions options);
-
-        TDeleteResult doDeleteMany(final DeleteOptions options);
-
-    }
 }

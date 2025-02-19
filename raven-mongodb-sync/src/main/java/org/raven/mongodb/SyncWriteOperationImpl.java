@@ -10,6 +10,7 @@ import lombok.NonNull;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.util.BsonUtils;
 
 import javax.annotation.Nullable;
@@ -17,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
-        implements SyncModifyOperation<TEntity, TKey> {
+public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
+        implements SyncWriteOperation<TEntity, TKey> {
 
     private final AbstractMongoBaseRepository<TEntity, TKey> baseRepository;
 
@@ -35,8 +36,8 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
     private final @Nullable ClientSession clientSession;
 
-    public SyncModifyOperationImpl(AbstractMongoBaseRepository<TEntity, TKey> baseRepository,
-                                   @Nullable ClientSession clientSession) {
+    public SyncWriteOperationImpl(AbstractMongoBaseRepository<TEntity, TKey> baseRepository,
+                                  @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;
     }
@@ -65,8 +66,8 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 //
 //    }
 
-    protected SyncModifyOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
-        return new SyncModifyOperationImpl<>(
+    protected SyncWriteOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
+        return new SyncWriteOperationImpl<>(
                 this.baseRepository,
                 clientSession);
     }
@@ -136,12 +137,12 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     @Override
-    public ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyProxy() {
-        return proxy;
+    public ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor() {
+        return modifyExecutor;
     }
 
-    private final ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> proxy =
-            new ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long>() {
+    private final ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor =
+            new ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long>() {
                 @Override
                 public EntityInformation<TEntity, TKey> getEntityInformation() {
                     return baseRepository.getEntityInformation();
@@ -149,7 +150,7 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
                 @Override
                 public TKey doInsert(TEntity entity, WriteConcern writeConcern) {
-                    InsertOneResult insertOneResult = SyncModifyOperationImpl.this.doInsert(entity, writeConcern);
+                    InsertOneResult insertOneResult = SyncWriteOperationImpl.this.doInsert(entity, writeConcern);
                     return insertOneResult.wasAcknowledged()
                             ? BsonUtils.convert(baseRepository.getEntityInformation().getIdType(), insertOneResult.getInsertedId())
                             : null;
@@ -157,7 +158,7 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
                 @Override
                 public Map<Integer, TKey> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
-                    InsertManyResult insertManyResult = SyncModifyOperationImpl.this.doInsertBatch(entities, writeConcern);
+                    InsertManyResult insertManyResult = SyncWriteOperationImpl.this.doInsertBatch(entities, writeConcern);
 
                     Map<Integer, TKey> integerTKeyMap = new HashMap<>();
                     if (insertManyResult.wasAcknowledged()) {
@@ -173,29 +174,29 @@ public class SyncModifyOperationImpl<TEntity extends Entity<TKey>, TKey>
 
                 @Override
                 public Long doUpdate(UpdateOptions options, UpdateType updateType) {
-                    UpdateResult updateResult = SyncModifyOperationImpl.this.doUpdate(options, updateType);
+                    UpdateResult updateResult = SyncWriteOperationImpl.this.doUpdate(options, updateType);
                     return updateResult.wasAcknowledged() ? updateResult.getModifiedCount() : 0;
                 }
 
                 @Override
                 public TEntity doFindOneAndUpdate(FindOneAndUpdateOptions options) {
-                    return SyncModifyOperationImpl.this.doFindOneAndUpdate(options);
+                    return SyncWriteOperationImpl.this.doFindOneAndUpdate(options);
                 }
 
                 @Override
                 public TEntity doFindOneAndDelete(FindOneAndDeleteOptions options) {
-                    return SyncModifyOperationImpl.this.doFindOneAndDelete(options);
+                    return SyncWriteOperationImpl.this.doFindOneAndDelete(options);
                 }
 
                 @Override
                 public Long doDeleteOne(DeleteOptions options) {
-                    DeleteResult deleteResult = SyncModifyOperationImpl.this.doDeleteOne(options);
+                    DeleteResult deleteResult = SyncWriteOperationImpl.this.doDeleteOne(options);
                     return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
                 }
 
                 @Override
                 public Long doDeleteMany(DeleteOptions options) {
-                    DeleteResult deleteResult = SyncModifyOperationImpl.this.doDeleteMany(options);
+                    DeleteResult deleteResult = SyncWriteOperationImpl.this.doDeleteMany(options);
                     return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
                 }
             };

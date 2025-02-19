@@ -6,7 +6,6 @@ import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.CountOptions;
 import org.raven.mongodb.contants.BsonConstant;
-import org.raven.mongodb.EntityInformation;
 import org.raven.mongodb.ExistsOptions;
 import org.raven.mongodb.FindOptions;
 import org.raven.mongodb.criteria.FieldNest;
@@ -22,7 +21,7 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 20:49
  */
-public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
+public interface ReadOperation<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
 
     //#region get
 
@@ -204,7 +203,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return Result
      */
     default TSingleResult findOne(final FindOptions findOptions) {
-        return findProxy().doFindOne(findOptions);
+        return findExecutor().doFindOne(findOptions);
     }
 
     //#endregion
@@ -337,7 +336,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return count
      */
     default TCountResult count(CountOptions countOptions) {
-        return findProxy().doCount(countOptions);
+        return findExecutor().doCount(countOptions);
     }
 
     /**
@@ -379,7 +378,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return exists
      */
     default TExistsResult exists(ExistsOptions existsOptions) {
-        return findProxy().doExists(existsOptions);
+        return findExecutor().doExists(existsOptions);
     }
 
     /**
@@ -447,7 +446,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
      * @return Result
      */
     default TListResult findList(final FindOptions findOptions) {
-        return findProxy().doFindList(findOptions);
+        return findExecutor().doFindList(findOptions);
     }
 
     default FindOptions createFindOptions(
@@ -463,7 +462,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
 
         if (!Objects.isNull(filterBuilder)) {
             findOptions.filter(
-                    filterBuilder.apply(FilterBuilder.create(findProxy().getEntityInformation().getEntityType()))
+                    filterBuilder.apply(FilterBuilder.create(findExecutor().getEntityInformation().getEntityType()))
             );
         }
 
@@ -475,7 +474,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
 
         if (!Objects.isNull(sortBuilder)) {
             findOptions.sort(
-                    sortBuilder.apply(SortBuilder.create(findProxy().getEntityInformation().getEntityType()))
+                    sortBuilder.apply(SortBuilder.create(findExecutor().getEntityInformation().getEntityType()))
             );
         }
 
@@ -489,7 +488,7 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
 
         if (!Objects.isNull(hintBuilder)) {
             findOptions.hint(
-                    hintBuilder.apply(HintBuilder.create(findProxy().getEntityInformation().getEntityType()))
+                    hintBuilder.apply(HintBuilder.create(findExecutor().getEntityInformation().getEntityType()))
             );
         }
 
@@ -502,19 +501,8 @@ public interface FindOperation<TEntity, TKey, TSingleResult, TListResult, TCount
     //#endregion
 
 
-    FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> findProxy();
+    FindExecutor<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> findExecutor();
 
-    interface FindProxy<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
 
-        EntityInformation<TEntity, TKey> getEntityInformation();
-
-        TSingleResult doFindOne(final FindOptions options);
-
-        TListResult doFindList(final FindOptions options);
-
-        TCountResult doCount(final CountOptions options);
-
-        TExistsResult doExists(final ExistsOptions options);
-    }
 
 }

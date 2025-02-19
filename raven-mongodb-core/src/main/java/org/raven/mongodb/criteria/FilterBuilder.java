@@ -419,4 +419,9 @@ public class FilterBuilder<TEntity> implements BsonBuilder {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return build().toString();
+    }
 }

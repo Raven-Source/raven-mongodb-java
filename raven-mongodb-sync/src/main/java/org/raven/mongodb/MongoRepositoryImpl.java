@@ -5,6 +5,7 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.Sequence;
@@ -18,10 +19,10 @@ import java.util.Map;
  * @author yi.liang
  */
 public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends MongoReadonlyRepositoryImpl<TEntity, TKey>
+        extends MongoQueryRepositoryImpl<TEntity, TKey>
         implements MongoRepository<TEntity, TKey> {
 
-    private final SyncModifyOperationImpl<TEntity, TKey> operation;
+    private final SyncWriteOperationImpl<TEntity, TKey> operation;
 
     //#region constructor
 
@@ -77,7 +78,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
 
-        operation = new SyncModifyOperationImpl<>(this, null);
+        operation = new SyncWriteOperationImpl<>(this, null);
     }
 
     //#endregion
@@ -123,7 +124,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
     //region protected
 
-    public SyncModifyOperation<TEntity, TKey> modifyWithClientSession(@Nullable ClientSession clientSession) {
+    public SyncWriteOperation<TEntity, TKey> modifyWithClientSession(@Nullable ClientSession clientSession) {
         if (clientSession == null) {
             return operation;
         } else {
@@ -168,8 +169,8 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //endregion
 
     @Override
-    public ModifyProxy<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyProxy() {
-        return operation.modifyProxy();
+    public ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor() {
+        return operation.modifyExecutor();
     }
 
 

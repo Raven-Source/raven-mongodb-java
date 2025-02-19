@@ -7,12 +7,13 @@ import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.contants.BsonConstant;
+import org.raven.mongodb.operation.FindExecutor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SyncFindOperationImpl<TEntity extends Entity<TKey>, TKey> implements SyncFindOperation<TEntity, TKey> {
+public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implements SyncReadOperation<TEntity, TKey> {
 
     private final AbstractMongoBaseRepository<TEntity, TKey> baseRepository;
 
@@ -24,19 +25,14 @@ public class SyncFindOperationImpl<TEntity extends Entity<TKey>, TKey> implement
 
     protected final @Nullable ClientSession clientSession;
 
-    public SyncFindOperationImpl(AbstractMongoBaseRepository<TEntity, TKey> baseRepository,
+    public SyncReadOperationImpl(AbstractMongoBaseRepository<TEntity, TKey> baseRepository,
                                  @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;
     }
 
-    protected SyncFindOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
-        return new SyncFindOperationImpl<>(this.baseRepository, clientSession);
-    }
-
-    @Override
-    public FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findProxy() {
-        return proxy;
+    protected SyncReadOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
+        return new SyncReadOperationImpl<>(this.baseRepository, clientSession);
     }
 
     @Override
@@ -98,35 +94,36 @@ public class SyncFindOperationImpl<TEntity extends Entity<TKey>, TKey> implement
 //        <TResult> FindIterable<TResult> doFind(@Nullable final ClientSession session, final FindOptions options, final Class<TResult> resultClass);
 //    }
 
-    public FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy() {
-        return proxy;
+    @Override
+    public FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findExecutor() {
+        return findExecutor;
     }
 
-    private final FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> proxy =
-            new FindProxy<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean>() {
+    private final FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findExecutor =
+            new FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean>() {
                 @Override
                 public EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return SyncFindOperationImpl.this.baseRepository.getEntityInformation();
+                    return SyncReadOperationImpl.this.baseRepository.getEntityInformation();
                 }
 
                 @Override
                 public TEntity doFindOne(FindOptions options) {
-                    return SyncFindOperationImpl.this.doFindOne(options);
+                    return SyncReadOperationImpl.this.doFindOne(options);
                 }
 
                 @Override
                 public List<TEntity> doFindList(FindOptions options) {
-                    return SyncFindOperationImpl.this.doFindList(options);
+                    return SyncReadOperationImpl.this.doFindList(options);
                 }
 
                 @Override
                 public Long doCount(CountOptions options) {
-                    return SyncFindOperationImpl.this.doCount(options);
+                    return SyncReadOperationImpl.this.doCount(options);
                 }
 
                 @Override
                 public Boolean doExists(ExistsOptions options) {
-                    return SyncFindOperationImpl.this.doExists(options);
+                    return SyncReadOperationImpl.this.doExists(options);
                 }
             };
 

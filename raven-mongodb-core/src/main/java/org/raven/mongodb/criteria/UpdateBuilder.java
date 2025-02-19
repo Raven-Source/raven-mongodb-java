@@ -269,4 +269,9 @@ public class UpdateBuilder<TEntity> implements BsonBuilder {
             return Updates.combine(new ArrayList<>(bsons));
         }
     }
+
+    @Override
+    public String toString() {
+        return build().toString();
+    }
 }

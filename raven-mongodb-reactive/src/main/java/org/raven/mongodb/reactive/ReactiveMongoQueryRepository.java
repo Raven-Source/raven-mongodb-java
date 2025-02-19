@@ -1,7 +1,7 @@
 package org.raven.mongodb.reactive;
 
 import org.raven.mongodb.FindOptions;
-import org.raven.mongodb.operation.FindOperation;
+import org.raven.mongodb.operation.ReadOperation;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -13,9 +13,9 @@ import java.util.Optional;
  * @param <TKey>    TKey
  * @author yi.liang
  */
-public interface ReactiveMongoReadonlyRepository<TEntity, TKey>
+public interface ReactiveMongoQueryRepository<TEntity, TKey>
         extends ReactiveMongoBaseRepository<TEntity>,
-        FindOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> {
+        ReadOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> {
 
 //    /**
 //     * 数量

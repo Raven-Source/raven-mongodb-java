@@ -6,6 +6,7 @@ import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.MongoOptions;
 //import org.raven.mongodb.repository.spi.IdGenerationType;
+import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.Sequence;
@@ -20,10 +21,10 @@ import java.util.Optional;
  * @author yi.liang
  */
 public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends ReactiveMongoReadonlyRepositoryImpl<TEntity, TKey>
+        extends ReactiveMongoQueryRepositoryImpl<TEntity, TKey>
         implements ReactiveMongoRepository<TEntity, TKey> {
 
-    private final ReactiveModifyOperationImpl<TEntity, TKey> operation;
+    private final ReactiveWriteOperationImpl<TEntity, TKey> operation;
 
     //#region constructor
 
@@ -80,7 +81,7 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
 
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
 
-        operation = new ReactiveModifyOperationImpl<>(this, null);
+        operation = new ReactiveWriteOperationImpl<>(this, null);
     }
 
     //#endregion
@@ -285,8 +286,8 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //endregion
 
     @Override
-    public ModifyProxy<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyProxy() {
-        return operation.modifyProxy();
+    public ModifyExecutor<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyExecutor() {
+        return operation.modifyExecutor();
     }
 
 }

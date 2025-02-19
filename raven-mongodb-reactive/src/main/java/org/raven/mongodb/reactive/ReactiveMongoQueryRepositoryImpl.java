@@ -5,6 +5,7 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.FindOptions;
 import org.raven.mongodb.MongoOptions;
+import org.raven.mongodb.operation.FindExecutor;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.Sequence;
@@ -21,11 +22,11 @@ import java.util.Optional;
  * @param <TKey>    TKey
  * @author yi.liang
  */
-public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, TKey>
+public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         extends AbstractAsyncMongoBaseRepository<TEntity, TKey>
-        implements ReactiveMongoReadonlyRepository<TEntity, TKey> {
+        implements ReactiveMongoQueryRepository<TEntity, TKey> {
 
-    private final ReactiveFindOperationImpl<TEntity, TKey> operation;
+    private final ReactiveReadOperationImpl<TEntity, TKey> operation;
 
     //#region constructor
 
@@ -34,7 +35,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
      *
      * @param mongoSession ReactiveMongoSession
      */
-    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession) {
+    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession) {
         this(mongoSession, null, null, null);
     }
 
@@ -44,7 +45,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
      * @param mongoSession   ReactiveMongoSession
      * @param collectionName collectionName
      */
-    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
+    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
         this(mongoSession, collectionName, null, null);
     }
 
@@ -54,7 +55,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
      * @param mongoSession ReactiveMongoSession
      * @param mongoOptions MongoOptions
      */
-    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
+    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
         this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
@@ -66,7 +67,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
      * @param mongoOptions   MongoOptions
      * @param collectionName collectionName
      */
-    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
+    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
         this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
     }
 
@@ -78,11 +79,11 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
      * @param sequence            Sequence
      * @param idGeneratorProvider IdGeneratorProvider
      */
-    public ReactiveMongoReadonlyRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
+    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, sequence, idGeneratorProvider);
 
-        operation = new ReactiveFindOperationImpl<>(this,null);
+        operation = new ReactiveReadOperationImpl<>(this,null);
     }
 
     //#endregion
@@ -103,7 +104,7 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
 
     //region protected
 
-    public ReactiveFindOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
+    public ReactiveReadOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
         if (clientSession == null) {
             return operation;
         } else {
@@ -165,8 +166,8 @@ public class ReactiveMongoReadonlyRepositoryImpl<TEntity extends Entity<TKey>, T
 //    }
 
     @Override
-    public FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findProxy() {
-        return operation.proxy();
+    public FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findExecutor() {
+        return operation.findExecutor();
     }
 
 //    private final FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> proxy =

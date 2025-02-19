@@ -1,13 +1,15 @@
 package org.raven.mongodb;
 
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 /**
  * @author yi.liang
  * date 2021.09.23 00:16
  */
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
 @Accessors(fluent = true)
 public class DeleteOptions extends AbstractModifyOptions<DeleteOptions> implements CommandOptions {
 

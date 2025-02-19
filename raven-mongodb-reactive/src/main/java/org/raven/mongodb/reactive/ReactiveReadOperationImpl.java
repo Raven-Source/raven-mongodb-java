@@ -10,6 +10,7 @@ import org.raven.mongodb.EntityInformation;
 import org.raven.mongodb.ExistsOptions;
 import org.raven.mongodb.FindOptions;
 import org.raven.mongodb.contants.BsonConstant;
+import org.raven.mongodb.operation.FindExecutor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,25 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ReactiveFindOperationImpl<TEntity extends Entity<TKey>, TKey> implements ReactiveFindOperation<TEntity, TKey> {
+public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> implements ReactiveReadOperation<TEntity, TKey> {
 
     private final AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository;
 
     protected final @Nullable ClientSession clientSession;
 
-    public ReactiveFindOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
+    public ReactiveReadOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
                                      @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;
     }
 
-    protected ReactiveFindOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
-        return new ReactiveFindOperationImpl<>(this.baseRepository, clientSession);
-    }
-
-    @Override
-    public FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findProxy() {
-        return proxy;
+    protected ReactiveReadOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
+        return new ReactiveReadOperationImpl<>(this.baseRepository, clientSession);
     }
 
     @Override
@@ -92,35 +88,36 @@ public class ReactiveFindOperationImpl<TEntity extends Entity<TKey>, TKey> imple
 
     //endregion
 
-    public FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> proxy() {
-        return proxy;
+    @Override
+    public FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findExecutor() {
+        return findExecutor;
     }
 
-    private FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> proxy =
-            new FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>>() {
+    private final FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findExecutor =
+            new FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>>() {
                 @Override
                 public EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return ReactiveFindOperationImpl.this.baseRepository.getEntityInformation();
+                    return ReactiveReadOperationImpl.this.baseRepository.getEntityInformation();
                 }
 
                 @Override
                 public Mono<Optional<TEntity>> doFindOne(FindOptions options) {
-                    return ReactiveFindOperationImpl.this.doFindOne(options);
+                    return ReactiveReadOperationImpl.this.doFindOne(options);
                 }
 
                 @Override
                 public Mono<List<TEntity>> doFindList(FindOptions options) {
-                    return ReactiveFindOperationImpl.this.doFindList(options);
+                    return ReactiveReadOperationImpl.this.doFindList(options);
                 }
 
                 @Override
                 public Mono<Long> doCount(CountOptions options) {
-                    return ReactiveFindOperationImpl.this.doCount(options);
+                    return ReactiveReadOperationImpl.this.doCount(options);
                 }
 
                 @Override
                 public Mono<Boolean> doExists(ExistsOptions options) {
-                    return ReactiveFindOperationImpl.this.doExists(options);
+                    return ReactiveReadOperationImpl.this.doExists(options);
                 }
             };
 

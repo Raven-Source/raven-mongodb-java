@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * @author yi.liang
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @ToString(callSuper = true)
 @Accessors(fluent = true)
 public class FindOptions extends AbstractFindOptions<FindOptions> {

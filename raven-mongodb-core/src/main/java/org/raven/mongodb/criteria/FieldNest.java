@@ -37,4 +37,10 @@ public class FieldNest {
         return String.join(delimiter, fields);
     }
 
+
+    @Override
+    public String toString() {
+        return build();
+    }
+
 }
