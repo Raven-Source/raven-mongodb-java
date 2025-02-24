@@ -159,6 +159,9 @@ public class MongoQueryRepositoryTest {
 //                        .set(Orders.Fields.status, Status.Delete)
 //                        .build()
 //        );
+
+        ordersRepository.deleteOne(orders.getId());
+
     }
 
     @Test

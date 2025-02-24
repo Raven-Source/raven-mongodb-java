@@ -97,7 +97,7 @@ public class OrdersRepositoryImpl extends MongoRepositoryImpl<Orders, Long> {
 
 ```
 
-#### 4. 开始查询、更新：
+#### 4. 开始查询：
 
 ```java
 Orders orders;
@@ -130,16 +130,5 @@ List<Orders> ordersList = ordersRepository.findList(
                 .build()
 );
 
-
-// 根据条件更新
-Long itemsId = orders.getItemsId();
-ordersRepository.updateOne(
-        f -> f
-            .eq(Orders.Fields.itemsId, itemsId)
-            .ne(Orders.Fields.isPay, false)
-        ,
-        u -> u
-            .set(Orders.Fields.status, Status.Delete)
-);
 
 ```
