@@ -7,6 +7,7 @@ import com.mongodb.client.model.geojson.Point;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.bson.BsonType;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
  * @author yi.liang
  * date 2021/9/12 23:01
  */
+@Accessors(fluent = true)
 public class FilterBuilder<TEntity> implements CriteriaBuilder {
 
     private final Class<TEntity> entityClass;
@@ -30,6 +32,21 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
     @Getter
     @Setter
     private Operator operator;
+
+    public FilterBuilder<TEntity> andOperator() {
+        this.operator = Operator.AND;
+        return this;
+    }
+
+    public FilterBuilder<TEntity> orOperator() {
+        this.operator = Operator.OR;
+        return this;
+    }
+
+    public FilterBuilder<TEntity> norOperator() {
+        this.operator = Operator.NOR;
+        return this;
+    }
 
     public FilterBuilder(final Class<TEntity> entityClass) {
         this(entityClass, Operator.AND);
@@ -347,14 +364,6 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
     public FilterBuilder<TEntity> not() {
 
         Bson bson = Filters.not(this.build());
-        bsons.clear();
-        bsons.add(bson);
-        return this;
-    }
-
-    public FilterBuilder<TEntity> nor() {
-
-        Bson bson = Filters.nor(this.build());
         bsons.clear();
         bsons.add(bson);
         return this;

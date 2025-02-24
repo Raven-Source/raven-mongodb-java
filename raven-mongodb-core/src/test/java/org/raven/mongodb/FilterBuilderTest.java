@@ -120,19 +120,37 @@ public class FilterBuilderTest {
 
         FilterBuilder<BsonDocument> filterBuilder = FilterBuilder.create(BsonDocument.class);// FilterBuilder.empty(BsonDocument.class);
 
-        filterBuilder.eq("a", "1")
+        filterBuilder
+                .eq("a", "1")
                 .ne("b", 2)
                 .gt("c", 3)
                 .lt("d", 4)
                 .gte("e", 5)
                 .lte("f", 6)
                 .in("g", 7, 8, 9)
-                .nin("h", 10, 11, 12);
+                .nin("h", 10, 11, 12)
+                .andOperator();
 
 
         Bson bson = filterBuilder.build();
         log.info(bson.toBsonDocument().toJson());
         Assert.assertEquals("{\"$and\": [{\"a\": \"1\"}, {\"b\": {\"$ne\": 2}}, {\"c\": {\"$gt\": 3}}, {\"d\": {\"$lt\": 4}}, {\"e\": {\"$gte\": 5}}, {\"f\": {\"$lte\": 6}}, {\"g\": {\"$in\": [7, 8, 9]}}, {\"h\": {\"$nin\": [10, 11, 12]}}]}",
+                bson.toBsonDocument().toJson()
+        );
+
+        filterBuilder.orOperator();
+
+        bson = filterBuilder.build();
+        log.info(bson.toBsonDocument().toJson());
+        Assert.assertEquals("{\"$or\": [{\"a\": \"1\"}, {\"b\": {\"$ne\": 2}}, {\"c\": {\"$gt\": 3}}, {\"d\": {\"$lt\": 4}}, {\"e\": {\"$gte\": 5}}, {\"f\": {\"$lte\": 6}}, {\"g\": {\"$in\": [7, 8, 9]}}, {\"h\": {\"$nin\": [10, 11, 12]}}]}",
+                bson.toBsonDocument().toJson()
+        );
+
+        filterBuilder.norOperator();
+
+        bson = filterBuilder.build();
+        log.info(bson.toBsonDocument().toJson());
+        Assert.assertEquals("{\"$nor\": [{\"a\": \"1\"}, {\"b\": {\"$ne\": 2}}, {\"c\": {\"$gt\": 3}}, {\"d\": {\"$lt\": 4}}, {\"e\": {\"$gte\": 5}}, {\"f\": {\"$lte\": 6}}, {\"g\": {\"$in\": [7, 8, 9]}}, {\"h\": {\"$nin\": [10, 11, 12]}}]}",
                 bson.toBsonDocument().toJson()
         );
     }
