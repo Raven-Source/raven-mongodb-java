@@ -7,6 +7,4 @@ package org.raven.mongodb;
 public interface EntityMetadata<TEntity> {
 
     Class<TEntity> getEntityType();
-
-    String getEntityName();
 }

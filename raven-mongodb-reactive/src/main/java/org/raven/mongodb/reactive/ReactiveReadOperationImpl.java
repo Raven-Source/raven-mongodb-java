@@ -1,21 +1,20 @@
 package org.raven.mongodb.reactive;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.reactivestreams.client.ClientSession;
 import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.CountOptions;
-import org.raven.mongodb.EntityInformation;
-import org.raven.mongodb.ExistsOptions;
-import org.raven.mongodb.FindOptions;
+import org.raven.mongodb.criteria.CountOptions;
+import org.raven.mongodb.criteria.ExistsOptions;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.contants.BsonConstant;
 import org.raven.mongodb.operation.FindExecutor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,11 +77,10 @@ public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> imple
             _filter = Filters.empty();
         }
 
-        List<String> includeFields = new ArrayList<>(1);
-        includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
+        Bson projection = Projections.include(BsonConstant.PRIMARY_KEY_NAME);
 
         return Mono.from(
-                this.findOne(_filter, includeFields, null, options.hint(), options.readPreference())
+                this.findOne(_filter, projection, null, options.hint(), options.readPreference())
         ).map(Optional::isPresent);
     }
 
@@ -96,8 +94,8 @@ public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> imple
     private final FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findExecutor =
             new FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>>() {
                 @Override
-                public EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return ReactiveReadOperationImpl.this.baseRepository.getEntityInformation();
+                public Class<TEntity> getEntityType() {
+                    return ReactiveReadOperationImpl.this.baseRepository.getEntityInformation().getEntityType();
                 }
 
                 @Override

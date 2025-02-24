@@ -106,19 +106,40 @@ orders = ordersRepository.findOne(1L);
 
 // 根据条件查询
 orders = ordersRepository.findOne(
-        f -> f.eq(Orders.Fields.status, Status.Normal)
-                .gt(Orders.Fields.price, 1.0)
+        f -> f
+            .eq(Orders.Fields.status, Status.Normal)
+            .gt(Orders.Fields.price, 1.0)
+);
+
+// 根据条件查询列表
+List<Orders> ordersList = ordersRepository.findList(
+        FindOptions.Builder.create(Orders.class)
+                .filter(f -> f
+                        .eq(Orders.Fields.status, Status.Normal)
+                        .gt(Orders.Fields.price, 1.0)
+                )
+                .sort(s -> s
+                        .asc(Orders.Fields.itemsId)
+                )
+                .projection(p -> p
+                        .include(Orders.Fields.name, Orders.Fields.itemsId)
+                        .excludeId()
+                )
+                .skip(3)
+                .limit(10)
                 .build()
 );
+
 
 // 根据条件更新
 Long itemsId = orders.getItemsId();
 ordersRepository.updateOne(
-        f -> f.eq(Orders.Fields.itemsId, itemsId)
-                .ne(Orders.Fields.isPay, false)
-                .build(),
-        u -> u.set(Orders.Fields.status, Status.Delete)
-                .build()
+        f -> f
+            .eq(Orders.Fields.itemsId, itemsId)
+            .ne(Orders.Fields.isPay, false)
+        ,
+        u -> u
+            .set(Orders.Fields.status, Status.Delete)
 );
 
 ```

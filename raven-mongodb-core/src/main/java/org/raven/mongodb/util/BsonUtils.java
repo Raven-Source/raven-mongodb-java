@@ -3,13 +3,13 @@ package org.raven.mongodb.util;
 import lombok.NonNull;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentWrapper;
+import org.bson.BsonNull;
 import org.bson.BsonValue;
 import org.bson.codecs.Encoder;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.raven.mongodb.criteria.ProjectionBuilder;
 
-import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,43 +26,70 @@ public final class BsonUtils {
         return new BsonDocumentWrapper<>(entity, encoder);
     }
 
-    public static @Nullable <TEntity> Bson projection(final Class<TEntity> entityClass,
-                                                      @Nullable final List<String> includeFields,
-                                                      @Nullable final List<String> excludeFields) {
+//    public static @Nullable <TEntity> Bson projection(final Class<TEntity> entityClass,
+//                                                      @Nullable final List<String> includeFields,
+//                                                      @Nullable final List<String> excludeFields) {
+//
+//        ProjectionBuilder<TEntity> projectionBuilder = ProjectionBuilder.create(entityClass);
+//        if (includeFields != null && !includeFields.isEmpty()) {
+//
+//            projectionBuilder.include(includeFields);
+//        }
+//
+//        if (excludeFields != null && !excludeFields.isEmpty()) {
+//
+//            projectionBuilder.exclude(excludeFields);
+//        }
+//
+//        return projectionBuilder.isEmpty() ? null : projectionBuilder.build();
+//    }
 
-        ProjectionBuilder<TEntity> projectionBuilder = ProjectionBuilder.create(entityClass);
-        if (includeFields != null && !includeFields.isEmpty()) {
 
-            projectionBuilder.include(includeFields);
-        }
-
-        if (excludeFields != null && !excludeFields.isEmpty()) {
-
-            projectionBuilder.exclude(excludeFields);
-        }
-
-        return projectionBuilder.isEmpty() ? null : projectionBuilder.build();
+    public static <T extends Bson> Bson combine(final Bson... bsons) {
+        return combine(Arrays.asList(bsons));
     }
 
-    public static <T extends Bson> Bson combine(@NonNull final List<T> bsons) {
+    public static <T extends Bson> Bson combine(final List<T> bsons) {
 
         BsonDocument document = new BsonDocument();
 
         for (Bson bson : bsons) {
 
-            if (bson == null)
-                continue;
+            if (bson != null) {
 
-            BsonDocument bsonDocument = bson.toBsonDocument();
+                BsonDocument bsonDocument = bson.toBsonDocument();
+                if (bsonDocument.isEmpty()) {
+                    continue;
+                }
 
-            for (Map.Entry<String, BsonValue> stringBsonValueEntry : bsonDocument.entrySet()) {
-                document.remove(stringBsonValueEntry.getKey());
-                document.append(stringBsonValueEntry.getKey(), stringBsonValueEntry.getValue());
+                for (Map.Entry<String, BsonValue> bsonEntry : bsonDocument.entrySet()) {
+                    document.remove(bsonEntry.getKey());
+                    document.append(bsonEntry.getKey(), bsonEntry.getValue());
+                }
             }
         }
 
         return document;
     }
+
+
+    public static Bson combine(String operationName, final BsonDocument bson) {
+        return combine(operationName, bson != null ? (BsonValue) bson.toBsonDocument() : BsonNull.VALUE);
+    }
+
+    public static Bson combine(String operationName, final Bson bson) {
+        return combine(operationName, bson != null ? (BsonValue) bson.toBsonDocument() : BsonNull.VALUE);
+    }
+
+
+    public static Bson combine(String operationName, final BsonValue bson) {
+
+        BsonDocument document = new BsonDocument();
+        document.append(operationName, bson);
+
+        return document;
+    }
+
 
 //    /**
 //     * ID assignment

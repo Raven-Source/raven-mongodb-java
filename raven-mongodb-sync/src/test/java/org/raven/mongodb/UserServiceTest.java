@@ -4,6 +4,7 @@ import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
@@ -13,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.model.User_ObjectID;
 import org.raven.mongodb.withobjectid.User_ObjectIDRepository;
 import org.raven.mongodb.model.User_StringID;
@@ -245,8 +247,9 @@ public class UserServiceTest {
         includeFields.add("_id");
         includeFields.add("ClassMap");
         includeFields.add("Name");
+
         Bson sort = Sorts.descending("Name");
-        List<User_StringID> usList2 = usRep.findList(filter, includeFields, sort, 100, 1);
+        List<User_StringID> usList2 = usRep.findList(filter, Projections.include(includeFields), sort, 100, 1);
         Assert.assertNotNull(usList2);
         Assert.assertTrue(usList2.size() >= 0);
         Assert.assertNotNull(usList2.get(0).getName());

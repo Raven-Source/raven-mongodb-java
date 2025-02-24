@@ -4,6 +4,7 @@ import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
@@ -246,7 +247,7 @@ public class UserServiceTest {
         includeFields.add("ClassMap");
         includeFields.add("Name");
         Bson sort = Sorts.descending("Name");
-        List<User_StringID> usList2 = usRep.findList(filter, includeFields, sort, 100, 1).block();
+        List<User_StringID> usList2 = usRep.findList(filter, Projections.include(includeFields), sort, 100, 1).block();
         Assert.assertNotNull(usList2);
         Assert.assertTrue(usList2.size() >= 0);
         Assert.assertNotNull(usList2.get(0).getName());

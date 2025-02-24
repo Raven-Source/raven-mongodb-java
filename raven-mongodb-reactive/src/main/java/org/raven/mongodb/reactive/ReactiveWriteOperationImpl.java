@@ -10,6 +10,10 @@ import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
+import org.raven.mongodb.criteria.DeleteOptions;
+import org.raven.mongodb.criteria.FindOneAndDeleteOptions;
+import org.raven.mongodb.criteria.FindOneAndUpdateOptions;
+import org.raven.mongodb.criteria.UpdateOptions;
 import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.util.BsonUtils;
 import reactor.core.publisher.Mono;
@@ -115,8 +119,8 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
             new ModifyExecutor<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>>() {
 
                 @Override
-                public EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return baseRepository.getEntityInformation();
+                public Class<TEntity> getEntityType() {
+                    return baseRepository.getEntityInformation().getEntityType();
                 }
 
                 @Override

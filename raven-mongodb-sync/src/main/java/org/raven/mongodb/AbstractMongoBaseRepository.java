@@ -21,10 +21,10 @@ import org.raven.mongodb.annotation.PreFind;
 import org.raven.mongodb.annotation.PreInsert;
 import org.raven.mongodb.annotation.PreUpdate;
 import org.raven.mongodb.contants.BsonConstant;
+import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.Sequence;
-import org.raven.mongodb.util.BsonUtils;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @author yi.liang
  */
 public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
-        extends AbstractMongoRepository<TEntity, TKey>
+        extends BaseRepository<TEntity, TKey>
         implements MongoBaseRepository<TEntity> {
 
     protected IdGenerator<TKey> idGenerator;
@@ -159,12 +159,12 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
      * @param <TResult>    TResult
      * @return FindIterable
      */
-    protected <TResult> FindIterable<TResult> findOptions(final FindIterable<TResult> findIterable,
-                                                          @Nullable final Bson projection,
-                                                          @Nullable final Bson sort,
-                                                          final int limit,
-                                                          final int skip,
-                                                          @Nullable final Bson hint) {
+    protected <TResult> FindIterable<TResult> findByOptions(final FindIterable<TResult> findIterable,
+                                                            @Nullable final Bson projection,
+                                                            @Nullable final Bson sort,
+                                                            final int limit,
+                                                            final int skip,
+                                                            @Nullable final Bson hint) {
 
         FindIterable<TResult> filter = findIterable;
         if (projection != null) {
@@ -199,8 +199,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
             options.filter(Filters.empty());
         }
 
-        Bson projection = BsonUtils.projection(entityInformation.getEntityType(),
-                options.includeFields(), options.excludeFields());
+//        Bson projection = BsonUtils.projection(entityInformation.getEntityType(),
+//                options.includeFields(), options.excludeFields());
 
         callGlobalInterceptors(PreFind.class, null, options);
 
@@ -210,7 +210,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         } else {
             result = getCollection(options.readPreference()).find(session, options.filter(), resultClass);
         }
-        result = findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
+        result = findByOptions(result, options.projection(), options.sort(), options.limit(), options.skip(), options.hint());
 
         return result;
     }
@@ -339,13 +339,11 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .sort(options.sort());
 
         if (session == null) {
-            return getCollection().findOneAndUpdate(options.filter(), options.update(),
-                    findOneAndUpdateOptions
-            );
+            return getCollection(options.writeConcern())
+                    .findOneAndUpdate(options.filter(), options.update(), findOneAndUpdateOptions);
         } else {
-            return getCollection().findOneAndUpdate(session, options.filter(), options.update(),
-                    findOneAndUpdateOptions
-            );
+            return getCollection(options.writeConcern())
+                    .findOneAndUpdate(session, options.filter(), options.update(), findOneAndUpdateOptions);
         }
     }
 
@@ -364,13 +362,11 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .sort(options.sort());
 
         if (session == null) {
-            return getCollection().findOneAndDelete(options.filter(),
-                    findOneAndDeleteOptions
-            );
+            return getCollection(options.writeConcern())
+                    .findOneAndDelete(options.filter(), findOneAndDeleteOptions);
         } else {
-            return getCollection().findOneAndDelete(session, options.filter(),
-                    findOneAndDeleteOptions
-            );
+            return getCollection(options.writeConcern())
+                    .findOneAndDelete(session, options.filter(), findOneAndDeleteOptions);
         }
     }
 

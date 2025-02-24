@@ -1,9 +1,7 @@
 package org.raven.mongodb.interceptors;
 
-import org.raven.mongodb.AbstractFindOptions;
-import org.raven.mongodb.DeleteOptions;
 import org.raven.mongodb.EntityInformation;
-import org.raven.mongodb.UpdateOptions;
+import org.raven.mongodb.criteria.*;
 
 /**
  * @author by yanfeng
@@ -11,7 +9,7 @@ import org.raven.mongodb.UpdateOptions;
  */
 public interface EntityInterceptor {
 
-    default void preFind(final AbstractFindOptions<?> options,
+    default void preFind(final BaseFindOptions<?> options,
                          final EntityInformation<?, ?> entityInformation) {
     }
 
@@ -19,11 +17,11 @@ public interface EntityInterceptor {
                            final EntityInformation<?, ?> entityInformation) {
     }
 
-    default void preUpdate(final UpdateOptions options,
+    default void preUpdate(final BaseUpdateOptions<?> options,
                            final EntityInformation<?, ?> entityInformation) {
     }
 
-    default void preDelete(final DeleteOptions options,
+    default void preDelete(final BaseModifyOptions<?> options,
                            final EntityInformation<?, ?> entityInformation) {
     }
 }

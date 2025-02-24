@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class FieldNest {
 
-    private List<String> fields;
+    private final List<String> fields;
 
-    private static final String delimiter = ".";
+    private static final String DELIMITER = ".";
 
     public FieldNest() {
         fields = new ArrayList<>();
@@ -34,7 +34,7 @@ public class FieldNest {
     }
 
     public String build() {
-        return String.join(delimiter, fields);
+        return String.join(DELIMITER, fields);
     }
 
 

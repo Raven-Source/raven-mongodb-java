@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * @author yi.liang
  * date 2021/9/12 23:01
  */
-public class FilterBuilder<TEntity> implements BsonBuilder {
+public class FilterBuilder<TEntity> implements CriteriaBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();

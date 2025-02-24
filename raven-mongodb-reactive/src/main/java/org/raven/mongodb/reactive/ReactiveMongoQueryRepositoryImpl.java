@@ -3,7 +3,7 @@ package org.raven.mongodb.reactive;
 import com.mongodb.reactivestreams.client.ClientSession;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.FindOptions;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.MongoOptions;
 import org.raven.mongodb.operation.FindExecutor;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
@@ -112,93 +112,11 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
         }
     }
 
-//    protected Mono<Optional<TEntity>> doFindOne(final FindOptions options) {
-//        return this.doFindOne(options, entityInformation.getEntityType());
-//    }
-//
-//    protected <TResult> Mono<Optional<TResult>> doFindOne(final FindOptions options, Class<TResult> resultClass) {
-//        return Mono.from(
-//                this.doFind(options, resultClass).first()
-//        ).map(Optional::of).defaultIfEmpty(Optional.empty());
-//    }
-//
-//    protected Mono<List<TEntity>> doFindList(final FindOptions options) {
-//        return this.doFindList(options, entityInformation.getEntityType());
-//    }
-//
-//    protected <TResult> Mono<List<TResult>> doFindList(final FindOptions options, Class<TResult> resultClass) {
-//        return Flux.from(
-//                doFind(options, resultClass)
-//        ).collectList();
-//    }
-
-//    protected Mono<Long> doCount(final CountOptions options) {
-//
-//        if (options.filter() == null) {
-//            options.filter(Filters.empty());
-//        }
-//
-//        callGlobalInterceptors(PreFind.class, null, options);
-//
-//        return Mono.from(
-//                super.getCollection(options.readPreference()).countDocuments(options.filter(),
-//                        new com.mongodb.client.model.CountOptions()
-//                                .hint(options.hint())
-//                                .limit(options.limit())
-//                                .skip(options.skip())
-//                )
-//        );
-//    }
-//
-//    protected Mono<Boolean> doExists(final ExistsOptions options) {
-//
-//        Bson _filter = options.filter();
-//        if (_filter == null) {
-//            _filter = new BsonDocument();
-//        }
-//
-//        List<String> includeFields = new ArrayList<>(1);
-//        includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
-//
-//        return Mono.from(
-//                this.findOne(_filter, includeFields, null, options.hint(), options.readPreference())
-//        ).map(Optional::isPresent);
-//    }
+    //endregion
 
     @Override
     public FindExecutor<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> findExecutor() {
         return operation.findExecutor();
     }
-
-//    private final FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> proxy =
-//
-//            new FindProxy<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>>() {
-//                @Override
-//                public EntityInformation<TEntity, TKey> getEntityInformation() {
-//                    return ReactiveMongoReadonlyRepositoryImpl.this.entityInformation;
-//                }
-//
-//                @Override
-//                public Mono<Optional<TEntity>> doFindOne(FindOptions options) {
-//                    return ReactiveMongoReadonlyRepositoryImpl.this.doFindOne(options);
-//                }
-//
-//                @Override
-//                public Mono<List<TEntity>> doFindList(FindOptions options) {
-//                    return ReactiveMongoReadonlyRepositoryImpl.this.doFindList(options);
-//                }
-//
-//                @Override
-//                public Mono<Long> doCount(CountOptions options) {
-//                    return ReactiveMongoReadonlyRepositoryImpl.this.doCount(options);
-//                }
-//
-//                @Override
-//                public Mono<Boolean> doExists(ExistsOptions options) {
-//                    return ReactiveMongoReadonlyRepositoryImpl.this.doExists(options);
-//                }
-//            };
-
-    //endregion
 
 }

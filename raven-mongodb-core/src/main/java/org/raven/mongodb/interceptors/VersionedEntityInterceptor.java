@@ -7,7 +7,7 @@ import org.bson.codecs.pojo.PropertyModel;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Versioned;
 import org.raven.mongodb.EntityInformation;
-import org.raven.mongodb.UpdateOptions;
+import org.raven.mongodb.criteria.BaseUpdateOptions;
 
 import java.util.Map;
 
@@ -18,7 +18,7 @@ import java.util.Map;
 public class VersionedEntityInterceptor implements EntityInterceptor {
 
     @Override
-    public void preUpdate(final UpdateOptions options,
+    public void preUpdate(final BaseUpdateOptions<?> options,
                           final EntityInformation<?, ?> entityInformation) {
 
         if (Versioned.class.isAssignableFrom(entityInformation.getEntityType())) {

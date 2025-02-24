@@ -16,7 +16,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
 /**
  * date 2022/11/5 17:12
  */
-public class ProjectionBuilder<TEntity> implements BsonBuilder {
+public class ProjectionBuilder<TEntity> implements CriteriaBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();

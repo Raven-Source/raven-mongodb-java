@@ -10,6 +10,10 @@ import lombok.NonNull;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.criteria.DeleteOptions;
+import org.raven.mongodb.criteria.FindOneAndDeleteOptions;
+import org.raven.mongodb.criteria.FindOneAndUpdateOptions;
+import org.raven.mongodb.criteria.UpdateOptions;
 import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.util.BsonUtils;
 
@@ -23,17 +27,6 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
 
     private final AbstractMongoBaseRepository<TEntity, TKey> baseRepository;
 
-//    private final Function2<TEntity, Boolean, Bson> createUpdateBsonProxy;
-//    private final Function3<ClientSession, TEntity, WriteConcern, InsertOneResult> doInsertProxy;
-//    private final Function3<ClientSession, List<TEntity>, WriteConcern, InsertManyResult> doInsertBatchProxy;
-//    private final Function3<ClientSession, UpdateOptions, UpdateType, UpdateResult> doUpdateProxy;
-//    private final Function2<ClientSession, FindOneAndUpdateOptions, TEntity> doFindOneAndUpdateProxy;
-//    private final Function2<ClientSession, FindOneAndDeleteOptions, TEntity> doFindOneAndDeleteProxy;
-//    private final Function2<ClientSession, DeleteOptions, DeleteResult> doDeleteOneProxy;
-//    private final Function2<ClientSession, DeleteOptions, DeleteResult> doDeleteManyProxy;
-//
-//    private final EntityInformation<TEntity, TKey> entityInformation;
-
     private final @Nullable ClientSession clientSession;
 
     public SyncWriteOperationImpl(AbstractMongoBaseRepository<TEntity, TKey> baseRepository,
@@ -42,49 +35,11 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         this.clientSession = clientSession;
     }
 
-//    public SyncModifyOperationImpl(Function2<TEntity, Boolean, Bson> createUpdateBsonProxy,
-//                                   Function3<ClientSession, TEntity, WriteConcern, InsertOneResult> doInsertProxy,
-//                                   Function3<ClientSession, List<TEntity>, WriteConcern, InsertManyResult> doInsertBatchProxy,
-//                                   Function3<ClientSession, UpdateOptions, UpdateType, UpdateResult> doUpdateProxy,
-//                                   Function2<ClientSession, FindOneAndUpdateOptions, TEntity> doFindOneAndUpdateProxy,
-//                                   Function2<ClientSession, FindOneAndDeleteOptions, TEntity> doFindOneAndDeleteProxy,
-//                                   Function2<ClientSession, DeleteOptions, DeleteResult> doDeleteOneProxy,
-//                                   Function2<ClientSession, DeleteOptions, DeleteResult> doDeleteManyProxy,
-//                                   EntityInformation<TEntity, TKey> entityInformation,
-//                                   @Nullable ClientSession clientSession) {
-//
-//        this.createUpdateBsonProxy = createUpdateBsonProxy;
-//        this.doInsertProxy = doInsertProxy;
-//        this.doInsertBatchProxy = doInsertBatchProxy;
-//        this.doUpdateProxy = doUpdateProxy;
-//        this.doFindOneAndUpdateProxy = doFindOneAndUpdateProxy;
-//        this.doFindOneAndDeleteProxy = doFindOneAndDeleteProxy;
-//        this.doDeleteOneProxy = doDeleteOneProxy;
-//        this.doDeleteManyProxy = doDeleteManyProxy;
-//        this.entityInformation = entityInformation;
-//        this.clientSession = clientSession;
-//
-//    }
-
     protected SyncWriteOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
         return new SyncWriteOperationImpl<>(
                 this.baseRepository,
                 clientSession);
     }
-
-//    protected SyncModifyOperationImpl<TEntity, TKey> clone(ClientSession clientSession) {
-//        return new SyncModifyOperationImpl<>(
-//                this.createUpdateBsonProxy,
-//                this.doInsertProxy,
-//                this.doInsertBatchProxy,
-//                this.doUpdateProxy,
-//                this.doFindOneAndUpdateProxy,
-//                this.doFindOneAndDeleteProxy,
-//                this.doDeleteOneProxy,
-//                this.doDeleteManyProxy,
-//                this.entityInformation,
-//                clientSession);
-//    }
 
     @Override
     public Long updateOne(Bson filter, TEntity updateEntity, boolean isUpsert, Bson hint, WriteConcern writeConcern) {
@@ -143,9 +98,10 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
 
     private final ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor =
             new ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long>() {
+
                 @Override
-                public EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return baseRepository.getEntityInformation();
+                public Class<TEntity> getEntityType() {
+                    return baseRepository.getEntityInformation().getEntityType();
                 }
 
                 @Override

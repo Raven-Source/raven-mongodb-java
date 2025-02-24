@@ -1,4 +1,4 @@
-package org.raven.mongodb.support;
+package org.raven.mongodb;
 
 import org.bson.BsonDocument;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -6,8 +6,6 @@ import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.util.BsonUtils;
-import org.raven.mongodb.DocumentNamed;
-import org.raven.mongodb.EntityInformation;
 import org.raven.mongodb.codec.PojoCodecRegistry;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 import org.raven.mongodb.util.EntityInterceptorUtils;

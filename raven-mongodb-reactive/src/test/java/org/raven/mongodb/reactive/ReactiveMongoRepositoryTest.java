@@ -3,7 +3,7 @@ package org.raven.mongodb.reactive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.raven.mongodb.CountOptions;
+import org.raven.mongodb.criteria.CountOptions;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;

@@ -1,11 +1,12 @@
 package org.raven.mongodb.reactive;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.raven.mongodb.FindOptions;
+import org.raven.mongodb.criteria.FindOptions;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class ReactiveMongoReaderRepositoryTest {
     private final int size = 10;
 
     @Before
-    public void init()  {
+    public void init() {
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
         Mono.from(repos.getDatabase().drop()).block();
@@ -80,9 +81,8 @@ public class ReactiveMongoReaderRepositoryTest {
             user = repos.findOne(Filters.eq("Name", user.getName())).block().orElse(null);
             Assert.assertNotNull(user);
 
-            user = repos.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
-                add("_id");
-            }}).block().orElse(null);
+            user = repos.findOne(Filters.eq("Name", user.getName())
+                    , Projections.include("_id")).block().orElse(null);
             Assert.assertEquals(user.getName(), null);
 
         }

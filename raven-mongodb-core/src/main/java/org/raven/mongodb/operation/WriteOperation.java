@@ -1,20 +1,13 @@
 package org.raven.mongodb.operation;
 
-import com.mongodb.Function;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReturnDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
-import org.raven.mongodb.criteria.FilterBuilder;
-import org.raven.mongodb.criteria.HintBuilder;
-import org.raven.mongodb.criteria.UpdateBuilder;
 import org.raven.mongodb.contants.BsonConstant;
-import org.raven.mongodb.DeleteOptions;
-import org.raven.mongodb.FindOneAndDeleteOptions;
-import org.raven.mongodb.FindOneAndUpdateOptions;
-import org.raven.mongodb.UpdateOptions;
+import org.raven.mongodb.criteria.*;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -189,49 +182,49 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     default TUpdateResult updateOne(TKey id,
-                                    final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
-        final Function<FilterBuilder<TEntity>, Bson> filterBuilder = f -> f.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
-        return this.updateOne(filterBuilder, updateBuilder, false);
+                                    final UpdateExpression<TEntity> updateExpression) {
+        final FilterExpression<TEntity> filterExpression = f -> f.eq(BsonConstant.PRIMARY_KEY_NAME, id);
+        return this.updateOne(filterExpression, updateExpression, false);
     }
 
-    default TUpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                    final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
-        return this.updateOne(filterBuilder, updateBuilder, false);
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final UpdateExpression<TEntity> updateExpression) {
+        return this.updateOne(filterExpression, updateExpression, false);
     }
 
-    default TUpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                    final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert) {
-        return this.updateOne(filterBuilder, updateBuilder, isUpsert, null);
+        return this.updateOne(filterExpression, updateExpression, isUpsert, null);
     }
 
-    default TUpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                    final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert,
-                                    final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
-        return this.updateOne(filterBuilder, updateBuilder, isUpsert, hintBuilder, null);
+                                    final HintExpression<TEntity> hintExpression) {
+        return this.updateOne(filterExpression, updateExpression, isUpsert, hintExpression, null);
     }
 
-    default TUpdateResult updateOne(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                    final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert,
-                                    final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+                                    final HintExpression<TEntity> hintExpression,
                                     final WriteConcern writeConcern) {
 
         final UpdateOptions options = new UpdateOptions();
-        if (!Objects.isNull(filterBuilder)) {
+        if (!Objects.isNull(filterExpression)) {
             options.filter(
-                    filterBuilder.apply(FilterBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
+                    filterExpression.toBson(modifyExecutor().getEntityType())
             );
         }
-        if (!Objects.isNull(updateBuilder)) {
+        if (!Objects.isNull(updateExpression)) {
             options.update(
-                    updateBuilder.apply(UpdateBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
+                    updateExpression.toBson(modifyExecutor().getEntityType())
             );
         }
-        if (!Objects.isNull(hintBuilder)) {
+        if (!Objects.isNull(hintExpression)) {
             options.hint(
-                    hintBuilder.apply(HintBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
+                    hintExpression.toBson(modifyExecutor().getEntityType())
             );
         }
         options.upsert(isUpsert);
@@ -300,37 +293,37 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.updateMany(options);
     }
 
-    default TUpdateResult updateMany(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                     final Function<UpdateBuilder<TEntity>, Bson> updateBuilder) {
-        return this.updateMany(filterBuilder, updateBuilder, null);
+    default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
+                                     final UpdateExpression<TEntity> updateExpression) {
+        return this.updateMany(filterExpression, updateExpression, null);
     }
 
-    default TUpdateResult updateMany(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                     final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
-                                     final Function<HintBuilder<TEntity>, Bson> hintBuilder) {
-        return this.updateMany(filterBuilder, updateBuilder, hintBuilder, null);
+    default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
+                                     final UpdateExpression<TEntity> updateExpression,
+                                     final HintExpression<TEntity> hintExpression) {
+        return this.updateMany(filterExpression, updateExpression, hintExpression, null);
     }
 
-    default TUpdateResult updateMany(final Function<FilterBuilder<TEntity>, Bson> filterBuilder,
-                                     final Function<UpdateBuilder<TEntity>, Bson> updateBuilder,
-                                     final Function<HintBuilder<TEntity>, Bson> hintBuilder,
+    default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
+                                     final UpdateExpression<TEntity> updateExpression,
+                                     final HintExpression<TEntity> hintExpression,
                                      final WriteConcern writeConcern) {
 
         final UpdateOptions options = new UpdateOptions();
 
-        if (!Objects.isNull(filterBuilder)) {
+        if (!Objects.isNull(filterExpression)) {
             options.filter(
-                    filterBuilder.apply(FilterBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
+                    filterExpression.toBson(modifyExecutor().getEntityType())
             );
         }
-        if (!Objects.isNull(updateBuilder)) {
+        if (!Objects.isNull(updateExpression)) {
             options.update(
-                    updateBuilder.apply(UpdateBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
+                    updateExpression.toBson(modifyExecutor().getEntityType())
             );
         }
-        if (!Objects.isNull(hintBuilder)) {
+        if (!Objects.isNull(hintExpression)) {
             options.hint(
-                    hintBuilder.apply(HintBuilder.create(modifyExecutor().getEntityInformation().getEntityType()))
+                    hintExpression.toBson(modifyExecutor().getEntityType())
             );
         }
         options.writeConcern(writeConcern);

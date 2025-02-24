@@ -8,7 +8,6 @@ import org.raven.mongodb.annotation.PreInsert;
 import org.raven.mongodb.annotation.PreUpdate;
 import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.interceptors.EntityInterceptor;
-import org.raven.mongodb.support.EntityInformationSupport;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -19,12 +18,12 @@ import java.lang.reflect.Type;
  * date 2021/9/20 20:57
  */
 @Slf4j
-public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey> {
+public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> {
 
     protected final EntityInformation<TEntity, TKey> entityInformation;
 
     @SuppressWarnings({"unchecked"})
-    protected AbstractMongoRepository(final String collectionName) {
+    protected BaseRepository(final String collectionName) {
 
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
@@ -51,13 +50,13 @@ public abstract class AbstractMongoRepository<TEntity extends Entity<TKey>, TKey
                 log.debug("Calling interceptor method " + event.getSimpleName() + " on " + ei);
             }
             if (PreFind.class.equals(event)) {
-                ei.preFind((AbstractFindOptions<?>) options, entityInformation);
+                ei.preFind((BaseFindOptions<?>) options, entityInformation);
             } else if (PreInsert.class.equals(event)) {
                 ei.preInsert(entity, entityInformation);
             } else if (PreUpdate.class.equals(event)) {
-                ei.preUpdate((UpdateOptions) options, entityInformation);
+                ei.preUpdate((BaseUpdateOptions<?>) options, entityInformation);
             } else if (PreDelete.class.equals(event)) {
-                ei.preDelete((DeleteOptions) options, entityInformation);
+                ei.preDelete((BaseModifyOptions<?>) options, entityInformation);
             }
         }
     }

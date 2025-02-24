@@ -4,7 +4,6 @@ import org.bson.BsonDocument;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.ClassModel;
 import org.raven.mongodb.interceptors.EntityInterceptor;
-//import org.raven.mongodb.repository.spi.IdGenerationType;
 
 import java.util.List;
 
@@ -13,6 +12,8 @@ import java.util.List;
  * date 2021/9/20 17:30
  */
 public interface EntityInformation<TEntity, TKey> extends EntityMetadata<TEntity> {
+
+    String getEntityName();
 
     Class<TKey> getIdType();
 

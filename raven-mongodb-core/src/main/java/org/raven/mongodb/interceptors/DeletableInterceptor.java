@@ -5,12 +5,10 @@ import org.bson.BsonDocument;
 import org.bson.codecs.pojo.PropertyModel;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Deletable;
-import org.raven.mongodb.AbstractFindOptions;
+import org.raven.mongodb.criteria.BaseFindOptions;
+import org.raven.mongodb.criteria.BaseUpdateOptions;
 import org.raven.mongodb.util.BsonUtils;
 import org.raven.mongodb.EntityInformation;
-import org.raven.mongodb.UpdateOptions;
-
-import java.util.Arrays;
 
 /**
  * @author by yanfeng
@@ -19,7 +17,7 @@ import java.util.Arrays;
 public class DeletableInterceptor implements EntityInterceptor {
 
     @Override
-    public void preFind(final AbstractFindOptions<?> options,
+    public void preFind(final BaseFindOptions<?> options,
                         final EntityInformation<?, ?> entityInformation) {
 
         if (Deletable.class.isAssignableFrom(entityInformation.getEntityType())) {
@@ -32,7 +30,7 @@ public class DeletableInterceptor implements EntityInterceptor {
     }
 
     @Override
-    public void preUpdate(UpdateOptions options, EntityInformation<?, ?> entityInformation) {
+    public void preUpdate(BaseUpdateOptions<?> options, EntityInformation<?, ?> entityInformation) {
 
         if (Deletable.class.isAssignableFrom(entityInformation.getEntityType())) {
 
@@ -57,7 +55,7 @@ public class DeletableInterceptor implements EntityInterceptor {
             BsonDocument bsonDocument = filter.toBsonDocument();
             if (!bsonDocument.containsKey(propertyModel.getName())) {
 
-                return BsonUtils.combine(Arrays.asList(filter, delBson));
+                return BsonUtils.combine(filter, delBson);
             } else {
                 return filter;
             }

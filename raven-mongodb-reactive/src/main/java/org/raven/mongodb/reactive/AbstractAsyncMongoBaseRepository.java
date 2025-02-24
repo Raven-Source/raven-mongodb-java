@@ -22,10 +22,10 @@ import org.raven.mongodb.annotation.PreFind;
 import org.raven.mongodb.annotation.PreInsert;
 import org.raven.mongodb.annotation.PreUpdate;
 import org.raven.mongodb.contants.BsonConstant;
+import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
 import org.raven.mongodb.spi.Sequence;
-import org.raven.mongodb.util.BsonUtils;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings({"unchecked"})
 public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TKey>, TKey>
-        extends AbstractMongoRepository<TEntity, TKey>
+        extends BaseRepository<TEntity, TKey>
         implements ReactiveMongoBaseRepository<TEntity> {
 
     protected ReactiveIdGenerator<TKey> idGenerator;
@@ -124,7 +124,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
      * @see WriteConcern
      */
     @Override
-    public MongoCollection<TEntity> getCollection(final WriteConcern writeConcern) {
+    public MongoCollection<TEntity> getCollection(@Nullable final WriteConcern writeConcern) {
         MongoCollection<TEntity> collection = this.getCollection();
         if (writeConcern != null) {
             collection = collection.withWriteConcern(writeConcern);
@@ -140,7 +140,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
      * @see ReadPreference
      */
     @Override
-    public MongoCollection<TEntity> getCollection(final ReadPreference readPreference) {
+    public MongoCollection<TEntity> getCollection(@Nullable final ReadPreference readPreference) {
         MongoCollection<TEntity> collection = this.getCollection();
         if (readPreference != null) {
             collection = collection.withReadPreference(readPreference);
@@ -160,7 +160,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
      * @param <TResult>     TResult
      * @return FindIterable
      */
-    protected <TResult> FindPublisher<TResult> findOptions(final FindPublisher<TResult> findPublisher
+    protected <TResult> FindPublisher<TResult> findByOptions(final FindPublisher<TResult> findPublisher
             , final Bson projection, final Bson sort
             , final int limit, final int skip, final Bson hint) {
 
@@ -197,8 +197,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
             options.filter(Filters.empty());
         }
 
-        Bson projection = BsonUtils.projection(entityInformation.getEntityType(),
-                options.includeFields(), options.excludeFields());
+//        Bson projection = BsonUtils.projection(entityInformation.getEntityType(),
+//                options.includeFields(),
+//                options.excludeFields());
 
         callGlobalInterceptors(PreFind.class, null, options);
 
@@ -208,7 +209,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         } else {
             result = getCollection(options.readPreference()).find(session, options.filter(), resultClass);
         }
-        result = findOptions(result, projection, options.sort(), options.limit(), options.skip(), options.hint());
+        result = findByOptions(result, options.projection(), options.sort(), options.limit(), options.skip(), options.hint());
 
         return result;
     }
@@ -377,12 +378,14 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         if (session == null) {
 
             return Mono.from(
-                    getCollection().findOneAndUpdate(options.filter(), options.update(), findOneAndUpdateOptions)
+                    getCollection(options.writeConcern())
+                            .findOneAndUpdate(options.filter(), options.update(), findOneAndUpdateOptions)
             );
         } else {
 
             return Mono.from(
-                    getCollection().findOneAndUpdate(session, options.filter(), options.update(), findOneAndUpdateOptions)
+                    getCollection(options.writeConcern())
+                            .findOneAndUpdate(session, options.filter(), options.update(), findOneAndUpdateOptions)
             );
         }
     }
@@ -404,12 +407,14 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         if (session == null) {
 
             return Mono.from(
-                    getCollection().findOneAndDelete(options.filter(), findOneAndDeleteOptions)
+                    getCollection(options.writeConcern())
+                            .findOneAndDelete(options.filter(), findOneAndDeleteOptions)
             );
         } else {
 
             return Mono.from(
-                    getCollection().findOneAndDelete(session, options.filter(), findOneAndDeleteOptions)
+                    getCollection(options.writeConcern())
+                            .findOneAndDelete(session, options.filter(), findOneAndDeleteOptions)
             );
         }
     }

@@ -3,10 +3,14 @@ package org.raven.mongodb;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import lombok.NonNull;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.contants.BsonConstant;
+import org.raven.mongodb.criteria.CountOptions;
+import org.raven.mongodb.criteria.ExistsOptions;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.operation.FindExecutor;
 
 import javax.annotation.Nullable;
@@ -48,7 +52,7 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
     //region protected
 
     protected TEntity doFindOne(final FindOptions options) {
-        return this.doFindOne(options, baseRepository.entityInformation.getEntityType());
+        return this.doFindOne(options, baseRepository.getEntityInformation().getEntityType());
     }
 
     protected <TResult> TResult doFindOne(final FindOptions options, Class<TResult> resultClass) {
@@ -56,7 +60,7 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
     }
 
     protected List<TEntity> doFindList(final FindOptions options) {
-        return this.doFindList(options, baseRepository.entityInformation.getEntityType());
+        return this.doFindList(options, baseRepository.getEntityInformation().getEntityType());
     }
 
     protected <TResult> List<TResult> doFindList(final FindOptions options, Class<TResult> resultClass) {
@@ -81,18 +85,13 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
             _filter = Filters.empty();
         }
 
-        List<String> includeFields = new ArrayList<>(1);
-        includeFields.add(BsonConstant.PRIMARY_KEY_NAME);
+        Bson projection = Projections.include(BsonConstant.PRIMARY_KEY_NAME);
 
-        return this.findOne(_filter, includeFields, null, options.hint(), options.readPreference()) != null;
+        return this.findOne(_filter, projection, null, options.hint(), options.readPreference()) != null;
     }
 
     //endregion
 
-//    public interface DoFindProxy {
-//
-//        <TResult> FindIterable<TResult> doFind(@Nullable final ClientSession session, final FindOptions options, final Class<TResult> resultClass);
-//    }
 
     @Override
     public FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findExecutor() {
@@ -102,8 +101,8 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
     private final FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> findExecutor =
             new FindExecutor<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean>() {
                 @Override
-                public EntityInformation<TEntity, TKey> getEntityInformation() {
-                    return SyncReadOperationImpl.this.baseRepository.getEntityInformation();
+                public Class<TEntity> getEntityType() {
+                    return SyncReadOperationImpl.this.baseRepository.getEntityInformation().getEntityType();
                 }
 
                 @Override
@@ -126,10 +125,5 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
                     return SyncReadOperationImpl.this.doExists(options);
                 }
             };
-
-//    public interface DoCountProxy {
-//
-//        long doCount(@Nullable final ClientSession session, final CountOptions options);
-//    }
 
 }

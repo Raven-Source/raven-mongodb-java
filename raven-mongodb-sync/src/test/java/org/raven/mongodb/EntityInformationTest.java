@@ -28,7 +28,7 @@ public class EntityInformationTest {
     public void test() throws Exception {
 
 
-        Field field = AbstractMongoRepository.class.getDeclaredField("entityInformation");
+        Field field = BaseRepository.class.getDeclaredField("entityInformation");
         field.setAccessible(true);
 
         EntityInformation<User, Long> entityInformation = (EntityInformation<User, Long>) field.get(userRepository);
@@ -40,7 +40,7 @@ public class EntityInformationTest {
         }
 
 
-        field = AbstractMongoRepository.class.getDeclaredField("entityInformation");
+        field = BaseRepository.class.getDeclaredField("entityInformation");
         field.setAccessible(true);
 
         EntityInformation<UserExtend, Long> userExtendEntityInformation = (EntityInformation<UserExtend, Long>) field.get(userExtendRepository);

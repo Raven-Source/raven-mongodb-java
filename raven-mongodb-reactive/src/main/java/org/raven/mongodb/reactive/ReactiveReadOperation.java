@@ -1,13 +1,14 @@
 package org.raven.mongodb.reactive;
 
-import org.raven.mongodb.FindOptions;
+import org.raven.commons.data.Entity;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.operation.ReadOperation;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ReactiveReadOperation<TEntity, TKey>
+public interface ReactiveReadOperation<TEntity extends Entity<TKey>, TKey>
         extends ReadOperation<TEntity, TKey, Mono<Optional<TEntity>>, Mono<List<TEntity>>, Mono<Long>, Mono<Boolean>> {
 
     /**

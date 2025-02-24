@@ -2,6 +2,7 @@ package org.raven.mongodb;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import lombok.val;
 import org.bson.conversions.Bson;
@@ -9,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.raven.mongodb.contants.BsonConstant;
+import org.raven.mongodb.criteria.CountOptions;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.model.*;
 
 import java.util.ArrayList;
@@ -98,9 +101,8 @@ public class MongoQueryRepositoryTest {
             user = userRepository.findOne(Filters.eq("Name", user.getName()));
             Assert.assertNotNull(user);
 
-            user = userRepository.findOne(Filters.eq("Name", user.getName()), new ArrayList<String>() {{
-                add("_id");
-            }});
+            user = userRepository.findOne(Filters.eq("Name", user.getName())
+                    , Projections.include("_id"));
             Assert.assertNull(user.getName());
         }
 
@@ -110,7 +112,7 @@ public class MongoQueryRepositoryTest {
 
         Long id = user2.getId();
         user2 = repos2.findOne(f -> {
-            return f.eq(BsonConstant.PRIMARY_KEY_NAME, id).build();
+            return f.eq(BsonConstant.PRIMARY_KEY_NAME, id);
         });
         Assert.assertNotNull(user2);
 
@@ -120,15 +122,32 @@ public class MongoQueryRepositoryTest {
         Assert.assertEquals(user.getName(), user2.getName());
 
 
-//        Orders orders;
-//        orders = ordersRepository.findOne(1L);
-//
-//        orders = ordersRepository.findOne(
-//                f -> f
-//                        .eq(Orders.Fields.status, Status.Normal)
-//                        .gt(Orders.Fields.price, 1.0)
-//                        .build()
-//        );
+        Orders orders;
+        orders = ordersRepository.findOne(1L);
+
+        orders = ordersRepository.findOne(
+                f -> f
+                        .eq(Orders.Fields.status, Status.Normal)
+                        .gt(Orders.Fields.price, 1.0)
+        );
+
+        findOptions = FindOptions.Builder.create(Orders.class)
+                .filter(f -> f
+                        .eq(Orders.Fields.status, Status.Normal)
+                        .gt(Orders.Fields.price, 1.0)
+                )
+                .sort(s -> s
+                        .asc(Orders.Fields.itemsId)
+                )
+                .projection(p -> p
+                        .include(Orders.Fields.name, Orders.Fields.itemsId)
+                        .excludeId()
+                )
+                .skip(1)
+                .limit(10)
+                .build();
+
+        List<Orders> ordersList = ordersRepository.findList(findOptions);
 //
 //        Long itemsId = orders.getItemsId();
 //        ordersRepository.updateOne(

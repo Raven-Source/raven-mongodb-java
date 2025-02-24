@@ -18,7 +18,7 @@ import static org.bson.codecs.pojo.ClassModelUtils.getWriteName;
  * @author yi.liang
  * date 2021/9/20 22:30
  */
-public class SortBuilder<TEntity> implements BsonBuilder {
+public class SortBuilder<TEntity> implements CriteriaBuilder {
 
     private final Class<TEntity> entityClass;
     private final List<Bson> bsons = new ArrayList<>();
