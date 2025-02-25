@@ -84,8 +84,8 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doInsert(this.clientSession, entity, writeConcern);
     }
 
-    protected Mono<InsertManyResult> doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
-        return baseRepository.doInsertBatch(this.clientSession, entities, writeConcern);
+    protected Mono<InsertManyResult> doInsertMany(final List<TEntity> entities, final WriteConcern writeConcern) {
+        return baseRepository.doInsertMany(this.clientSession, entities, writeConcern);
     }
 
     protected Mono<UpdateResult> doUpdate(final UpdateOptions options, final ExecuteType executeType) {
@@ -136,7 +136,7 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                 @Override
                 public Mono<Map<Integer, TKey>> doInsertMany(List<TEntity> entities, WriteConcern writeConcern) {
 
-                    return ReactiveWriteOperationImpl.this.doInsertBatch(entities, writeConcern).map(x -> {
+                    return ReactiveWriteOperationImpl.this.doInsertMany(entities, writeConcern).map(x -> {
 
                         Map<Integer, TKey> integerTKeyMap = new HashMap<>();
                         if (x.wasAcknowledged()) {

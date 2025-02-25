@@ -61,7 +61,9 @@ public class MongoRepositoryTest extends MongoRepositoryTestBase {
         BsonDocument bsonDocument = repos.getEntityInformation().toBsonDocument(user);
         int size = bsonDocument.size();
 
+        System.out.println("user.id:  " + user.getId());
         repos.insert(user);
+        System.out.println("user.id:  " + user.getId());
 
         Assert.assertNotEquals(user.getId().longValue(), 0);
 

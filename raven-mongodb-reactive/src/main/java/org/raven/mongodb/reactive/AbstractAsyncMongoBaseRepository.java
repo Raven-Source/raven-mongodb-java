@@ -272,7 +272,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         });
     }
 
-    protected Mono<InsertManyResult> doInsertBatch(@Nullable final ClientSession session
+    protected Mono<InsertManyResult> doInsertMany(@Nullable final ClientSession session
             , final List<TEntity> entities
             , final WriteConcern writeConcern) {
 

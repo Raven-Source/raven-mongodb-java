@@ -66,8 +66,8 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doInsert(this.clientSession, entity, writeConcern);
     }
 
-    protected InsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
-        return baseRepository.doInsertBatch(this.clientSession, entities, writeConcern);
+    protected InsertManyResult doInsertMany(final List<TEntity> entities, final WriteConcern writeConcern) {
+        return baseRepository.doInsertMany(this.clientSession, entities, writeConcern);
     }
 
     protected UpdateResult doUpdate(@NonNull final UpdateOptions options,
@@ -115,7 +115,7 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
 
                 @Override
                 public Map<Integer, TKey> doInsertMany(List<TEntity> entities, WriteConcern writeConcern) {
-                    InsertManyResult insertManyResult = SyncWriteOperationImpl.this.doInsertBatch(entities, writeConcern);
+                    InsertManyResult insertManyResult = SyncWriteOperationImpl.this.doInsertMany(entities, writeConcern);
 
                     Map<Integer, TKey> integerTKeyMap = new HashMap<>();
                     if (insertManyResult.wasAcknowledged()) {

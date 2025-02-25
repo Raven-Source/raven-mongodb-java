@@ -262,7 +262,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
         }
     }
 
-    protected InsertManyResult doInsertBatch(@Nullable final ClientSession session
+    protected InsertManyResult doInsertMany(@Nullable final ClientSession session
             , final List<TEntity> entities
             , final WriteConcern writeConcern) {
 

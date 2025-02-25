@@ -52,6 +52,7 @@ public abstract class MongoRepositoryTestBase {
             users.add(user);
         }
 
+
         val result = userRepository.insertMany(users);
         System.out.println(result.size());
 
