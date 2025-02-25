@@ -230,5 +230,13 @@ public class MongoRepositoryTest extends MongoRepositoryTestBase {
 
         System.out.println("count: " + count);
         Assert.assertEquals(count, 1L);
+
+        count = ordersRepository.updateMany(
+                f -> f.eq(Fields.isPay, false)
+                , u -> u.set(Fields.status, Status.Delete)
+        );
+
+        System.out.println("count: " + count);
+        Assert.assertTrue(count > 1L);
     }
 }

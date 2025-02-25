@@ -158,7 +158,7 @@ public class MongoQueryRepositoryTest extends MongoRepositoryTestBase {
 //                        .build()
 //        );
 
-        ordersRepository.deleteOne(orders.getId());
+       long count = ordersRepository.deleteOne(orders.getId());
 
     }
 
