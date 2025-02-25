@@ -45,8 +45,8 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
     }
 
     @Override
-    public <TResult> List<TResult> findList(FindOptions findOptions, Class<TResult> resultClass) {
-        return doFindList(findOptions, resultClass);
+    public <TResult> List<TResult> findMany(FindOptions findOptions, Class<TResult> resultClass) {
+        return doFindMany(findOptions, resultClass);
     }
 
     //region protected
@@ -59,11 +59,11 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
         return baseRepository.doFind(clientSession, options, resultClass).first();
     }
 
-    protected List<TEntity> doFindList(final FindOptions options) {
-        return this.doFindList(options, baseRepository.getEntityInformation().getEntityType());
+    protected List<TEntity> doFindMany(final FindOptions options) {
+        return this.doFindMany(options, baseRepository.getEntityInformation().getEntityType());
     }
 
-    protected <TResult> List<TResult> doFindList(final FindOptions options, Class<TResult> resultClass) {
+    protected <TResult> List<TResult> doFindMany(final FindOptions options, Class<TResult> resultClass) {
         FindIterable<TResult> result = baseRepository.doFind(clientSession, options, resultClass);
 
         ArrayList<TResult> list = new ArrayList<>();
@@ -111,8 +111,8 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
                 }
 
                 @Override
-                public List<TEntity> doFindList(FindOptions options) {
-                    return SyncReadOperationImpl.this.doFindList(options);
+                public List<TEntity> doFindMany(FindOptions options) {
+                    return SyncReadOperationImpl.this.doFindMany(options);
                 }
 
                 @Override

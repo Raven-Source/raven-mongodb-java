@@ -3,6 +3,8 @@ package org.raven.mongodb.criteria;
 import com.mongodb.WriteConcern;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.bson.BsonNull;
+import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.raven.mongodb.util.BsonUtils;
 
@@ -27,7 +29,7 @@ public abstract class BaseModifyOptions<P extends BaseModifyOptions<P>> extends 
     public Bson toBson() {
         return BsonUtils.combine(
                 super.toBson(),
-                BsonUtils.combine("writeConcern",  writeConcern.asDocument())
+                BsonUtils.combine("writeConcern", writeConcern != null ? writeConcern.asDocument() : BsonNull.VALUE)
         );
 
     }

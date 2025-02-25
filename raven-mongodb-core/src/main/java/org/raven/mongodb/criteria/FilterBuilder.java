@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.bson.BsonNull;
 import org.bson.BsonType;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
@@ -73,6 +74,18 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
         return bsons.isEmpty();
     }
 
+    public FilterBuilder<TEntity> isNull(final String fieldName) {
+        assert fieldName != null;
+        bsons.add(Filters.eq(getWriteName(fieldName), BsonNull.VALUE));
+        return this;
+    }
+
+    public FilterBuilder<TEntity> isNotNull(final String fieldName) {
+        assert fieldName != null;
+        bsons.add(Filters.ne(getWriteName(fieldName), BsonNull.VALUE));
+        return this;
+    }
+
     public <TItem> FilterBuilder<TEntity> eq(final String fieldName, final TItem value) {
         assert fieldName != null;
         bsons.add(Filters.eq(getWriteName(fieldName), value));
@@ -135,8 +148,12 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
         return this;
     }
 
-    public FilterBuilder<TEntity> exists(final String fieldName) {
+    public FilterBuilder<TEntity> isExists(final String fieldName) {
         return this.exists(fieldName, true);
+    }
+
+    public FilterBuilder<TEntity> isNotExists(final String fieldName) {
+        return this.exists(fieldName, false);
     }
 
     public FilterBuilder<TEntity> exists(final String fieldName, final boolean exists) {
@@ -327,7 +344,11 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
         return this;
     }
 
-    public FilterBuilder<TEntity> and(@NonNull final FilterBuilder<TEntity> that) {
+    public FilterBuilder<TEntity> and(@NonNull final FilterExpression<TEntity> that) {
+        return and(that.toBson(entityClass));
+    }
+
+    public <YEntity> FilterBuilder<TEntity> and(@NonNull final FilterBuilder<YEntity> that) {
         return and(that.build());
     }
 
@@ -344,7 +365,11 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
         return this;
     }
 
-    public FilterBuilder<TEntity> or(@NonNull final FilterBuilder<TEntity> that) {
+    public FilterBuilder<TEntity> or(@NonNull final FilterExpression<TEntity> that) {
+        return or(that.toBson(entityClass));
+    }
+
+    public <YEntity> FilterBuilder<TEntity> or(@NonNull final FilterBuilder<YEntity> that) {
         return or(that.build());
     }
 
@@ -358,6 +383,20 @@ public class FilterBuilder<TEntity> implements CriteriaBuilder {
         Bson bson = Filters.or(this.build(), that);
         bsons.clear();
         bsons.add(bson);
+        return this;
+    }
+
+    public FilterBuilder<TEntity> add(@NonNull final FilterExpression<TEntity> that) {
+        return add(that.toBson(entityClass));
+    }
+
+    public <YEntity> FilterBuilder<TEntity> add(@NonNull final FilterBuilder<YEntity> that) {
+        return add(that.build());
+    }
+
+    public FilterBuilder<TEntity> add(@NonNull final Bson that) {
+
+        bsons.add(that);
         return this;
     }
 

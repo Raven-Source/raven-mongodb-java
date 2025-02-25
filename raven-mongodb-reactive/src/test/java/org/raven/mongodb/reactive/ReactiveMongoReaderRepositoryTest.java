@@ -32,7 +32,7 @@ public class ReactiveMongoReaderRepositoryTest {
             list.add(user);
         }
 
-        repos.insertBatch(list).block();
+        repos.insertMany(list).block();
     }
 
 //    @After
@@ -48,21 +48,21 @@ public class ReactiveMongoReaderRepositoryTest {
         List<User> list = null;
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
-        list = repos.findList(FindOptions.create()).block();
+        list = repos.findMany(FindOptions.create()).block();
         Assert.assertNotEquals(list.size(), 0);
 
-        list = repos.findList(Filters.gte("_id", 1)).block();
+        list = repos.findMany(Filters.gte("_id", 1)).block();
         Assert.assertNotEquals(list.size(), 0);
 
         for (User user : list) {
             Assert.assertNotNull(user.getName());
         }
 
-        list = repos.findList(Filters.eq("_id", 1)).block();
+        list = repos.findMany(Filters.eq("_id", 1)).block();
         Assert.assertEquals(list.size(), 1);
 
 
-        list = repos.findList(null, null, Sorts.descending("_id"), 1, 0).block();
+        list = repos.findMany(null, null, Sorts.descending("_id"), 1, 0).block();
         Assert.assertNotNull(list.get(0));
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getId().longValue(), 10);

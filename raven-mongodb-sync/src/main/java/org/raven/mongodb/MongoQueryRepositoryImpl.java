@@ -93,14 +93,15 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     @Override
-    public <TResult> List<TResult> findList(FindOptions findOptions, Class<TResult> resultClass) {
-        return operation.findList(findOptions, resultClass);
+    public <TResult> List<TResult> findMany(FindOptions findOptions, Class<TResult> resultClass) {
+        return operation.findMany(findOptions, resultClass);
     }
 
     //endregion
 
     //region protected
 
+    @Override
     public SyncReadOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
         if (clientSession == null) {
             return operation;

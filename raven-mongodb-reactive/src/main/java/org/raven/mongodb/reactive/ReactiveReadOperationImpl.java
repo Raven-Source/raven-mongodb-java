@@ -40,8 +40,8 @@ public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> imple
     }
 
     @Override
-    public <TResult> Mono<List<TResult>> findList(FindOptions findOptions, Class<TResult> resultClass) {
-        return doFindList(findOptions, resultClass);
+    public <TResult> Mono<List<TResult>> findMany(FindOptions findOptions, Class<TResult> resultClass) {
+        return doFindMany(findOptions, resultClass);
     }
 
     //region protected
@@ -56,11 +56,11 @@ public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> imple
         ).map(Optional::of).defaultIfEmpty(Optional.empty());
     }
 
-    protected Mono<List<TEntity>> doFindList(final FindOptions options) {
-        return this.doFindList(options, baseRepository.getEntityInformation().getEntityType());
+    protected Mono<List<TEntity>> doFindMany(final FindOptions options) {
+        return this.doFindMany(options, baseRepository.getEntityInformation().getEntityType());
     }
 
-    protected <TResult> Mono<List<TResult>> doFindList(final FindOptions options, Class<TResult> resultClass) {
+    protected <TResult> Mono<List<TResult>> doFindMany(final FindOptions options, Class<TResult> resultClass) {
         return Flux.from(
                 baseRepository.doFind(clientSession, options, resultClass)
         ).collectList();
@@ -104,8 +104,8 @@ public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> imple
                 }
 
                 @Override
-                public Mono<List<TEntity>> doFindList(FindOptions options) {
-                    return ReactiveReadOperationImpl.this.doFindList(options);
+                public Mono<List<TEntity>> doFindMany(FindOptions options) {
+                    return ReactiveReadOperationImpl.this.doFindMany(options);
                 }
 
                 @Override

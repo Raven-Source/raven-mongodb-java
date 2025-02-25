@@ -71,8 +71,13 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     protected UpdateResult doUpdate(@NonNull final UpdateOptions options,
-                                    final UpdateType updateType) {
-        return baseRepository.doUpdate(this.clientSession, options, updateType);
+                                    final ExecuteType executeType) {
+        return baseRepository.doUpdate(this.clientSession, options, executeType);
+    }
+
+    protected DeleteResult doDelete(final DeleteOptions options,
+                                    final ExecuteType executeType) {
+        return baseRepository.doDelete(this.clientSession, options, executeType);
     }
 
     protected TEntity doFindOneAndUpdate(final FindOneAndUpdateOptions options) {
@@ -83,13 +88,9 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doFindOneAndDelete(this.clientSession, options);
     }
 
-    protected DeleteResult doDeleteOne(final DeleteOptions options) {
-        return baseRepository.doDeleteOne(this.clientSession, options);
-    }
-
-    protected DeleteResult doDeleteMany(final DeleteOptions options) {
-        return baseRepository.doDeleteMany(this.clientSession, options);
-    }
+//    protected DeleteResult doDeleteMany(final DeleteOptions options) {
+//        return baseRepository.doDelete(this.clientSession, options);
+//    }
 
     @Override
     public ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor() {
@@ -113,7 +114,7 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Map<Integer, TKey> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                public Map<Integer, TKey> doInsertMany(List<TEntity> entities, WriteConcern writeConcern) {
                     InsertManyResult insertManyResult = SyncWriteOperationImpl.this.doInsertBatch(entities, writeConcern);
 
                     Map<Integer, TKey> integerTKeyMap = new HashMap<>();
@@ -129,9 +130,15 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Long doUpdate(UpdateOptions options, UpdateType updateType) {
-                    UpdateResult updateResult = SyncWriteOperationImpl.this.doUpdate(options, updateType);
+                public Long doUpdate(UpdateOptions options, ExecuteType executeType) {
+                    UpdateResult updateResult = SyncWriteOperationImpl.this.doUpdate(options, executeType);
                     return updateResult.wasAcknowledged() ? updateResult.getModifiedCount() : 0;
+                }
+
+                @Override
+                public Long doDelete(DeleteOptions options, final ExecuteType executeType) {
+                    DeleteResult deleteResult = SyncWriteOperationImpl.this.doDelete(options, executeType);
+                    return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
                 }
 
                 @Override
@@ -144,16 +151,10 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                     return SyncWriteOperationImpl.this.doFindOneAndDelete(options);
                 }
 
-                @Override
-                public Long doDeleteOne(DeleteOptions options) {
-                    DeleteResult deleteResult = SyncWriteOperationImpl.this.doDeleteOne(options);
-                    return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
-                }
-
-                @Override
-                public Long doDeleteMany(DeleteOptions options) {
-                    DeleteResult deleteResult = SyncWriteOperationImpl.this.doDeleteMany(options);
-                    return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
-                }
+//                @Override
+//                public Long doDeleteMany(DeleteOptions options) {
+//                    DeleteResult deleteResult = SyncWriteOperationImpl.this.doDeleteMany(options);
+//                    return deleteResult.wasAcknowledged() ? deleteResult.getDeletedCount() : 0;
+//                }
             };
 }

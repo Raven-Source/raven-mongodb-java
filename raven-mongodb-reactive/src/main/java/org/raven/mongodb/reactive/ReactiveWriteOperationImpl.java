@@ -88,9 +88,12 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doInsertBatch(this.clientSession, entities, writeConcern);
     }
 
-    protected Mono<UpdateResult> doUpdate(final UpdateOptions options,
-                                          final UpdateType updateType) {
-        return baseRepository.doUpdate(this.clientSession, options, updateType);
+    protected Mono<UpdateResult> doUpdate(final UpdateOptions options, final ExecuteType executeType) {
+        return baseRepository.doUpdate(this.clientSession, options, executeType);
+    }
+
+    protected Mono<DeleteResult> doDelete(final DeleteOptions options, final ExecuteType executeType) {
+        return baseRepository.doDelete(this.clientSession, options, executeType);
     }
 
     protected Mono<TEntity> doFindOneAndUpdate(final FindOneAndUpdateOptions options) {
@@ -101,13 +104,9 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         return baseRepository.doFindOneAndDelete(this.clientSession, options);
     }
 
-    protected Mono<DeleteResult> doDeleteOne(final DeleteOptions options) {
-        return baseRepository.doDeleteOne(this.clientSession, options);
-    }
-
-    protected Mono<DeleteResult> doDeleteMany(final DeleteOptions options) {
-        return baseRepository.doDeleteMany(this.clientSession, options);
-    }
+//    protected Mono<DeleteResult> doDeleteMany(final DeleteOptions options) {
+//        return baseRepository.doDeleteMany(this.clientSession, options);
+//    }
 
 
     @Override
@@ -135,7 +134,7 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Mono<Map<Integer, TKey>> doInsertBatch(List<TEntity> entities, WriteConcern writeConcern) {
+                public Mono<Map<Integer, TKey>> doInsertMany(List<TEntity> entities, WriteConcern writeConcern) {
 
                     return ReactiveWriteOperationImpl.this.doInsertBatch(entities, writeConcern).map(x -> {
 
@@ -154,9 +153,16 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                 }
 
                 @Override
-                public Mono<Long> doUpdate(UpdateOptions options, UpdateType updateType) {
-                    return ReactiveWriteOperationImpl.this.doUpdate(options, updateType).map(x ->
+                public Mono<Long> doUpdate(UpdateOptions options, ExecuteType executeType) {
+                    return ReactiveWriteOperationImpl.this.doUpdate(options, executeType).map(x ->
                             x.wasAcknowledged() ? x.getModifiedCount() : 0
+                    );
+                }
+
+                @Override
+                public Mono<Long> doDelete(DeleteOptions options, final ExecuteType executeType) {
+                    return ReactiveWriteOperationImpl.this.doDelete(options, executeType).map(x ->
+                            x.wasAcknowledged() ? x.getDeletedCount() : 0
                     );
                 }
 
@@ -170,19 +176,12 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
                     return ReactiveWriteOperationImpl.this.doFindOneAndDelete(options);
                 }
 
-                @Override
-                public Mono<Long> doDeleteOne(DeleteOptions options) {
-                    return ReactiveWriteOperationImpl.this.doDeleteOne(options).map(x ->
-                            x.wasAcknowledged() ? x.getDeletedCount() : 0
-                    );
-                }
-
-                @Override
-                public Mono<Long> doDeleteMany(DeleteOptions options) {
-                    return ReactiveWriteOperationImpl.this.doDeleteMany(options).map(x ->
-                            x.wasAcknowledged() ? x.getDeletedCount() : 0
-                    );
-                }
+//                @Override
+//                public Mono<Long> doDeleteMany(DeleteOptions options) {
+//                    return ReactiveWriteOperationImpl.this.doDeleteMany(options).map(x ->
+//                            x.wasAcknowledged() ? x.getDeletedCount() : 0
+//                    );
+//                }
             };
 
 }

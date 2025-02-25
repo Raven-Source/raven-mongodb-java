@@ -14,7 +14,7 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 20:49
  */
-public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> {
+public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult, TManyResult, TCountResult, TExistsResult> {
 
     //#region get
 
@@ -206,11 +206,20 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
     /**
      * 根据条件获取获取列表
      *
+     * @return Result
+     */
+    default TManyResult findAll() {
+        return this.findMany((Bson) null);
+    }
+
+    /**
+     * 根据条件获取获取列表
+     *
      * @param filter 查询条件
      * @return Result
      */
-    default TListResult findList(final Bson filter) {
-        return this.findList(filter, null);
+    default TManyResult findMany(final Bson filter) {
+        return this.findMany(filter, null);
     }
 
     /**
@@ -220,8 +229,8 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
      * @param projection 查询字段
      * @return Result
      */
-    default TListResult findList(final Bson filter, final Bson projection) {
-        return this.findList(filter, projection, null);
+    default TManyResult findMany(final Bson filter, final Bson projection) {
+        return this.findMany(filter, projection, null);
     }
 
     /**
@@ -232,8 +241,8 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
      * @param sort       排序
      * @return Result
      */
-    default TListResult findList(final Bson filter, final Bson projection, final Bson sort) {
-        return this.findList(filter, projection, sort, 0, 0);
+    default TManyResult findMany(final Bson filter, final Bson projection, final Bson sort) {
+        return this.findMany(filter, projection, sort, 0, 0);
     }
 
     /**
@@ -248,7 +257,7 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
      * @param readPreference 访问设置
      * @return Result
      */
-    default TListResult findList(final Bson filter, final Bson projection, final Bson sort
+    default TManyResult findMany(final Bson filter, final Bson projection, final Bson sort
             , final int limit, final int skip
             , final Bson hint
             , final @Nullable ReadPreference readPreference) {
@@ -265,7 +274,7 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         options.skip(skip);
         options.sort(sort);
 
-        return this.findList(options);
+        return this.findMany(options);
     }
 
 
@@ -384,42 +393,42 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
      * @param skip       skip
      * @return Result
      */
-    default TListResult findList(final Bson filter, final Bson projection, final Bson sort
+    default TManyResult findMany(final Bson filter, final Bson projection, final Bson sort
             , final int limit, final int skip) {
-        return this.findList(filter, projection, sort, limit, skip, null, null);
+        return this.findMany(filter, projection, sort, limit, skip, null, null);
     }
 
-    default TListResult findList(final FilterExpression<TEntity> filterExpression) {
-        return this.findList(filterExpression, null);
+    default TManyResult findMany(final FilterExpression<TEntity> filterExpression) {
+        return this.findMany(filterExpression, null);
     }
 
-    default TListResult findList(final FilterExpression<TEntity> filterExpression,
+    default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression) {
-        return this.findList(filterExpression, projectionExpression, null);
+        return this.findMany(filterExpression, projectionExpression, null);
     }
 
-    default TListResult findList(final FilterExpression<TEntity> filterExpression,
+    default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression) {
-        return this.findList(filterExpression, projectionExpression, sortExpression, 0, 0);
+        return this.findMany(filterExpression, projectionExpression, sortExpression, 0, 0);
     }
 
-    default TListResult findList(final FilterExpression<TEntity> filterExpression,
+    default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression,
                                  int limit, int skip) {
-        return this.findList(filterExpression, projectionExpression, sortExpression, limit, skip, null);
+        return this.findMany(filterExpression, projectionExpression, sortExpression, limit, skip, null);
     }
 
-    default TListResult findList(final FilterExpression<TEntity> filterExpression,
+    default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression,
                                  int limit, int skip,
                                  final HintExpression<TEntity> hintExpression) {
-        return this.findList(filterExpression, projectionExpression, sortExpression, limit, skip, hintExpression, null);
+        return this.findMany(filterExpression, projectionExpression, sortExpression, limit, skip, hintExpression, null);
     }
 
-    default TListResult findList(final FilterExpression<TEntity> filterExpression,
+    default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression,
                                  int limit, int skip,
@@ -428,7 +437,7 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
 
         final FindOptions findOptions = createFindOptions(filterExpression, projectionExpression, sortExpression, limit, skip, hintExpression, readPreference);
 
-        return this.findList(findOptions);
+        return this.findMany(findOptions);
 
     }
 
@@ -438,8 +447,8 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
      * @param findOptions FindOptions
      * @return Result
      */
-    default TListResult findList(final FindOptions findOptions) {
-        return findExecutor().doFindList(findOptions);
+    default TManyResult findMany(final FindOptions findOptions) {
+        return findExecutor().doFindMany(findOptions);
     }
 
     default FindOptions createFindOptions(
@@ -493,7 +502,7 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
 
     //#endregion
 
-    FindExecutor<TEntity, TKey, TSingleResult, TListResult, TCountResult, TExistsResult> findExecutor();
+    FindExecutor<TEntity, TKey, TSingleResult, TManyResult, TCountResult, TExistsResult> findExecutor();
 
 
 }

@@ -10,7 +10,7 @@ public interface FindExecutor<TEntity extends Entity<TKey>, TKey, TSingleResult,
 
     TSingleResult doFindOne(final FindOptions options);
 
-    TListResult doFindList(final FindOptions options);
+    TListResult doFindMany(final FindOptions options);
 
     TCountResult doCount(final CountOptions options);
 

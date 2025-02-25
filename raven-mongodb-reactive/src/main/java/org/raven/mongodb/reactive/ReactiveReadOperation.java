@@ -29,5 +29,5 @@ public interface ReactiveReadOperation<TEntity extends Entity<TKey>, TKey>
      * @param <TResult>   TResult
      * @return TResult
      */
-    <TResult> Mono<List<TResult>> findList(final FindOptions findOptions, final Class<TResult> resultClass);
+    <TResult> Mono<List<TResult>> findMany(final FindOptions findOptions, final Class<TResult> resultClass);
 }

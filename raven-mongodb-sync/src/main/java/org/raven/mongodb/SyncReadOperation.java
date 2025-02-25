@@ -6,7 +6,8 @@ import org.raven.mongodb.operation.ReadOperation;
 
 import java.util.List;
 
-public interface SyncReadOperation<TEntity extends Entity<TKey>, TKey> extends ReadOperation<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> {
+public interface SyncReadOperation<TEntity extends Entity<TKey>, TKey>
+        extends ReadOperation<TEntity, TKey, TEntity, List<TEntity>, Long, Boolean> {
 
     /**
      * 根据条件获取实体
@@ -26,6 +27,6 @@ public interface SyncReadOperation<TEntity extends Entity<TKey>, TKey> extends R
      * @param <TResult>   TResult
      * @return TResult
      */
-    <TResult> List<TResult> findList(final FindOptions findOptions, final Class<TResult> resultClass);
+    <TResult> List<TResult> findMany(final FindOptions findOptions, final Class<TResult> resultClass);
 
 }

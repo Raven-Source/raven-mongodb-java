@@ -315,7 +315,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
     protected Mono<UpdateResult> doUpdate(@Nullable final ClientSession session
             , @NonNull final UpdateOptions options
-            , final UpdateType updateType) {
+            , final ExecuteType executeType) {
 
         if (options.filter() == null) {
             options.filter(Filters.empty());
@@ -328,7 +328,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                         .hint(options.hint())
                         .upsert(options.upsert());
 
-        if (updateType == UpdateType.ONE) {
+        if (executeType == ExecuteType.ONE) {
 
             if (session == null) {
                 return Mono.from(
@@ -356,6 +356,52 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
             }
         }
+    }
+
+    protected Mono<DeleteResult> doDelete(@Nullable final ClientSession session
+            , @NonNull final DeleteOptions options
+            , final ExecuteType executeType) {
+
+        if (options.filter() == null) {
+            options.filter(Filters.empty());
+        }
+
+        callGlobalInterceptors(PreDelete.class, null, options);
+
+        com.mongodb.client.model.DeleteOptions deleteOptions =
+                new com.mongodb.client.model.DeleteOptions()
+                        .hint(options.hint());
+
+        if (executeType == ExecuteType.ONE) {
+            if (session == null) {
+
+                return Mono.from(
+                        getCollection(options.writeConcern())
+                                .deleteOne(options.filter(), deleteOptions)
+                );
+            } else {
+
+                return Mono.from(
+                        getCollection(options.writeConcern())
+                                .deleteOne(session, options.filter(), deleteOptions)
+                );
+            }
+        } else {
+            if (session == null) {
+
+                return Mono.from(
+                        getCollection(options.writeConcern())
+                                .deleteMany(options.filter(), deleteOptions)
+                );
+            } else {
+
+                return Mono.from(
+                        getCollection(options.writeConcern())
+                                .deleteMany(session, options.filter(), deleteOptions)
+                );
+            }
+        }
+
     }
 
     protected Mono<TEntity> doFindOneAndUpdate(@Nullable final ClientSession session
@@ -419,55 +465,29 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
         }
     }
 
-    protected Mono<DeleteResult> doDeleteOne(@Nullable final ClientSession session
-            , @NonNull final DeleteOptions options) {
-
-        if (options.filter() == null) {
-            options.filter(Filters.empty());
-        }
-
-        callGlobalInterceptors(PreDelete.class, null, options);
-
-        com.mongodb.client.model.DeleteOptions deleteOptions =
-                new com.mongodb.client.model.DeleteOptions()
-                        .hint(options.hint());
-
-        if (session == null) {
-
-            return Mono.from(
-                    getCollection(options.writeConcern()).deleteOne(options.filter(), deleteOptions)
-            );
-        } else {
-
-            return Mono.from(
-                    getCollection(options.writeConcern()).deleteOne(session, options.filter(), deleteOptions)
-            );
-        }
-    }
-
-    protected Mono<DeleteResult> doDeleteMany(@Nullable final ClientSession session
-            , @NonNull final DeleteOptions options) {
-
-        if (options.filter() == null) {
-            options.filter(Filters.empty());
-        }
-
-        com.mongodb.client.model.DeleteOptions deleteOptions =
-                new com.mongodb.client.model.DeleteOptions()
-                        .hint(options.hint());
-
-        if (session == null) {
-
-            return Mono.from(
-                    getCollection(options.writeConcern()).deleteMany(options.filter(), deleteOptions)
-            );
-        } else {
-
-            return Mono.from(
-                    getCollection(options.writeConcern()).deleteMany(session, options.filter(), deleteOptions)
-            );
-        }
-    }
+//    protected Mono<DeleteResult> doDeleteMany(@Nullable final ClientSession session
+//            , @NonNull final DeleteOptions options) {
+//
+//        if (options.filter() == null) {
+//            options.filter(Filters.empty());
+//        }
+//
+//        com.mongodb.client.model.DeleteOptions deleteOptions =
+//                new com.mongodb.client.model.DeleteOptions()
+//                        .hint(options.hint());
+//
+//        if (session == null) {
+//
+//            return Mono.from(
+//                    getCollection(options.writeConcern()).deleteMany(options.filter(), deleteOptions)
+//            );
+//        } else {
+//
+//            return Mono.from(
+//                    getCollection(options.writeConcern()).deleteMany(session, options.filter(), deleteOptions)
+//            );
+//        }
+//    }
 
     /**
      * @param updateEntity Entity

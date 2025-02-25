@@ -62,7 +62,7 @@ public class ReactiveMongoRepositoryTest {
         }
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
-        repos.insertBatch(list).block();
+        repos.insertMany(list).block();
 
         for (User user : list) {
             Assert.assertNotEquals(user.getId().longValue(), 0);

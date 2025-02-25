@@ -1,4 +1,4 @@
-package org.raven.mongodb.reactive;
+package org.raven.mongodb.test;
 
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
@@ -14,19 +14,20 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.raven.mongodb.reactive.withobjectid.User_ObjectIDRepository;
+import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.test.model.User_ObjectID;
+import org.raven.mongodb.test.withobjectid.User_ObjectIDRepository;
 import org.raven.mongodb.test.model.User_StringID;
-import org.raven.mongodb.reactive.withstringid.User_StringIDRepository;
-import reactor.core.publisher.Mono;
+import org.raven.mongodb.test.withstringid.User_StringIDRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
-@SuppressWarnings({"unchecked"})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserServiceTest {
     private static List<String> abcList = new ArrayList<String>();
+    private static List<String> objectIDList = new ArrayList<>();
 
     static User_StringIDRepository usRep = null;
     static User_ObjectIDRepository uoRep = null;
@@ -37,8 +38,8 @@ public class UserServiceTest {
         usRep = new User_StringIDRepository();
         uoRep = new User_ObjectIDRepository();
 
-        Mono.from(usRep.getDatabase().getCollection(usRep.getCollectionName()).drop()).block();
-        Mono.from(uoRep.getDatabase().getCollection(usRep.getCollectionName()).drop()).block();
+        usRep.getDatabase().getCollection(usRep.getCollectionName()).drop();
+        uoRep.getDatabase().getCollection(usRep.getCollectionName()).drop();
 
         //#region 初始化abcList
         abcList.add("a");
@@ -168,42 +169,42 @@ public class UserServiceTest {
             int random1 = GetRandomInt(0, 26);
             int random2 = GetRandomInt(0, 26);
             //String id = abcList.get(random1) + "_" + abcList.get(random2) + "_" + i;
-            String id = UUID.randomUUID().toString();
+//            String id = UUID.randomUUID().toString();
             User_StringID us = null;
             if (i % 2 == 0) {
-                us = GetUS(id, "RandomMan1");
+                us = GetUS(null, "RandomMan1");
             } else {
-                us = GetUS(id, "RandomMan2", null, null);
+                us = GetUS(null, "RandomMan2", null, null);
             }
             usList.add(us);
         }
-        usRep.insertMany(usList).block();
+        usRep.insertMany(usList);
         //#endregion
 
         //#region Insert
         User_StringID us2 = GetUS("def_456", "aa", null, null);
-        usRep.insert(us2).block();
+        usRep.insert(us2);
         Assert.assertEquals(us2.getId(), "def_456");
         Assert.assertEquals(us2.getName(), "aa");
 
         User_StringID us3 = GetUS("ghi_789", "bb", null, null);
-        usRep.insert(us3).block();
+        usRep.insert(us3);
         Assert.assertEquals(us3.getId(), "ghi_789");
 
         User_StringID us4 = GetUS("jkl_101112", "cc", null, null);
-        usRep.insert(us4).block();
+        usRep.insert(us4);
         Assert.assertEquals(us4.getId(), "jkl_101112");
 
         User_StringID us5 = GetUS("mno_131415", "d", null, null);
-        usRep.insert(us5).block();
+        usRep.insert(us5);
         Assert.assertEquals(us5.getId(), "mno_131415");
 
         User_StringID us1 = GetUS("abc_123", "aa");
-        usRep.insert(us1, WriteConcern.ACKNOWLEDGED).block();
+        usRep.insert(us1, WriteConcern.ACKNOWLEDGED);
         Assert.assertEquals(us1.getId(), "abc_123");
 
         User_StringID us11 = GetUS("abc_123", "aa");
-        usRep.insert(us11, WriteConcern.ACKNOWLEDGED).block();
+        usRep.insert(us11, WriteConcern.ACKNOWLEDGED);
         Assert.assertEquals(us11.getId(), "abc_123");
         //#endregion
     }
@@ -218,11 +219,11 @@ public class UserServiceTest {
     @Test
     public void a02Get() throws MongoException {
         String id = "abc_123";//有
-        User_StringID us = usRep.findOne(id).block().orElse(null);
+        User_StringID us = usRep.findOne(id);
         Assert.assertEquals(us.getId(), id);
 
         String id2 = "a1234";//没有
-        User_StringID us2 = usRep.findOne(id2).block().orElse(null);
+        User_StringID us2 = usRep.findOne(id2);
         Assert.assertNull(us2);
     }
 
@@ -238,7 +239,7 @@ public class UserServiceTest {
         String id = "abc_123";//有
 
         Bson filter = Filters.or(Filters.eq("_id", "abc_123"), Filters.eq("_id", "def_456"));
-        List<User_StringID> usList1 = usRep.findMany(filter).block();
+        List<User_StringID> usList1 = usRep.findMany(filter);
         Assert.assertNotNull(usList1);
         Assert.assertTrue(usList1.size() >= 1);
 
@@ -246,8 +247,9 @@ public class UserServiceTest {
         includeFields.add("_id");
         includeFields.add("ClassMap");
         includeFields.add("Name");
+
         Bson sort = Sorts.descending("Name");
-        List<User_StringID> usList2 = usRep.findMany(filter, Projections.include(includeFields), sort, 100, 1).block();
+        List<User_StringID> usList2 = usRep.findMany(filter, Projections.include(includeFields), sort, 100, 1);
         Assert.assertNotNull(usList2);
         Assert.assertTrue(usList2.size() >= 0);
         Assert.assertNotNull(usList2.get(0).getName());
@@ -265,19 +267,19 @@ public class UserServiceTest {
     @Test
     public void a04Update() throws MongoException {
         String id = "abc_123";//有
-        long updateResult1 = usRep.updateOne(Filters.eq("_id", id), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED).block();
-        Assert.assertEquals(updateResult1, 1L);
+        long updateResult1 = usRep.updateOne(Filters.eq("_id", id), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(1L, updateResult1);
 
         User_StringID us = GetUS(id, "UUU");
-        long updateResult2 = usRep.updateOne(Filters.eq("_id", id), us, false, WriteConcern.ACKNOWLEDGED).block();
+        long updateResult2 = usRep.updateOne(Filters.eq("_id", id), us, false, WriteConcern.ACKNOWLEDGED);
         Assert.assertEquals(updateResult2, 1L);
 
         String id2 = "sdsdfsd21f3d123123";//没有
-        long updateResult3 = usRep.updateOne(Filters.eq("_id", id2), Updates.set("Name", "Update_OK"), true, WriteConcern.ACKNOWLEDGED).block();
+        long updateResult3 = usRep.updateOne(Filters.eq("_id", id2), Updates.set("Name", "Update_OK"), true, WriteConcern.ACKNOWLEDGED);
 
         Bson updateManyFilter = Filters.or(Filters.eq("_id", id), Filters.eq("_id", id2));
-        long updateResult4 = usRep.updateMany(updateManyFilter, Updates.set("Name", "Update_OK"), WriteConcern.ACKNOWLEDGED).block();
-        Assert.assertTrue(updateResult4 >= 1L);
+        long updateResult4 = usRep.updateMany(updateManyFilter, Updates.set("Name", "Update_OK"), WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(1L, updateResult4);
     }
 
     /**
@@ -295,18 +297,18 @@ public class UserServiceTest {
         String id2 = "sdsdfsd21f3d";//没有
         String id3 = "def_456";//有（删除测试）
 
-        User_StringID us = usRep.findOneAndUpdate(Filters.eq("_id", id), Updates.set("Name", "FOU_OK"), false, Sorts.descending("_id")).block();
+        User_StringID us = usRep.findOneAndUpdate(Filters.eq("_id", id), Updates.set("Name", "FOU_OK"), false, Sorts.descending("_id"));
         Assert.assertNotNull(us);
         Assert.assertEquals(us.getId(), id);
         //Assert.assertEquals(us.getName(),"FOU_OK");
 
-        User_StringID us2 = usRep.findOneAndUpdate(Filters.eq("_id", id2), Updates.set("Name", "FOU_OK"), false, Sorts.descending("_id")).block();
+        User_StringID us2 = usRep.findOneAndUpdate(Filters.eq("_id", id2), Updates.set("Name", "FOU_OK"), false, Sorts.descending("_id"));
         Assert.assertNull(us2);
 
-        User_StringID us3 = usRep.findOneAndDelete(Filters.eq("_id", id2)).block();
+        User_StringID us3 = usRep.findOneAndDelete(Filters.eq("_id", id2));
         Assert.assertNull(us3);
 
-        User_StringID us4 = usRep.findOneAndDelete(Filters.eq("_id", id3)).block();
+        User_StringID us4 = usRep.findOneAndDelete(Filters.eq("_id", id3));
         Assert.assertNotNull(us4);
         Assert.assertEquals(us4.getId(), id3);
     }
@@ -324,14 +326,14 @@ public class UserServiceTest {
         String id = "ghi_789";//有
         String id2 = "12321dsfdf";//没有
         String id3 = "mno_131415";//有
-        Long drl1 = usRep.deleteOne(Filters.eq("_id", id)).block();
+        Long drl1 = usRep.deleteOne(Filters.eq("_id", id));
 
-        Long drl2 = usRep.deleteOne(Filters.eq("_id", id2), WriteConcern.ACKNOWLEDGED).block();
+        Long drl2 = usRep.deleteOne(Filters.eq("_id", id2), WriteConcern.ACKNOWLEDGED);
         Assert.assertNotNull(drl2);
-        Assert.assertEquals((long) drl2, 0L);
+        Assert.assertEquals(0L, (long) drl2);
 
         Bson filter = Filters.and(Filters.eq("_id", id), Filters.eq("_id", id2), Filters.eq("_id", id3));
-        Long drl3 = usRep.deleteMany(filter).block();
+        Long drl3 = usRep.deleteMany(filter);
     }
     //#endregion
 
@@ -348,12 +350,12 @@ public class UserServiceTest {
     public void a07InsertObjectID() throws MongoException {
         //#region Insert
         User_ObjectID us1 = GetUO("bb");
-        uoRep.insert(us1, WriteConcern.ACKNOWLEDGED).block();
+        uoRep.insert(us1, WriteConcern.ACKNOWLEDGED);
         //Assert.assertNull(us1.getId());
         Assert.assertEquals(us1.getName(), "bb");
 
         User_ObjectID us2 = GetUO("bb");
-        uoRep.insert(us2).block();
+        uoRep.insert(us2);
         //Assert.assertNull(us2.getId());
         Assert.assertEquals(us2.getName(), "bb");
 
@@ -370,7 +372,7 @@ public class UserServiceTest {
             User_ObjectID us = GetUO(name);
             usList.add(us);
         }
-        uoRep.insertMany(usList).block();
+        uoRep.insertMany(usList);
         try {
             for (User_ObjectID userValue : usList) {
                 //Assert.assertNotNull(userValue.getId());
@@ -394,12 +396,12 @@ public class UserServiceTest {
      */
     @Test
     public void a08GetObjectID() throws MongoException {
-        User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb")).block().orElse(null);
+        User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb"));
         Assert.assertNotNull(getUo);
 
-        User_ObjectID uo1 = uoRep.findOne(new ObjectId(getUo.getId().toString())).block().orElse(null); //有数据
-        User_ObjectID uo3 = uoRep.findOne(Filters.eq("_id", "ObjectId(\"" + getUo.getId().toString() + "\")")).block().orElse(null); //取不到数据
-        User_ObjectID uo5 = uoRep.findOne(Filters.eq("_id", getUo.getId())).block().orElse(null);//有数据
+        User_ObjectID uo1 = uoRep.findOne(new ObjectId(getUo.getId().toString())); //有数据
+        User_ObjectID uo5 = uoRep.findOne(Filters.eq("_id", getUo.getId()));//有数据
+        User_ObjectID uo3 = uoRep.findOne(Filters.eq("_id", "ObjectId(\"" + getUo.getId().toString() + "\")")); //取不到数据
         Assert.assertNotNull(uo1);
         Assert.assertNotNull(uo5);
         Assert.assertNull(uo3);
@@ -407,28 +409,29 @@ public class UserServiceTest {
 
         //根据ID获取一条实体数据
         ObjectId id3 = new ObjectId(getUo.getId().toString());
-        User_ObjectID uoModel3 = uoRep.findOne(id3).block().orElse(null);
+        User_ObjectID uoModel3 = uoRep.findOne(id3);
 
-        List<User_ObjectID> uoList3 = uoRep.findMany(Filters.eq("Name", "bb")).block();
+        List<User_ObjectID> uoList3 = uoRep.findMany(Filters.eq("Name", "bb"));
 
         //新增一条实体数据
         User_ObjectID us2 = GetUO("啦啦啦啦11");
-        uoRep.insert(us2).block();
+        uoRep.insert(us2);
 
 
         User_ObjectID uoModel = GetUO("啦啦啦啦11");
         Bson filterUpdate = Filters.eq("Name", "啦啦啦啦13");
-        long count2 = uoRep.count(filterUpdate).block();
-        long update = uoRep.updateOne(filterUpdate, uoModel, true, null).block();
+        long count2 = uoRep.count(filterUpdate);
+        long update = uoRep.updateOne(filterUpdate, uoModel, true, null);
         //BsonValue bv = update.getUpsertedId();
 
         Bson filter = Filters.eq("Name", "bb");
-        long count = uoRep.count(filter).block();
+        long count = uoRep.count(filter);
 
         //自动生成ObjectId
         ObjectId oi = new ObjectId();
 
-        List<User_ObjectID> uoList = uoRep.findMany(filter).block();
+        List<User_ObjectID> uoList = uoRep.findMany(filter);
+
         Assert.assertNotNull(uoList);
         Assert.assertTrue(uoList.size() >= 1);
         Assert.assertNotNull(uoList.get(0).getId());
@@ -442,19 +445,19 @@ public class UserServiceTest {
      */
     @Test
     public void a09DeleteObjectID() throws MongoException {
-        /*Bson filterList = null;
-        for(String objID : ObjectIDList){
-            Bson filter = Filters.eq("_id",objID);
-            if (filterList == null) {
-                filterList = filter;
-            }
-            else{
-                filterList = Filters.and(filterList,filter);
-            }
+
+        List<String> ids = uoRep.findMany(new FindOptions().skip(10).limit(10))
+                .stream().map(x -> x.getId().toHexString()).collect(Collectors.toList());
+
+        objectIDList.addAll(ids);
+
+        List<Bson> filterList = new ArrayList<>();
+        for (String objID : objectIDList) {
+            Bson filter = Filters.eq("_id", new ObjectId(objID));
+            filterList.add(filter);
         }
-        DeleteResult drl = uoRep.deleteMany(filterList,WriteConcern.ACKNOWLEDGED);
-        Assert.assertNotNull(drl);
-        Assert.assertTrue(drl.getDeletedCount() == ObjectIDList.size());*/
+        long drl = uoRep.deleteMany(Filters.or(filterList), WriteConcern.ACKNOWLEDGED);
+        Assert.assertEquals(drl, objectIDList.size());
     }
 
     /**
@@ -466,13 +469,13 @@ public class UserServiceTest {
      */
     @Test
     public void a10UpdateObjectID() throws MongoException {
-        User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb")).block().orElse(null);
+        User_ObjectID getUo = uoRep.findOne(Filters.eq("Name", "bb"));
         Assert.assertNotNull(getUo);
-        long updateResult1 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED).block();
+        long updateResult1 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), Updates.set("Name", "Update_OK"), false, WriteConcern.ACKNOWLEDGED);
         Assert.assertEquals(updateResult1, 1L);
 
         User_ObjectID us = GetUO("UpOK");
-        long updateResult2 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), us, true, WriteConcern.ACKNOWLEDGED).block();
+        long updateResult2 = uoRep.updateOne(Filters.eq("_id", getUo.getId()), us, true, WriteConcern.ACKNOWLEDGED);
         Assert.assertTrue(updateResult2 >= 0);
     }
     //#endregion

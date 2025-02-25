@@ -14,16 +14,15 @@ public interface ModifyExecutor<TEntity extends Entity<TKey>, TKey, TInsertOneRe
 
     TInsertOneResult doInsert(final TEntity entity, final WriteConcern writeConcern);
 
-    TInsertManyResult doInsertBatch(final List<TEntity> entities, final WriteConcern writeConcern);
+    TInsertManyResult doInsertMany(final List<TEntity> entities, final WriteConcern writeConcern);
 
-    TUpdateResult doUpdate(final UpdateOptions options, final UpdateType updateType);
+    TUpdateResult doUpdate(final UpdateOptions options, final ExecuteType executeType);
+
+    TDeleteResult doDelete(final DeleteOptions options, final ExecuteType executeType);
 
     TFindOneAndModifyResult doFindOneAndUpdate(final FindOneAndUpdateOptions options);
 
     TFindOneAndModifyResult doFindOneAndDelete(final FindOneAndDeleteOptions options);
 
-    TDeleteResult doDeleteOne(final DeleteOptions options);
-
-    TDeleteResult doDeleteMany(final DeleteOptions options);
 
 }

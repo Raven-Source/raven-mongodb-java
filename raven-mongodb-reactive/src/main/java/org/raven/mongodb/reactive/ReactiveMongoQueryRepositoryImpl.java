@@ -96,14 +96,15 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
     }
 
     @Override
-    public <TResult> Mono<List<TResult>> findList(FindOptions findOptions, Class<TResult> resultClass) {
-        return operation.findList(findOptions, resultClass);
+    public <TResult> Mono<List<TResult>> findMany(FindOptions findOptions, Class<TResult> resultClass) {
+        return operation.findMany(findOptions, resultClass);
     }
 
     //#endregion
 
     //region protected
 
+    @Override
     public ReactiveReadOperation<TEntity, TKey> findWithClientSession(@Nullable ClientSession clientSession) {
         if (clientSession == null) {
             return operation;

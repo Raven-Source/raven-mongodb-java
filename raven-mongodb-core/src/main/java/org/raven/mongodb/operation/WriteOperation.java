@@ -42,8 +42,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @param entities entities
      * @return InsertManyResult
      */
-    default TInsertManyResult insertBatch(final List<TEntity> entities) {
-        return this.insertBatch(entities, null);
+    default TInsertManyResult insertMany(final List<TEntity> entities) {
+        return this.insertMany(entities, null);
     }
 
     /**
@@ -51,9 +51,9 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @param writeConcern {{@link WriteConcern}}
      * @return InsertManyResult
      */
-    default TInsertManyResult insertBatch(final List<TEntity> entities, final WriteConcern writeConcern) {
+    default TInsertManyResult insertMany(final List<TEntity> entities, final WriteConcern writeConcern) {
 
-        return modifyExecutor().doInsertBatch(entities, writeConcern);
+        return modifyExecutor().doInsertMany(entities, writeConcern);
     }
 
     //#endregion
@@ -245,7 +245,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      */
     default TUpdateResult updateOne(final UpdateOptions options) {
 
-        return modifyExecutor().doUpdate(options, UpdateType.ONE);
+        return modifyExecutor().doUpdate(options, ExecuteType.ONE);
     }
 
     /**
@@ -341,7 +341,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     default TUpdateResult updateMany(final UpdateOptions options) {
 
         options.upsert(false);
-        return modifyExecutor().doUpdate(options, UpdateType.MANY);
+        return modifyExecutor().doUpdate(options, ExecuteType.MANY);
     }
 
     //#endregion
@@ -557,7 +557,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @return DeleteResult
      */
     default TDeleteResult deleteOne(final DeleteOptions options) {
-        return modifyExecutor().doDeleteOne(options);
+        return modifyExecutor().doDelete(options, ExecuteType.ONE);
     }
 
     /**
@@ -600,7 +600,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @return DeleteResult
      */
     default TDeleteResult deleteMany(final DeleteOptions options) {
-        return modifyExecutor().doDeleteMany(options);
+        return modifyExecutor().doDelete(options, ExecuteType.MANY);
     }
 
 
