@@ -475,6 +475,13 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
 
     default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
                                                      final UpdateExpression<TEntity> updateExpression,
+                                                     final SortExpression<TEntity> sortExpression) {
+
+        return this.findOneAndUpdate(filterExpression, updateExpression, sortExpression, null);
+    }
+
+    default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
+                                                     final UpdateExpression<TEntity> updateExpression,
                                                      final SortExpression<TEntity> sortExpression,
                                                      final HintExpression<TEntity> hintExpression) {
 
@@ -579,6 +586,12 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression) {
 
         return this.findOneAndDelete(filterExpression, null, null);
+    }
+
+    default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,
+                                                     final SortExpression<TEntity> sortExpression) {
+
+        return this.findOneAndDelete(filterExpression, sortExpression, null);
     }
 
     default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,

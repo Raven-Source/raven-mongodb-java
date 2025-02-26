@@ -144,9 +144,18 @@ public class MongoRepositoryTest extends MongoRepositoryTestBase {
         );
 
         Long uid = user.getId();
-        long result = ordersRepository.updateOne(
+        Orders orders = ordersRepository.findOneAndUpdate(
+                f -> f.eq(Fields.uid, uid).eq(Fields.isPay, false),
+                u -> u.inc(Fields.version, 123).set(Fields.isPay, true)
+        );
+
+        System.out.println("orders.version: " + orders.getVersion());
+
+        orders = ordersRepository.findOneAndDelete(orders.getId());
+
+        orders = ordersRepository.findOneAndDelete(
                 f -> f.eq(Fields.uid, uid),
-                u -> u.set(Fields.itemsId, 123)
+                s -> s.desc(Fields.createTime)
         );
 
     }

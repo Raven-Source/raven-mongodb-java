@@ -1,5 +1,7 @@
 package org.raven.mongodb.reactive;
 
+import org.raven.mongodb.test.model.Mall;
+
 public class MallRepositoryImpl extends ReactiveMongoRepositoryImpl<Mall, String> {
     public MallRepositoryImpl() {
         super(MongoSessionInstance.mongoSession);

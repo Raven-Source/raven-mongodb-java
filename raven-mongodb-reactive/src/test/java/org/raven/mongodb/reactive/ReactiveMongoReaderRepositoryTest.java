@@ -7,11 +7,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.raven.mongodb.criteria.FindOptions;
+import org.raven.mongodb.test.model.User;
+import org.raven.mongodb.test.model.User2;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 
 @SuppressWarnings("")
 public class ReactiveMongoReaderRepositoryTest {
@@ -43,30 +47,59 @@ public class ReactiveMongoReaderRepositoryTest {
 //    }
 
     @Test
-    public void getList() {
+    public void getList() throws Exception {
 
-        List<User> list = null;
+        Semaphore semaphore = new Semaphore(0);
 
         ReactiveMongoRepository<User, Long> repos = new UserReactiveRepositoryImpl();
-        list = repos.findMany(FindOptions.create()).block();
-        Assert.assertNotEquals(list.size(), 0);
+        repos.findMany(FindOptions.create())
+                .subscribe(
+                        list -> {
+                            Assert.assertNotEquals(list.size(), 0);
+                            System.out.println("list.size: " + list.size());
+                            semaphore.release();
+                        }
+                );
 
-        list = repos.findMany(Filters.gte("_id", 1)).block();
-        Assert.assertNotEquals(list.size(), 0);
+        semaphore.acquire(1);
 
-        for (User user : list) {
-            Assert.assertNotNull(user.getName());
-        }
+        repos.findMany(Filters.gte("_id", 1))
+                .subscribe(
+                        list -> {
+                            Assert.assertNotEquals(list.size(), 0);
 
-        list = repos.findMany(Filters.eq("_id", 1)).block();
-        Assert.assertEquals(list.size(), 1);
+                            for (User user : list) {
+                                Assert.assertNotNull(user.getName());
+                            }
+                            System.out.println("list.size: " + list.size());
+                            semaphore.release();
+                        }
+                );
 
+        semaphore.acquire(1);
 
-        list = repos.findMany(null, null, Sorts.descending("_id"), 1, 0).block();
-        Assert.assertNotNull(list.get(0));
-        Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0).getId().longValue(), 10);
+        repos.findMany(Filters.eq("_id", 1))
+                .subscribe(list -> {
 
+                    Assert.assertEquals(list.size(), 1);
+                    System.out.println("list.size: " + list.size());
+                    semaphore.release();
+                });
+
+        semaphore.acquire(1);
+
+        repos.findMany(null, null, Sorts.descending("_id"), 1, 0)
+                .subscribe(list -> {
+
+                    Assert.assertNotNull(list.get(0));
+                    Assert.assertEquals(list.size(), 1);
+                    Assert.assertEquals(list.get(0).getId().longValue(), 10);
+                    System.out.println("list.size: " + list.size());
+
+                    semaphore.release();
+                });
+
+        semaphore.acquire(1);
     }
 
     @Test

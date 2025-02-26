@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.raven.mongodb.criteria.CountOptions;
+import org.raven.mongodb.test.model.Mall;
+import org.raven.mongodb.test.model.User;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
