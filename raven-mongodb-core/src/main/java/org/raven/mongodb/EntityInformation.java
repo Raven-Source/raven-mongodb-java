@@ -17,6 +17,8 @@ public interface EntityInformation<TEntity, TKey> extends EntityMetadata<TEntity
 
     Class<TKey> getIdType();
 
+    String getIdName();
+
 //    IdGenerationType getIdGenerationType();
 
     BsonDocument toBsonDocument(TEntity entity);

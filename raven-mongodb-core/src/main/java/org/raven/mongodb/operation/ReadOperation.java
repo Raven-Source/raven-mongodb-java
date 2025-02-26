@@ -5,7 +5,6 @@ import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.criteria.*;
-import org.raven.mongodb.contants.BsonConstant;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -14,7 +13,8 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 20:49
  */
-public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult, TManyResult, TCountResult, TExistsResult> {
+public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult, TManyResult, TCountResult, TExistsResult>
+        extends KeyFilter<TKey> {
 
     //#region get
 
@@ -50,9 +50,7 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
     default TSingleResult findOne(final TKey id, final Bson projection
             , final ReadPreference readPreference) {
 
-        Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-
-        return this.findOne(filter, projection, null, null, readPreference);
+        return this.findOne(filterById(id), projection, null, null, readPreference);
     }
 
     /**
@@ -209,7 +207,7 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
      * @return Result
      */
     default TManyResult findAll() {
-        return this.findMany((Bson) null);
+        return this.findMany(Filters.empty());
     }
 
     /**
@@ -275,112 +273,6 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         options.sort(sort);
 
         return this.findMany(options);
-    }
-
-
-    /**
-     * 数量
-     *
-     * @param filter 查询条件
-     * @return count
-     */
-    default TCountResult count(Bson filter) {
-        return this.count(filter, null, null);
-    }
-
-    /**
-     * 数量
-     *
-     * @param filter         查询条件
-     * @param hint           hint索引
-     * @param readPreference 访问设置
-     * @return count
-     */
-    default TCountResult count(Bson filter, Bson hint
-            , @Nullable ReadPreference readPreference) {
-
-        return this.count(filter, 0, 0, hint, readPreference);
-    }
-
-
-    /**
-     * 数量
-     *
-     * @param filter         查询条件
-     * @param limit          limit
-     * @param skip           skip
-     * @param hint           hint索引
-     * @param readPreference 访问设置
-     * @return count
-     */
-    default TCountResult count(Bson filter, int limit, int skip, Bson hint
-            , @Nullable ReadPreference readPreference) {
-
-        CountOptions options = (CountOptions) new CountOptions()
-                .limit(limit)
-                .skip(skip)
-                .filter(filter)
-                .hint(hint);
-
-        if (readPreference != null) {
-
-            options.readPreference(readPreference);
-        }
-
-        return this.count(options);
-    }
-
-
-    /**
-     * 数量
-     *
-     * @param countOptions CountOptions
-     * @return count
-     */
-    default TCountResult count(CountOptions countOptions) {
-        return findExecutor().doCount(countOptions);
-    }
-
-    /**
-     * 是否存在
-     *
-     * @param filter conditions
-     * @return exists
-     */
-    default TExistsResult exists(Bson filter) {
-        return this.exists(filter, null, null);
-    }
-
-    /**
-     * 是否存在
-     *
-     * @param filter         conditions
-     * @param hint           hint
-     * @param readPreference ReadPreference
-     * @return exists
-     */
-    default TExistsResult exists(Bson filter, Bson hint
-            , @Nullable ReadPreference readPreference) {
-        ExistsOptions options = (ExistsOptions) new ExistsOptions()
-                .filter(filter)
-                .hint(hint);
-
-        if (readPreference != null) {
-
-            options.readPreference(readPreference);
-        }
-
-        return this.exists(options);
-    }
-
-    /**
-     * 是否存在
-     *
-     * @param existsOptions ExistsOptions
-     * @return exists
-     */
-    default TExistsResult exists(ExistsOptions existsOptions) {
-        return findExecutor().doExists(existsOptions);
     }
 
     /**
@@ -498,6 +390,197 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
             findOptions.readPreference(readPreference);
         }
         return findOptions;
+    }
+
+    /**
+     * 全部数量
+     *
+     * @return count
+     */
+    default TCountResult count() {
+        return this.count(Filters.empty());
+    }
+
+    /**
+     * 数量
+     *
+     * @param filter 查询条件
+     * @return count
+     */
+    default TCountResult count(final Bson filter) {
+        return this.count(filter, null, null);
+    }
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return count
+     */
+    default TCountResult count(final Bson filter, @Nullable final Bson hint
+            , @Nullable final ReadPreference readPreference) {
+
+        return this.count(filter, 0, 0, hint, readPreference);
+    }
+
+
+    /**
+     * 数量
+     *
+     * @param filter         查询条件
+     * @param limit          limit
+     * @param skip           skip
+     * @param hint           hint索引
+     * @param readPreference 访问设置
+     * @return count
+     */
+    default TCountResult count(final Bson filter, int limit, int skip, @Nullable final Bson hint
+            , @Nullable final ReadPreference readPreference) {
+
+        CountOptions options = new CountOptions()
+                .limit(limit)
+                .skip(skip)
+                .filter(filter)
+                .hint(hint)
+                .readPreference(readPreference);
+
+        return this.count(options);
+    }
+
+    default TCountResult count(final FilterExpression<TEntity> filterExpression) {
+        return this.count(filterExpression, 0, 0);
+    }
+
+    default TCountResult count(final FilterExpression<TEntity> filterExpression,
+                               int limit, int skip) {
+        return this.count(filterExpression, limit, skip, null);
+    }
+
+    default TCountResult count(final FilterExpression<TEntity> filterExpression,
+                               int limit, int skip,
+                               final HintExpression<TEntity> hintExpression) {
+        return this.count(filterExpression, limit, skip, hintExpression, null);
+    }
+
+    default TCountResult count(final FilterExpression<TEntity> filterExpression,
+                               int limit, int skip,
+                               final HintExpression<TEntity> hintExpression,
+                               final ReadPreference readPreference) {
+
+        final CountOptions options = new CountOptions()
+                .readPreference(readPreference);
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(
+                    filterExpression.toBson(findExecutor().getEntityType())
+            );
+        }
+
+        if (limit > 0) {
+            options.limit(limit);
+        }
+
+        if (skip > 0) {
+            options.skip(skip);
+        }
+
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(
+                    hintExpression.toBson(findExecutor().getEntityType())
+            );
+        }
+
+        return this.count(options);
+
+    }
+
+    /**
+     * 数量
+     *
+     * @param countOptions CountOptions
+     * @return count
+     */
+    default TCountResult count(final CountOptions countOptions) {
+        return findExecutor().doCount(countOptions);
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param id ID
+     * @return exists
+     */
+    default TExistsResult exists(final TKey id) {
+        return this.exists(filterById(id));
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param filter conditions
+     * @return exists
+     */
+    default TExistsResult exists(final Bson filter) {
+        return this.exists(filter, null, null);
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param filter         conditions
+     * @param hint           hint
+     * @param readPreference ReadPreference
+     * @return exists
+     */
+    default TExistsResult exists(final Bson filter, @Nullable final Bson hint
+            , @Nullable final ReadPreference readPreference) {
+        ExistsOptions options = new ExistsOptions()
+                .filter(filter)
+                .hint(hint)
+                .readPreference(readPreference);
+
+        return this.exists(options);
+    }
+
+
+    default TExistsResult exists(final FilterExpression<TEntity> filterExpression) {
+        return this.exists(filterExpression, null);
+    }
+
+    default TExistsResult exists(final FilterExpression<TEntity> filterExpression,
+                                 final HintExpression<TEntity> hintExpression) {
+        return this.exists(filterExpression, hintExpression, null);
+    }
+
+    default TExistsResult exists(final FilterExpression<TEntity> filterExpression,
+                                 final HintExpression<TEntity> hintExpression,
+                                 final ReadPreference readPreference) {
+
+        final ExistsOptions options = new ExistsOptions()
+                .readPreference(readPreference);
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(filterExpression.toBson(findExecutor().getEntityType()));
+        }
+
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(hintExpression.toBson(findExecutor().getEntityType()));
+        }
+
+        return this.exists(options);
+
+    }
+
+    /**
+     * 是否存在
+     *
+     * @param existsOptions ExistsOptions
+     * @return exists
+     */
+    default TExistsResult exists(ExistsOptions existsOptions) {
+        return findExecutor().doExists(existsOptions);
     }
 
     //#endregion

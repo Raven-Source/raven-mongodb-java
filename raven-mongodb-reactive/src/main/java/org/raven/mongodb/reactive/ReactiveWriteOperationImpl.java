@@ -108,6 +108,11 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
 //        return baseRepository.doDeleteMany(this.clientSession, options);
 //    }
 
+    @Override
+    public Bson filterById(TKey id) {
+        return baseRepository.filterById(id);
+    }
+
 
     @Override
     public ModifyExecutor<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> modifyExecutor() {

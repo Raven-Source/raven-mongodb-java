@@ -90,6 +90,11 @@ public class SyncReadOperationImpl<TEntity extends Entity<TKey>, TKey> implement
         return this.findOne(_filter, projection, null, options.hint(), options.readPreference()) != null;
     }
 
+    @Override
+    public Bson filterById(TKey id) {
+        return baseRepository.filterById(id);
+    }
+
     //endregion
 
 

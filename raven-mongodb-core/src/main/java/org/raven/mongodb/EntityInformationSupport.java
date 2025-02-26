@@ -5,6 +5,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.raven.commons.data.Entity;
+import org.raven.mongodb.contants.BsonConstant;
 import org.raven.mongodb.util.BsonUtils;
 import org.raven.mongodb.codec.PojoCodecRegistry;
 import org.raven.mongodb.interceptors.EntityInterceptor;
@@ -94,6 +95,11 @@ public class EntityInformationSupport<TEntity extends Entity<TKey>, TKey> implem
 //    public IdGenerationType getIdGenerationType() {
 //        return idGenerationType;
 //    }
+
+    @Override
+    public String getIdName() {
+        return BsonConstant.PRIMARY_KEY_NAME;
+    }
 
     @Override
     public String getEntityName() {

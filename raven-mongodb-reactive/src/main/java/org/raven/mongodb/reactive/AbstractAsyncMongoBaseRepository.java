@@ -318,7 +318,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
             , final ExecuteType executeType) {
 
         if (options.filter() == null) {
-            options.filter(Filters.empty());
+            throw new IllegalArgumentException("filter can not be null");
         }
 
         callGlobalInterceptors(PreUpdate.class, null, options);
@@ -363,7 +363,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
             , final ExecuteType executeType) {
 
         if (options.filter() == null) {
-            options.filter(Filters.empty());
+            throw new IllegalArgumentException("filter can not be null");
         }
 
         callGlobalInterceptors(PreDelete.class, null, options);
@@ -408,7 +408,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
             , @NonNull final FindOneAndUpdateOptions options) {
 
         if (options.filter() == null) {
-            options.filter(Filters.empty());
+            throw new IllegalArgumentException("filter can not be null");
         }
 
         callGlobalInterceptors(PreUpdate.class, null, options);
@@ -440,7 +440,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
             , @NonNull final FindOneAndDeleteOptions options) {
 
         if (options.filter() == null) {
-            options.filter(Filters.empty());
+            throw new IllegalArgumentException("filter can not be null");
         }
 
         callGlobalInterceptors(PreDelete.class, null, options);

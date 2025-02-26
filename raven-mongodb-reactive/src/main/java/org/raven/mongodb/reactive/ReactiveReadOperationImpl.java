@@ -84,6 +84,11 @@ public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> imple
         ).map(Optional::isPresent);
     }
 
+    @Override
+    public Bson filterById(TKey id) {
+        return baseRepository.filterById(id);
+    }
+
     //endregion
 
     @Override

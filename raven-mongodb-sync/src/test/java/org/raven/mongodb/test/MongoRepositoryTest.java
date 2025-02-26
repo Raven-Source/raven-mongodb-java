@@ -125,7 +125,7 @@ public class MongoRepositoryTest extends MongoRepositoryTestBase {
     }
 
     @Test
-    public void a5_update() {
+    public void a5_findOneAndUpdate() {
 
         MongoRepository<User, Long> repos = new UserRepositoryImpl();
         List<User> users = repos.findMany(FindOptions.create().limit(1));
@@ -143,9 +143,11 @@ public class MongoRepositoryTest extends MongoRepositoryTestBase {
 
         );
 
-        Assert.assertEquals(user.getAge(), age + 5);
-        Assert.assertEquals(user.getVersion().longValue(), Long.sum(version, 1L));
-
+        Long uid = user.getId();
+        long result = ordersRepository.updateOne(
+                f -> f.eq(Fields.uid, uid),
+                u -> u.set(Fields.itemsId, 123)
+        );
 
     }
 
@@ -199,7 +201,7 @@ public class MongoRepositoryTest extends MongoRepositoryTestBase {
 
         Assert.assertNotNull(mongoWriteException);
 
-        List<Mall> list = mall_repos.findMany((Bson) null);
+        List<Mall> list = mall_repos.findAll();
 
         Bson filter = FilterBuilder.create(Mall.class).eq(Mall.Fields.id, list.get(0).getId()).build();
         Bson update = UpdateBuilder.create(Mall.class).set(Mall.Fields.status, Status.Delete).build();

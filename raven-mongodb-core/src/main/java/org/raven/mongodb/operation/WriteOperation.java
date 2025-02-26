@@ -6,7 +6,6 @@ import com.mongodb.client.model.ReturnDocument;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
-import org.raven.mongodb.contants.BsonConstant;
 import org.raven.mongodb.criteria.*;
 
 import javax.annotation.Nullable;
@@ -17,7 +16,8 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 21:39
  */
-public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> {
+public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult>
+        extends KeyFilter<TKey> {
 
     //#region insert
 
@@ -63,11 +63,23 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     /**
      * 修改单条数据
      *
+     * @param updateEntity TEntity
+     * @return UpdateResult
+     */
+    default TUpdateResult updateOne(final TEntity updateEntity) {
+
+        return this.updateOne(filterById(updateEntity.getId()), updateEntity);
+    }
+
+    /**
+     * 修改单条数据
+     *
      * @param filter       conditions
      * @param updateEntity TEntity
      * @return UpdateResult
      */
     default TUpdateResult updateOne(final Bson filter, final TEntity updateEntity) {
+
         return this.updateOne(filter, updateEntity, false, null);
     }
 
@@ -119,8 +131,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      */
     default TUpdateResult updateOne(final TKey id, final Bson update) {
 
-        final Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return this.updateOne(filter, update, false, (WriteConcern) null);
+        return this.updateOne(filterById(id), update);
     }
 
     /**
@@ -183,18 +194,21 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
 
     default TUpdateResult updateOne(TKey id,
                                     final UpdateExpression<TEntity> updateExpression) {
-        final FilterExpression<TEntity> filterExpression = f -> f.eq(BsonConstant.PRIMARY_KEY_NAME, id);
+
+        final FilterExpression<TEntity> filterExpression = f -> f.add(filterById(id));
         return this.updateOne(filterExpression, updateExpression, false);
     }
 
     default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
                                     final UpdateExpression<TEntity> updateExpression) {
+
         return this.updateOne(filterExpression, updateExpression, false);
     }
 
     default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
                                     final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert) {
+
         return this.updateOne(filterExpression, updateExpression, isUpsert, null);
     }
 
@@ -202,6 +216,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
                                     final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert,
                                     final HintExpression<TEntity> hintExpression) {
+
         return this.updateOne(filterExpression, updateExpression, isUpsert, hintExpression, null);
     }
 
@@ -211,7 +226,10 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
                                     final HintExpression<TEntity> hintExpression,
                                     final WriteConcern writeConcern) {
 
-        final UpdateOptions options = new UpdateOptions();
+        final UpdateOptions options = new UpdateOptions()
+                .writeConcern(writeConcern)
+                .upsert(isUpsert);
+
         if (!Objects.isNull(filterExpression)) {
             options.filter(
                     filterExpression.toBson(modifyExecutor().getEntityType())
@@ -227,15 +245,9 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
                     hintExpression.toBson(modifyExecutor().getEntityType())
             );
         }
-        options.upsert(isUpsert);
-
-        if (writeConcern != null) {
-            options.writeConcern(writeConcern);
-        }
 
         return this.updateOne(options);
     }
-
 
     /**
      * 修改单条数据
@@ -267,7 +279,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @param writeConcern writeConcern
      * @return UpdateResult
      */
-    default TUpdateResult updateMany(final Bson filter, final Bson update, final WriteConcern writeConcern) {
+    default TUpdateResult updateMany(final Bson filter, final Bson update,
+                                     final @Nullable WriteConcern writeConcern) {
         return this.updateMany(filter, update, (Bson) null, writeConcern);
     }
 
@@ -280,17 +293,20 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @param writeConcern writeConcern
      * @return UpdateResult
      */
-    default TUpdateResult updateMany(final Bson filter, final Bson update, Bson hint, final @Nullable WriteConcern writeConcern) {
+    default TUpdateResult updateMany(final Bson filter, final Bson update,
+                                     final @Nullable Bson hint, final @Nullable WriteConcern writeConcern) {
 
         UpdateOptions options = new UpdateOptions();
         options.filter(filter);
         options.update(update);
         options.hint(hint);
-        if (writeConcern != null) {
-            options.writeConcern(writeConcern);
-        }
+        options.writeConcern(writeConcern);
 
         return this.updateMany(options);
+    }
+
+    default TUpdateResult updateAll(final UpdateExpression<TEntity> updateExpression) {
+        return this.updateMany(f -> f, updateExpression);
     }
 
     default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
@@ -351,6 +367,17 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     /**
      * 找到并更新
      *
+     * @param id     TKey
+     * @param update update
+     * @return FindOneAndModifyResult
+     */
+    default TFindOneAndModifyResult findOneAndUpdate(TKey id, final Bson update) {
+        return this.findOneAndUpdate(filterById(id), update, false, null);
+    }
+
+    /**
+     * 找到并更新
+     *
      * @param filter conditions
      * @param update update
      * @return FindOneAndModifyResult
@@ -400,18 +427,6 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     /**
      * 找到并更新
      *
-     * @param options FindOneAndUpdateOptions
-     * @return FindOneAndModifyResult
-     */
-    default TFindOneAndModifyResult findOneAndUpdate(final FindOneAndUpdateOptions options) {
-        options.returnDocument(ReturnDocument.AFTER);
-
-        return modifyExecutor().doFindOneAndUpdate(options);
-    }
-
-    /**
-     * 找到并更新
-     *
      * @param filter conditions
      * @param entity entity
      * @return FindOneAndModifyResult
@@ -444,6 +459,83 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @return FindOneAndModifyResult
      */
     TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint);
+
+    default TFindOneAndModifyResult findOneAndUpdate(final TKey id,
+                                                     final UpdateExpression<TEntity> updateExpression) {
+
+        final FilterExpression<TEntity> filterExpression = f -> f.add(filterById(id));
+        return this.findOneAndUpdate(filterExpression, updateExpression);
+    }
+
+    default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
+                                                     final UpdateExpression<TEntity> updateExpression) {
+
+        return this.findOneAndUpdate(filterExpression, updateExpression, null, null);
+    }
+
+    default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
+                                                     final UpdateExpression<TEntity> updateExpression,
+                                                     final SortExpression<TEntity> sortExpression,
+                                                     final HintExpression<TEntity> hintExpression) {
+
+        return this.findOneAndUpdate(filterExpression, updateExpression, sortExpression, hintExpression, null);
+    }
+
+    default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
+                                                     final UpdateExpression<TEntity> updateExpression,
+                                                     final SortExpression<TEntity> sortExpression,
+                                                     final HintExpression<TEntity> hintExpression,
+                                                     final WriteConcern writeConcern) {
+
+        final FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+        options.writeConcern(writeConcern);
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(
+                    filterExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        if (!Objects.isNull(updateExpression)) {
+            options.update(
+                    updateExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        if (!Objects.isNull(sortExpression)) {
+            options.sort(
+                    sortExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(
+                    hintExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+
+        return this.findOneAndUpdate(options);
+
+    }
+
+    /**
+     * 找到并更新
+     *
+     * @param options FindOneAndUpdateOptions
+     * @return FindOneAndModifyResult
+     */
+    default TFindOneAndModifyResult findOneAndUpdate(final FindOneAndUpdateOptions options) {
+        options.returnDocument(ReturnDocument.AFTER);
+
+        return modifyExecutor().doFindOneAndUpdate(options);
+    }
+
+    /**
+     * 找到并删除
+     *
+     * @param id ID
+     * @return FindOneAndModifyResult
+     */
+    default TFindOneAndModifyResult findOneAndDelete(TKey id) {
+        return this.findOneAndDelete(filterById(id));
+    }
 
     /**
      * 找到并删除
@@ -484,6 +576,48 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.findOneAndDelete(option);
     }
 
+    default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression) {
+
+        return this.findOneAndDelete(filterExpression, null, null);
+    }
+
+    default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,
+                                                     final SortExpression<TEntity> sortExpression,
+                                                     final HintExpression<TEntity> hintExpression) {
+
+        return this.findOneAndDelete(filterExpression, sortExpression, hintExpression, null);
+    }
+
+    default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,
+                                                     final SortExpression<TEntity> sortExpression,
+                                                     final HintExpression<TEntity> hintExpression,
+                                                     final WriteConcern writeConcern) {
+
+        final FindOneAndDeleteOptions options = new FindOneAndDeleteOptions();
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(
+                    filterExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+
+        if (!Objects.isNull(sortExpression)) {
+            options.sort(
+                    sortExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(
+                    hintExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+
+        options.writeConcern(writeConcern);
+
+        return this.findOneAndDelete(options);
+
+    }
+
     /**
      * 找到并删除
      *
@@ -513,8 +647,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      * @return DeleteResult
      */
     default TDeleteResult deleteOne(final TKey id, final WriteConcern writeConcern) {
-        Bson filter = Filters.eq(BsonConstant.PRIMARY_KEY_NAME, id);
-        return this.deleteOne(filter, writeConcern);
+        return this.deleteOne(filterById(id), writeConcern);
     }
 
     /**
@@ -552,12 +685,46 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.deleteOne(options);
     }
 
+    default TDeleteResult deleteOne(final FilterExpression<TEntity> filterExpression) {
+
+        return this.deleteOne(filterExpression, null, null);
+    }
+
+    default TDeleteResult deleteOne(final FilterExpression<TEntity> filterExpression,
+                                    final HintExpression<TEntity> hintExpression,
+                                    final WriteConcern writeConcern) {
+
+        DeleteOptions options = new DeleteOptions();
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(
+                    filterExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(
+                    hintExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        options.writeConcern(writeConcern);
+
+        return this.deleteOne(options);
+    }
+
     /**
      * @param options DeleteOptions
      * @return DeleteResult
      */
     default TDeleteResult deleteOne(final DeleteOptions options) {
         return modifyExecutor().doDelete(options, ExecuteType.ONE);
+    }
+
+    /**
+     * @return DeleteResult
+     */
+    default TDeleteResult deleteAll() {
+        return this.deleteMany(Filters.empty(), null);
     }
 
     /**
@@ -595,6 +762,34 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.deleteMany(options);
     }
 
+
+    default TDeleteResult deleteMany(final FilterExpression<TEntity> filterExpression) {
+
+        return this.deleteMany(filterExpression, null, null);
+    }
+
+    default TDeleteResult deleteMany(final FilterExpression<TEntity> filterExpression,
+                                     final HintExpression<TEntity> hintExpression,
+                                     final WriteConcern writeConcern) {
+
+        DeleteOptions options = new DeleteOptions();
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(
+                    filterExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(
+                    hintExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        options.writeConcern(writeConcern);
+
+        return this.deleteMany(options);
+    }
+
     /**
      * @param options DeleteOptions
      * @return DeleteResult
@@ -602,7 +797,6 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     default TDeleteResult deleteMany(final DeleteOptions options) {
         return modifyExecutor().doDelete(options, ExecuteType.MANY);
     }
-
 
     //#endregion
 

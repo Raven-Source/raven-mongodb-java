@@ -1,6 +1,7 @@
 package org.raven.mongodb.criteria;
 
 import com.mongodb.ReadPreference;
+import com.mongodb.client.model.Filters;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.bson.BsonInt32;
@@ -19,6 +20,7 @@ public class CountOptions extends BaseFindOptions<CountOptions> {
     private int skip;
 
     public CountOptions() {
+        filter(Filters.empty());
     }
 
     @Override

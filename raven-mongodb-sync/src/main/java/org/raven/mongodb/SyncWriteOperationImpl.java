@@ -93,6 +93,11 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
 //    }
 
     @Override
+    public Bson filterById(TKey id) {
+        return baseRepository.filterById(id);
+    }
+
+    @Override
     public ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor() {
         return modifyExecutor;
     }

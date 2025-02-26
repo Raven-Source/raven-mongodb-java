@@ -1,13 +1,17 @@
 package org.raven.mongodb;
 
+import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
+import org.raven.commons.util.Args;
 import org.raven.mongodb.annotation.PreDelete;
 import org.raven.mongodb.annotation.PreFind;
 import org.raven.mongodb.annotation.PreInsert;
 import org.raven.mongodb.annotation.PreUpdate;
 import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.interceptors.EntityInterceptor;
+import org.raven.mongodb.operation.KeyFilter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -18,7 +22,7 @@ import java.lang.reflect.Type;
  * date 2021/9/20 20:57
  */
 @Slf4j
-public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> {
+public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> implements KeyFilter<TKey> {
 
     protected final EntityInformation<TEntity, TKey> entityInformation;
 
@@ -59,6 +63,12 @@ public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> {
                 ei.preDelete((BaseModifyOptions<?>) options, entityInformation);
             }
         }
+    }
+
+    @Override
+    public Bson filterById(final TKey id) {
+        Args.notNull(id, "entity.id");
+        return Filters.eq(entityInformation.getIdName(), id);
     }
 
     protected FilterBuilder<TEntity> filterBuilder() {
