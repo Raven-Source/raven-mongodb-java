@@ -12,9 +12,7 @@ import org.raven.mongodb.test.model.User2;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
 @SuppressWarnings("")
@@ -88,7 +86,7 @@ public class ReactiveMongoReaderRepositoryTest {
 
         semaphore.acquire(1);
 
-        repos.findMany(null, null, Sorts.descending("_id"), 1, 0)
+        repos.findMany(Filters.empty(), null, Sorts.descending("_id"), 1, 0)
                 .subscribe(list -> {
 
                     Assert.assertNotNull(list.get(0));
