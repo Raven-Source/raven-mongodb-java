@@ -290,21 +290,52 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         return this.findMany(filter, projection, sort, limit, skip, null, null);
     }
 
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @return Result
+     */
     default TManyResult findMany(final FilterExpression<TEntity> filterExpression) {
         return this.findMany(filterExpression, null);
     }
 
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterExpression     {{@link FilterBuilder}}
+     * @param projectionExpression {{@link ProjectionBuilder}}
+     * @return Result
+     */
     default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression) {
         return this.findMany(filterExpression, projectionExpression, null);
     }
 
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterExpression     {{@link FilterBuilder}}
+     * @param projectionExpression {{@link ProjectionBuilder}}
+     * @param sortExpression       {{@link SortBuilder}}
+     * @return Result
+     */
     default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression) {
         return this.findMany(filterExpression, projectionExpression, sortExpression, 0, 0);
     }
 
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterExpression     {{@link FilterBuilder}}
+     * @param projectionExpression {{@link ProjectionBuilder}}
+     * @param sortExpression       {{@link SortBuilder}}
+     * @param limit                limit
+     * @param skip                 skip
+     * @return Result
+     */
     default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression,
@@ -312,6 +343,17 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         return this.findMany(filterExpression, projectionExpression, sortExpression, limit, skip, null);
     }
 
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterExpression     {{@link FilterBuilder}}
+     * @param projectionExpression {{@link ProjectionBuilder}}
+     * @param sortExpression       {{@link SortBuilder}}
+     * @param limit                limit
+     * @param skip                 skip
+     * @param hintExpression       {{@link HintBuilder}}
+     * @return Result
+     */
     default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression,
@@ -320,6 +362,18 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         return this.findMany(filterExpression, projectionExpression, sortExpression, limit, skip, hintExpression, null);
     }
 
+    /**
+     * 根据条件获取实体
+     *
+     * @param filterExpression     {{@link FilterBuilder}}
+     * @param projectionExpression {{@link ProjectionBuilder}}
+     * @param sortExpression       {{@link SortBuilder}}
+     * @param limit                limit
+     * @param skip                 skip
+     * @param hintExpression       {{@link HintBuilder}}
+     * @param readPreference       {{@link ReadPreference}}
+     * @return Result
+     */
     default TManyResult findMany(final FilterExpression<TEntity> filterExpression,
                                  final ProjectionExpression<TEntity> projectionExpression,
                                  final SortExpression<TEntity> sortExpression,
@@ -449,21 +503,54 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         return this.count(options);
     }
 
+    /**
+     * 数量
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @return Result
+     */
     default TCountResult count(final FilterExpression<TEntity> filterExpression) {
         return this.count(filterExpression, 0, 0);
     }
 
+    /**
+     * 数量
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param limit            limit
+     * @param skip             skip
+     * @return Result
+     */
     default TCountResult count(final FilterExpression<TEntity> filterExpression,
                                int limit, int skip) {
         return this.count(filterExpression, limit, skip, null);
     }
 
+    /**
+     * 数量
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param limit            limit
+     * @param skip             skip
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return Result
+     */
     default TCountResult count(final FilterExpression<TEntity> filterExpression,
                                int limit, int skip,
                                final HintExpression<TEntity> hintExpression) {
         return this.count(filterExpression, limit, skip, hintExpression, null);
     }
 
+    /**
+     * 数量
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param limit            limit
+     * @param skip             skip
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param readPreference   {{@link ReadPreference}}
+     * @return Result
+     */
     default TCountResult count(final FilterExpression<TEntity> filterExpression,
                                int limit, int skip,
                                final HintExpression<TEntity> hintExpression,
@@ -544,16 +631,36 @@ public interface ReadOperation<TEntity extends Entity<TKey>, TKey, TSingleResult
         return this.exists(options);
     }
 
-
+    /**
+     * 是否存在
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @return Result
+     */
     default TExistsResult exists(final FilterExpression<TEntity> filterExpression) {
         return this.exists(filterExpression, null);
     }
 
+    /**
+     * 是否存在
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return Result
+     */
     default TExistsResult exists(final FilterExpression<TEntity> filterExpression,
                                  final HintExpression<TEntity> hintExpression) {
         return this.exists(filterExpression, hintExpression, null);
     }
 
+    /**
+     * 是否存在
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param readPreference   {{@link ReadPreference}}
+     * @return Result
+     */
     default TExistsResult exists(final FilterExpression<TEntity> filterExpression,
                                  final HintExpression<TEntity> hintExpression,
                                  final ReadPreference readPreference) {

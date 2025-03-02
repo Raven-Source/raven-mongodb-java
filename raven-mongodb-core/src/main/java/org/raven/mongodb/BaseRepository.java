@@ -25,6 +25,7 @@ import java.lang.reflect.Type;
 public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> implements KeyFilter<TKey> {
 
     protected final EntityInformation<TEntity, TKey> entityInformation;
+    protected final OperationLogger operationLogger;
 
     @SuppressWarnings({"unchecked"})
     protected BaseRepository(final String collectionName) {
@@ -35,6 +36,7 @@ public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> impleme
         Class<TKey> keyClazz = (Class<TKey>) params[1];
 
         this.entityInformation = new EntityInformationSupport<>(entityClazz, keyClazz, collectionName);
+        this.operationLogger = new OperationLogger();
     }
 
     /**
@@ -67,7 +69,7 @@ public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> impleme
 
     @Override
     public Bson filterById(final TKey id) {
-        Args.notNull(id, "entity.id");
+        Args.notNull(id, "entity.getId()");
         return Filters.eq(entityInformation.getIdName(), id);
     }
 

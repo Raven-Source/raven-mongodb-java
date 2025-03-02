@@ -203,6 +203,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
         callGlobalInterceptors(PreFind.class, null, options);
 
+        operationLogger.log("find", options);
+
         FindPublisher<TResult> result;
         if (session == null) {
             result = getCollection(options.readPreference()).find(options.filter(), resultClass);
@@ -228,6 +230,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                 .hint(options.hint())
                 .limit(options.limit())
                 .skip(options.skip());
+
+        operationLogger.log("count", options);
 
         if (session == null) {
             return Mono.from(
@@ -330,6 +334,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
         if (executeType == ExecuteType.ONE) {
 
+            operationLogger.log("updateOne", options);
+
             if (session == null) {
                 return Mono.from(
                         getCollection(options.writeConcern())
@@ -342,6 +348,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                 );
             }
         } else {
+
+            operationLogger.log("updateMany", options);
+
             if (session == null) {
                 return Mono.from(
                         getCollection(options.writeConcern())
@@ -373,6 +382,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                         .hint(options.hint());
 
         if (executeType == ExecuteType.ONE) {
+
+            operationLogger.log("deleteOne", options);
+
             if (session == null) {
 
                 return Mono.from(
@@ -387,6 +399,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                 );
             }
         } else {
+
+            operationLogger.log("deleteMany", options);
+
             if (session == null) {
 
                 return Mono.from(
@@ -420,6 +435,7 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                         .hint(options.hint())
                         .sort(options.sort());
 
+        operationLogger.log("findOneAndUpdate", options);
 
         if (session == null) {
 
@@ -449,6 +465,8 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
                 new com.mongodb.client.model.FindOneAndDeleteOptions()
                         .hint(options.hint())
                         .sort(options.sort());
+
+        operationLogger.log("findOneAndDelete", options);
 
         if (session == null) {
 

@@ -204,6 +204,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
         callGlobalInterceptors(PreFind.class, null, options);
 
+        operationLogger.log("find", options);
+
         FindIterable<TResult> result;
         if (session == null) {
             result = getCollection(options.readPreference()).find(options.filter(), resultClass);
@@ -228,6 +230,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                 .hint(options.hint())
                 .limit(options.limit())
                 .skip(options.skip());
+
+        operationLogger.log("count", options);
 
         if (session == null) {
             return getCollection(options.readPreference()).countDocuments(options.filter(), countOptions);
@@ -304,6 +308,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .upsert(options.upsert());
 
         if (executeType == ExecuteType.ONE) {
+
+            operationLogger.log("updateOne", options);
+
             if (session == null) {
                 return getCollection(options.writeConcern())
                         .updateOne(options.filter(), options.update(), updateOptions);
@@ -312,6 +319,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .updateOne(session, options.filter(), options.update(), updateOptions);
             }
         } else {
+
+            operationLogger.log("updateMany", options);
+
             if (session == null) {
                 return getCollection(options.writeConcern())
                         .updateMany(options.filter(), options.update(), updateOptions);
@@ -337,6 +347,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .hint(options.hint());
 
         if (executeType == ExecuteType.ONE) {
+
+            operationLogger.log("deleteOne", options);
+
             if (session == null) {
 
                 return getCollection(options.writeConcern())
@@ -347,6 +360,9 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .deleteOne(session, options.filter(), deleteOptions);
             }
         } else {
+
+            operationLogger.log("deleteMany", options);
+
             if (session == null) {
 
                 return getCollection(options.writeConcern())
@@ -376,6 +392,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         .hint(options.hint())
                         .sort(options.sort());
 
+        operationLogger.log("findOneAndUpdate", options);
+
         if (session == null) {
             return getCollection(options.writeConcern())
                     .findOneAndUpdate(options.filter(), options.update(), findOneAndUpdateOptions);
@@ -398,6 +416,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                 new com.mongodb.client.model.FindOneAndDeleteOptions()
                         .hint(options.hint())
                         .sort(options.sort());
+
+        operationLogger.log("findOneAndDelete", options);
 
         if (session == null) {
             return getCollection(options.writeConcern())

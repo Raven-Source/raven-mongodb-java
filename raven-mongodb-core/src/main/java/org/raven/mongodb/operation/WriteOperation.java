@@ -192,6 +192,13 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.updateOne(options);
     }
 
+    /**
+     * 修改单条数据
+     *
+     * @param id               TKey
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateOne(TKey id,
                                     final UpdateExpression<TEntity> updateExpression) {
 
@@ -199,12 +206,27 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.updateOne(filterExpression, updateExpression, false);
     }
 
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
                                     final UpdateExpression<TEntity> updateExpression) {
 
         return this.updateOne(filterExpression, updateExpression, false);
     }
 
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param isUpsert         default false, true if a new document should be inserted if there are no matches to the query filter
+     * @return UpdateResult
+     */
     default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
                                     final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert) {
@@ -212,6 +234,15 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.updateOne(filterExpression, updateExpression, isUpsert, null);
     }
 
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param isUpsert         default false, true if a new document should be inserted if there are no matches to the query filter
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
                                     final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert,
@@ -220,6 +251,16 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.updateOne(filterExpression, updateExpression, isUpsert, hintExpression, null);
     }
 
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param isUpsert         default false, true if a new document should be inserted if there are no matches to the query filter
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
                                     final UpdateExpression<TEntity> updateExpression,
                                     final boolean isUpsert,
@@ -309,17 +350,41 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.updateMany(f -> f, updateExpression);
     }
 
+    /**
+     * 修改多条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
                                      final UpdateExpression<TEntity> updateExpression) {
         return this.updateMany(filterExpression, updateExpression, null);
     }
 
+    /**
+     * 修改多条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
                                      final UpdateExpression<TEntity> updateExpression,
                                      final HintExpression<TEntity> hintExpression) {
         return this.updateMany(filterExpression, updateExpression, hintExpression, null);
     }
 
+    /**
+     * 修改多条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
     default TUpdateResult updateMany(final FilterExpression<TEntity> filterExpression,
                                      final UpdateExpression<TEntity> updateExpression,
                                      final HintExpression<TEntity> hintExpression,
@@ -460,6 +525,12 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
      */
     TFindOneAndModifyResult findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint);
 
+    /**
+     * 找到并更新
+     *
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndUpdate(final TKey id,
                                                      final UpdateExpression<TEntity> updateExpression) {
 
@@ -467,12 +538,27 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.findOneAndUpdate(filterExpression, updateExpression);
     }
 
+    /**
+     * 找到并更新
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
                                                      final UpdateExpression<TEntity> updateExpression) {
 
         return this.findOneAndUpdate(filterExpression, updateExpression, null, null);
     }
 
+    /**
+     * 找到并更新
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param sortExpression   {{@link SortBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
                                                      final UpdateExpression<TEntity> updateExpression,
                                                      final SortExpression<TEntity> sortExpression) {
@@ -480,6 +566,15 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.findOneAndUpdate(filterExpression, updateExpression, sortExpression, null);
     }
 
+    /**
+     * 找到并更新
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param sortExpression   {{@link SortBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
                                                      final UpdateExpression<TEntity> updateExpression,
                                                      final SortExpression<TEntity> sortExpression,
@@ -488,6 +583,16 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.findOneAndUpdate(filterExpression, updateExpression, sortExpression, hintExpression, null);
     }
 
+    /**
+     * 找到并更新
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateExpression {{@link UpdateBuilder}}
+     * @param sortExpression   {{@link SortBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndUpdate(final FilterExpression<TEntity> filterExpression,
                                                      final UpdateExpression<TEntity> updateExpression,
                                                      final SortExpression<TEntity> sortExpression,
@@ -583,17 +688,38 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.findOneAndDelete(option);
     }
 
+    /**
+     * 找到并删除
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression) {
 
         return this.findOneAndDelete(filterExpression, null, null);
     }
 
+    /**
+     * 找到并删除
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param sortExpression   {{@link SortBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,
                                                      final SortExpression<TEntity> sortExpression) {
 
         return this.findOneAndDelete(filterExpression, sortExpression, null);
     }
 
+    /**
+     * 找到并删除
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param sortExpression   {{@link SortBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,
                                                      final SortExpression<TEntity> sortExpression,
                                                      final HintExpression<TEntity> hintExpression) {
@@ -601,6 +727,15 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.findOneAndDelete(filterExpression, sortExpression, hintExpression, null);
     }
 
+    /**
+     * 找到并删除
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param sortExpression   {{@link SortBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
     default TFindOneAndModifyResult findOneAndDelete(final FilterExpression<TEntity> filterExpression,
                                                      final SortExpression<TEntity> sortExpression,
                                                      final HintExpression<TEntity> hintExpression,
@@ -647,6 +782,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     //#region delete
 
     /**
+     * 删除一条
+     *
      * @param id id
      * @return DeleteResult
      */
@@ -655,6 +792,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除一条
+     *
      * @param id           id
      * @param writeConcern WriteConcern
      * @return DeleteResult
@@ -664,6 +803,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除一条
+     *
      * @param filter conditions
      * @return DeleteResult
      */
@@ -672,6 +813,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除一条
+     *
      * @param filter       conditions
      * @param writeConcern WriteConcern
      * @return DeleteResult
@@ -681,6 +824,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除一条
+     *
      * @param filter       conditions
      * @param hint         hint
      * @param writeConcern WriteConcern
@@ -698,11 +843,25 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.deleteOne(options);
     }
 
+    /**
+     * 删除一条
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @return UpdateResult
+     */
     default TDeleteResult deleteOne(final FilterExpression<TEntity> filterExpression) {
 
         return this.deleteOne(filterExpression, null, null);
     }
 
+    /**
+     * 删除一条
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
     default TDeleteResult deleteOne(final FilterExpression<TEntity> filterExpression,
                                     final HintExpression<TEntity> hintExpression,
                                     final WriteConcern writeConcern) {
@@ -741,6 +900,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除多条
+     *
      * @param filter conditions
      * @return DeleteResult
      */
@@ -749,6 +910,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除多条
+     *
      * @param filter       conditions
      * @param writeConcern WriteConcern
      * @return DeleteResult
@@ -758,6 +921,8 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     }
 
     /**
+     * 删除多条
+     *
      * @param filter       conditions
      * @param hint         hint
      * @param writeConcern WriteConcern
@@ -775,12 +940,25 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         return this.deleteMany(options);
     }
 
-
+    /**
+     * 删除一条
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @return UpdateResult
+     */
     default TDeleteResult deleteMany(final FilterExpression<TEntity> filterExpression) {
 
         return this.deleteMany(filterExpression, null, null);
     }
 
+    /**
+     * 删除一条
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
     default TDeleteResult deleteMany(final FilterExpression<TEntity> filterExpression,
                                      final HintExpression<TEntity> hintExpression,
                                      final WriteConcern writeConcern) {
