@@ -528,6 +528,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     /**
      * 找到并更新
      *
+     * @param id               TKey
      * @param updateExpression {{@link UpdateBuilder}}
      * @return UpdateResult
      */
