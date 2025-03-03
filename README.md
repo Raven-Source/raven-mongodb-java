@@ -85,7 +85,7 @@ public class DataSourceConfiguration {
 @Setter
 public class Orders implements AutoIncr<Long> {
 
-    @BsonId()
+    @BsonId
     private Long id;
 
     private Long uid;
