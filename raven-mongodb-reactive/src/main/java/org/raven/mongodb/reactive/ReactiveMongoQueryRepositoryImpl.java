@@ -8,7 +8,6 @@ import org.raven.mongodb.MongoOptions;
 import org.raven.mongodb.operation.FindExecutor;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
-import org.raven.mongodb.spi.Sequence;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
@@ -36,7 +35,7 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
      * @param mongoSession ReactiveMongoSession
      */
     public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession) {
-        this(mongoSession, null, null, null);
+        this(mongoSession, null, (IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase>) null);
     }
 
     /**
@@ -46,7 +45,7 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
      * @param collectionName collectionName
      */
     public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName) {
-        this(mongoSession, collectionName, null, null);
+        this(mongoSession, collectionName, null);
     }
 
     /**
@@ -56,7 +55,7 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
      * @param mongoOptions MongoOptions
      */
     public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
-        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, null, mongoOptions.getIdGeneratorProvider());
     }
 
 
@@ -68,7 +67,7 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
      * @param collectionName collectionName
      */
     public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
-        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, collectionName, mongoOptions.getIdGeneratorProvider());
     }
 
     /**
@@ -76,14 +75,13 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
      *
      * @param mongoSession        ReactiveMongoSession
      * @param collectionName      collectionName
-     * @param sequence            Sequence
      * @param idGeneratorProvider IdGeneratorProvider
      */
-    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
+    public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-        super(mongoSession, collectionName, sequence, idGeneratorProvider);
+        super(mongoSession, collectionName, idGeneratorProvider);
 
-        operation = new ReactiveReadOperationImpl<>(this,null);
+        operation = new ReactiveReadOperationImpl<>(this, null);
     }
 
     //#endregion

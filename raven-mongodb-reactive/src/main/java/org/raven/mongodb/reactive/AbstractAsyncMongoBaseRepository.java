@@ -25,7 +25,6 @@ import org.raven.mongodb.contants.BsonConstant;
 import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
-import org.raven.mongodb.spi.Sequence;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
@@ -62,8 +61,9 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
     }
 
     //#region constructor
-    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName, final Sequence sequence
-            , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+    public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession
+            , @Nullable final String collectionName
+            , @Nullable final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(collectionName);
 
         this.mongoSession = mongoSession;
@@ -71,13 +71,11 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
         this.idGenerator = idGeneratorProvider != null ?
                 idGeneratorProvider.build(this.getCollectionName(),
-                        sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),
                         this::getDatabase) :
                 DefaultIdGeneratorProvider.Default.build(
                         this.getCollectionName(),
-                        sequence,
                         entityInformation.getEntityType(),
                         entityInformation.getIdType(),
                         this::getDatabase);
@@ -85,21 +83,21 @@ public abstract class AbstractAsyncMongoBaseRepository<TEntity extends Entity<TK
 
 
     public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession) {
-        this(mongoSession, null, null, null);
+        this(mongoSession, (String) null, (IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase>) null);
     }
 
     public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final String collectionName) {
-        this(mongoSession, collectionName, null, null);
+        this(mongoSession, collectionName, null);
     }
 
     @SuppressWarnings({"unchecked"})
     public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions) {
-        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, null, mongoOptions.getIdGeneratorProvider());
     }
 
     @SuppressWarnings({"unchecked"})
     public AbstractAsyncMongoBaseRepository(final ReactiveMongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
-        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, collectionName, mongoOptions.getIdGeneratorProvider());
     }
 
     //#endregion

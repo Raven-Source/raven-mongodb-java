@@ -8,7 +8,6 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
-import org.raven.mongodb.spi.Sequence;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoSession mongoSession
      */
     public MongoRepositoryImpl(final MongoSession mongoSession) {
-        this(mongoSession, null, null, null);
+        this(mongoSession, null, (IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase>) null);
     }
 
     /**
@@ -42,7 +41,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName collectionName
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
-        this(mongoSession, collectionName, null, null);
+        this(mongoSession, collectionName, null);
     }
 
     /**
@@ -52,7 +51,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoOptions MongoOptions
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
-        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, null, mongoOptions.getIdGeneratorProvider());
     }
 
     /**
@@ -63,7 +62,7 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName collectionName
      */
     public MongoRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
-        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, collectionName, mongoOptions.getIdGeneratorProvider());
     }
 
     /**
@@ -71,12 +70,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession        mongoSession
      * @param collectionName      collectionName
-     * @param sequence            Sequence
      * @param idGeneratorProvider idGeneratorProvider
      */
-    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
+    public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
-        super(mongoSession, collectionName, sequence, idGeneratorProvider);
+        super(mongoSession, collectionName, idGeneratorProvider);
 
         operation = new SyncWriteOperationImpl<>(this, null);
     }

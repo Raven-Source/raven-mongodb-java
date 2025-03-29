@@ -7,7 +7,6 @@ import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.operation.FindExecutor;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
-import org.raven.mongodb.spi.Sequence;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -33,7 +32,7 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoSession MongoSession
      */
     public MongoQueryRepositoryImpl(final MongoSession mongoSession) {
-        this(mongoSession, null, null, null);
+        this(mongoSession, null, (IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase>) null);
     }
 
     /**
@@ -43,7 +42,7 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName collectionName
      */
     public MongoQueryRepositoryImpl(final MongoSession mongoSession, final String collectionName) {
-        this(mongoSession, collectionName, null, null);
+        this(mongoSession, collectionName, null);
     }
 
     /**
@@ -53,7 +52,7 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param mongoOptions MongoOptions
      */
     public MongoQueryRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions) {
-        this(mongoSession, null, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, null, mongoOptions.getIdGeneratorProvider());
     }
 
     /**
@@ -64,7 +63,7 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      * @param collectionName collectionName
      */
     public MongoQueryRepositoryImpl(final MongoSession mongoSession, final MongoOptions mongoOptions, final String collectionName) {
-        this(mongoSession, collectionName, mongoOptions.getSequence(), mongoOptions.getIdGeneratorProvider());
+        this(mongoSession, collectionName, mongoOptions.getIdGeneratorProvider());
     }
 
     /**
@@ -72,13 +71,12 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
      *
      * @param mongoSession        MongoSession
      * @param collectionName      collectionName
-     * @param sequence            Sequence
      * @param idGeneratorProvider IdGeneratorProvider
      */
-    public MongoQueryRepositoryImpl(final MongoSession mongoSession, final String collectionName, final Sequence sequence
+    public MongoQueryRepositoryImpl(final MongoSession mongoSession, final String collectionName
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
 
-        super(mongoSession, collectionName, sequence, idGeneratorProvider);
+        super(mongoSession, collectionName, idGeneratorProvider);
 
         operation = new SyncReadOperationImpl<>(this, null);
     }

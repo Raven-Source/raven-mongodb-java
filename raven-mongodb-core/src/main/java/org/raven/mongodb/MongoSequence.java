@@ -2,6 +2,7 @@ package org.raven.mongodb;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.raven.commons.util.PropertiesUtils;
 import org.raven.mongodb.spi.Sequence;
 
 /**
@@ -10,6 +11,8 @@ import org.raven.mongodb.spi.Sequence;
 @Getter
 @Setter
 public class MongoSequence implements Sequence {
+
+    private static final String PROPERTIES_FILE = "META-INF/mongodb.properties";
 
     private String sequenceName;
 
@@ -33,8 +36,8 @@ public class MongoSequence implements Sequence {
      */
     public MongoSequence() {
 
-        this.sequenceName = "_sequence";
-        this.collectionName = "_id";
-        this.incrementName = "incr";
+        this.sequenceName = PropertiesUtils.getString(PROPERTIES_FILE, AvailableSettings.SEQUENCE_SEQUENCE_NAME, "_sequence");
+        this.collectionName = PropertiesUtils.getString(PROPERTIES_FILE, AvailableSettings.SEQUENCE_COLLECTION_NAME, "_id");
+        this.incrementName = PropertiesUtils.getString(PROPERTIES_FILE, AvailableSettings.SEQUENCE_INCREMENT_NAME, "incr");
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>raven-mongodb</artifactId>
         <groupId>io.github.raven-source</groupId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,13 +26,11 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
-            <version>${mongodb-driver.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
-            <version>${mongodb-driver.version}</version>
         </dependency>
 
     </dependencies>

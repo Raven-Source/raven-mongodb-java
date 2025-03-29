@@ -9,9 +9,9 @@ import org.raven.mongodb.spi.Sequence;
  */
 public interface MongoOptions {
 
-    default Sequence getSequence() {
-        return null;
-    }
+//    default Sequence getSequence() {
+//        return null;
+//    }
 
 //    default String getCollectionName() {
 //        return null;

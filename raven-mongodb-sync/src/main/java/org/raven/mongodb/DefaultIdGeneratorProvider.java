@@ -8,6 +8,7 @@ import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.Sequence;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -22,7 +23,11 @@ public class DefaultIdGeneratorProvider implements IdGeneratorProvider<IdGenerat
     public static final DefaultIdGeneratorProvider Default = new DefaultIdGeneratorProvider();
 
     @Override
-    public <TEntity, TKey> IdGenerator<TKey> build(String collectionName, Sequence sequence, Class<TEntity> entityClazz, Class<TKey> keyClazz, Supplier<MongoDatabase> databaseSupplier) {
+    public <TEntity, TKey> IdGenerator<TKey> build(String collectionName, Class<TEntity> entityClazz, Class<TKey> keyClazz, Supplier<MongoDatabase> databaseSupplier) {
+        return build(collectionName, null, entityClazz, keyClazz, databaseSupplier);
+    }
+
+    public <TEntity, TKey> IdGenerator<TKey> build(String collectionName, @Nullable Sequence sequence, Class<TEntity> entityClazz, Class<TKey> keyClazz, Supplier<MongoDatabase> databaseSupplier) {
 
         if (BsonConstant.AUTO_INCR_CLASS.isAssignableFrom(entityClazz)) {
             return new IncrementIdGeneration(collectionName, Optional.ofNullable(sequence).orElseGet(MongoSequence::new), keyClazz, databaseSupplier);

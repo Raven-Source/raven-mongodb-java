@@ -13,6 +13,7 @@ import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 import org.raven.mongodb.operation.KeyFilter;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -28,7 +29,7 @@ public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> impleme
     protected final OperationLogger operationLogger;
 
     @SuppressWarnings({"unchecked"})
-    protected BaseRepository(final String collectionName) {
+    protected BaseRepository(@Nullable final String collectionName) {
 
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
