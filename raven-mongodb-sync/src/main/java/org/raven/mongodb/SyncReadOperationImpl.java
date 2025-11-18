@@ -13,7 +13,7 @@ import org.raven.mongodb.criteria.ExistsOptions;
 import org.raven.mongodb.criteria.FindOptions;
 import org.raven.mongodb.operation.FindExecutor;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

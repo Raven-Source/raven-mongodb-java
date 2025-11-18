@@ -13,7 +13,7 @@ import org.bson.BsonType;
 import org.bson.codecs.pojo.ClassModelUtils;
 import org.bson.conversions.Bson;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;

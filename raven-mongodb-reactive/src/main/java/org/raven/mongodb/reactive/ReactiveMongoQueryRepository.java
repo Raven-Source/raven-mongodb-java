@@ -3,7 +3,7 @@ package org.raven.mongodb.reactive;
 import com.mongodb.reactivestreams.client.ClientSession;
 import org.raven.commons.data.Entity;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 
 /**

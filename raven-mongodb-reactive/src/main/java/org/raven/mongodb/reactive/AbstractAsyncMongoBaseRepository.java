@@ -27,7 +27,7 @@ import org.raven.mongodb.spi.IdGeneratorProvider;
 import org.raven.mongodb.spi.ReactiveIdGenerator;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 

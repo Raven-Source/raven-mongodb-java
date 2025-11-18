@@ -13,7 +13,7 @@ import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 import org.raven.mongodb.operation.KeyFilter;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

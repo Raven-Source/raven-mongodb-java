@@ -8,7 +8,7 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
 import org.raven.mongodb.criteria.*;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 

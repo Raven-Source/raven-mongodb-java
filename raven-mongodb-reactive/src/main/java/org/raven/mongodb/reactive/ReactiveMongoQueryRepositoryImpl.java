@@ -10,7 +10,7 @@ import org.raven.mongodb.spi.ReactiveIdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
