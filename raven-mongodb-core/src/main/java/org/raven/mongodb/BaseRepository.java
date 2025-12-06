@@ -41,6 +41,18 @@ public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> impleme
     }
 
     /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz    entity class
+     * @param keyClazz       key class
+     * @param collectionName collection name
+     */
+    protected BaseRepository(Class<TEntity> entityClazz, Class<TKey> keyClazz, @Nullable final String collectionName) {
+        this.entityInformation = new EntityInformationSupport<>(entityClazz, keyClazz, collectionName);
+        this.operationLogger = new OperationLogger();
+    }
+
+    /**
      * Collection Name
      *
      * @return Collection Name

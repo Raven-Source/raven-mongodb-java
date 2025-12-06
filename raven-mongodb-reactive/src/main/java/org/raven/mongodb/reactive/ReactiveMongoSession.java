@@ -1,7 +1,10 @@
 package org.raven.mongodb.reactive;
 
+import com.mongodb.ClientSessionOptions;
+import com.mongodb.reactivestreams.client.ClientSession;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import org.reactivestreams.Publisher;
 
 /**
  * @author yi.liang
@@ -18,4 +21,12 @@ public interface ReactiveMongoSession {
      * @return {@link MongoClient}
      */
     MongoClient getMongoClient();
+
+    default Publisher<ClientSession> startSession() {
+        return getMongoClient().startSession();
+    }
+
+    default Publisher<ClientSession> startSession(ClientSessionOptions options) {
+        return getMongoClient().startSession(options);
+    }
 }

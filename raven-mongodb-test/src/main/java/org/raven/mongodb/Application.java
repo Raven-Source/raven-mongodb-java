@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * date 2021/11/17 17:09
  */
 @Slf4j
-@SpringBootApplication(scanBasePackageClasses = MongoSessionInstance.class)
+@SpringBootApplication()
 @EnableConfigurationProperties
 public class Application {
 

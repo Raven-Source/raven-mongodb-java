@@ -20,7 +20,7 @@
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-spi</artifactId>
-            <version>${raven-mongodb.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

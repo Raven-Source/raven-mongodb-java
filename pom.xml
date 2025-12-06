@@ -17,8 +17,8 @@
         <module>raven-mongodb-spi</module>
         <module>raven-mongodb-sync</module>
         <module>raven-mongodb-reactive</module>
+        <module>raven-mongodb-spring</module>
 <!--        <module>raven-mongodb-test</module>-->
-<!--        <module>raven-mongodb-spring</module>-->
     </modules>
 
     <properties>
@@ -32,7 +32,7 @@
         <raven-framework.version>5.0.5</raven-framework.version>
         <mongodb-driver.version>5.6.1</mongodb-driver.version>
 
-        <raven-mongodb.version>${project.version}</raven-mongodb.version>
+<!--        <raven-mongodb.version>${project.version}</raven-mongodb.version>-->
 
     </properties>
 
@@ -146,7 +146,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.18.0</version>
                 <configuration>
                     <generateBackupPoms>false</generateBackupPoms>
                 </configuration>

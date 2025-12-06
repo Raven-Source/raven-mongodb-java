@@ -15,48 +15,47 @@
     <artifactId>raven-mongodb-reactive</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <reactor.version>3.6.12</reactor.version>
+        <reactive-streams.version>1.0.4</reactive-streams.version>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-core</artifactId>
-            <version>${raven-mongodb.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-reactivestreams</artifactId>
-            <exclusions>
+            <!--<exclusions>
                 <exclusion>
                     <groupId>org.reactivestreams</groupId>
                     <artifactId>reactive-streams</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+            <version>${reactive-streams.version}</version>
+        </dependency>-->
 
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.2.22.RELEASE</version>
+            <version>${reactor.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.reactivestreams</groupId>
-                    <artifactId>reactive-streams</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-core</artifactId>
-            <version>${raven-mongodb.version}</version>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

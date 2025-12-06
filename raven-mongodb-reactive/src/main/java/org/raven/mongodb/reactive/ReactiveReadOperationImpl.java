@@ -20,11 +20,11 @@ import java.util.Optional;
 
 public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> implements ReactiveReadOperation<TEntity, TKey> {
 
-    private final AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository;
+    private final AbstractReactiveMongoBaseRepository<TEntity, TKey> baseRepository;
 
     protected final @Nullable ClientSession clientSession;
 
-    public ReactiveReadOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
+    public ReactiveReadOperationImpl(AbstractReactiveMongoBaseRepository<TEntity, TKey> baseRepository,
                                      @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;

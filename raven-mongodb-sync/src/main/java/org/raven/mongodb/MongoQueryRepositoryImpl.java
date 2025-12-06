@@ -81,6 +81,24 @@ public class MongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         operation = new SyncReadOperationImpl<>(this, null);
     }
 
+    /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz         entity class
+     * @param keyClazz            key class
+     * @param mongoSession        MongoSession
+     * @param collectionName      collectionName
+     * @param idGeneratorProvider IdGeneratorProvider
+     */
+    public MongoQueryRepositoryImpl(Class<TEntity> entityClazz, Class<TKey> keyClazz
+            , final MongoSession mongoSession, final String collectionName
+            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+
+        super(entityClazz, keyClazz, mongoSession, collectionName, idGeneratorProvider);
+
+        operation = new SyncReadOperationImpl<>(this, null);
+    }
+
     //#endregion
 
     //region ext

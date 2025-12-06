@@ -4,12 +4,13 @@ import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import org.raven.mongodb.EntityDefine;
 
 /**
  * @param <TEntity> TEntity
  * @author yi.liang
  */
-public interface ReactiveMongoBaseRepository<TEntity> {
+public interface ReactiveMongoBaseRepository<TEntity> extends EntityDefine<TEntity> {
 
     /**
      * @return collectionName

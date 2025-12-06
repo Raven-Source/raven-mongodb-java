@@ -27,12 +27,12 @@ import java.util.Optional;
 public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         implements ReactiveWriteOperation<TEntity, TKey> {
 
-    private final AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository;
+    private final AbstractReactiveMongoBaseRepository<TEntity, TKey> baseRepository;
 
     private final @Nullable ClientSession clientSession;
 
 
-    public ReactiveWriteOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
+    public ReactiveWriteOperationImpl(AbstractReactiveMongoBaseRepository<TEntity, TKey> baseRepository,
                                       @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;
@@ -42,6 +42,10 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
         return new ReactiveWriteOperationImpl<>(this.baseRepository, clientSession);
     }
 
+    @Override
+    public EntityInformation<TEntity, ?> getEntityInformation() {
+        return baseRepository.getEntityInformation();
+    }
 
     /**
      * 修改单条数据
@@ -74,7 +78,7 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Mono<TEntity> findOneAndUpdate(final Bson filter, final TEntity entity, final boolean isUpsert, final Bson sort, final Bson hint) {
 
-        return baseRepository.createUpdateBson(entity, isUpsert).flatMap(update ->
+        return createUpdateBson(entity, isUpsert).flatMap(update ->
                 this.findOneAndUpdate(filter, update, isUpsert, sort, hint)
         );
 
@@ -111,6 +115,11 @@ public class ReactiveWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Bson filterById(TKey id) {
         return baseRepository.filterById(id);
+    }
+
+    @Override
+    public Mono<Bson> createUpdateBson(TEntity updateEntity, boolean isUpsert) {
+        return baseRepository.createUpdateBson(updateEntity, isUpsert);
     }
 
 

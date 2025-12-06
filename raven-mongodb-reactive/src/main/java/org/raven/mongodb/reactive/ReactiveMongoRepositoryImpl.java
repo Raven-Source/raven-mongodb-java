@@ -1,6 +1,7 @@
 package org.raven.mongodb.reactive;
 
 import com.mongodb.WriteConcern;
+import com.mongodb.reactivestreams.client.ClientSession;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bson.conversions.Bson;
 import org.raven.commons.data.Entity;
@@ -81,6 +82,24 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         operation = new ReactiveWriteOperationImpl<>(this, null);
     }
 
+    /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz         entity class
+     * @param keyClazz            key class
+     * @param mongoSession        ReactiveMongoSession
+     * @param collectionName      collectionName
+     * @param idGeneratorProvider IdGeneratorProvider
+     */
+    public ReactiveMongoRepositoryImpl(Class<TEntity> entityClazz, Class<TKey> keyClazz
+            , final ReactiveMongoSession mongoSession, final String collectionName
+            , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+
+        super(entityClazz, keyClazz, mongoSession, collectionName, idGeneratorProvider);
+
+        operation = new ReactiveWriteOperationImpl<>(this, null);
+    }
+
     //#endregion
 
     //#region update
@@ -125,6 +144,15 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     //#endregion
 
     //region protected
+
+    @Override
+    public ReactiveWriteOperation<TEntity, TKey> modifyWithClientSession(ClientSession clientSession) {
+        if (clientSession == null) {
+            return operation;
+        } else {
+            return operation.clone(clientSession);
+        }
+    }
 
 //    protected Mono<InsertOneResult> doInsert(final TEntity entity, final WriteConcern writeConcern) {
 //
@@ -287,4 +315,8 @@ public class ReactiveMongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
         return operation.modifyExecutor();
     }
 
+    @Override
+    public Mono<Bson> createUpdateBson(TEntity updateEntity, boolean isUpsert) {
+        return super.createUpdateBson(updateEntity, isUpsert);
+    }
 }

@@ -22,7 +22,7 @@ import java.util.Optional;
  * @author yi.liang
  */
 public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey>
-        extends AbstractAsyncMongoBaseRepository<TEntity, TKey>
+        extends AbstractReactiveMongoBaseRepository<TEntity, TKey>
         implements ReactiveMongoQueryRepository<TEntity, TKey> {
 
     private final ReactiveReadOperationImpl<TEntity, TKey> operation;
@@ -80,6 +80,23 @@ public class ReactiveMongoQueryRepositoryImpl<TEntity extends Entity<TKey>, TKey
     public ReactiveMongoQueryRepositoryImpl(final ReactiveMongoSession mongoSession, final String collectionName
             , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, idGeneratorProvider);
+
+        operation = new ReactiveReadOperationImpl<>(this, null);
+    }
+
+    /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz         entity class
+     * @param keyClazz            key class
+     * @param mongoSession        ReactiveMongoSession
+     * @param collectionName      collectionName
+     * @param idGeneratorProvider IdGeneratorProvider
+     */
+    public ReactiveMongoQueryRepositoryImpl(Class<TEntity> entityClazz, Class<TKey> keyClazz
+            , final ReactiveMongoSession mongoSession, final String collectionName
+            , final IdGeneratorProvider<ReactiveIdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+        super(entityClazz, keyClazz, mongoSession, collectionName, idGeneratorProvider);
 
         operation = new ReactiveReadOperationImpl<>(this, null);
     }
