@@ -1,11 +1,7 @@
 package org.raven.mongodb.reactive;
 
+import com.mongodb.reactivestreams.client.ClientSession;
 import org.raven.commons.data.Entity;
-import org.raven.mongodb.operation.WriteOperation;
-import reactor.core.publisher.Mono;
-
-import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -15,6 +11,8 @@ import java.util.Optional;
  */
 public interface ReactiveMongoRepository<TEntity extends Entity<TKey>, TKey>
         extends ReactiveMongoQueryRepository<TEntity, TKey>
-        , WriteOperation<TEntity, TKey, Mono<Optional<TKey>>, Mono<Map<Integer, TKey>>, Mono<Long>, Mono<TEntity>, Mono<Long>> {
+        , ReactiveWriteOperation<TEntity, TKey> {
+
+    ReactiveWriteOperation<TEntity, TKey> modifyWithClientSession(ClientSession clientSession);
 
 }

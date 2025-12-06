@@ -5,7 +5,7 @@
     <parent>
         <artifactId>raven-mongodb</artifactId>
         <groupId>io.github.raven-source</groupId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-core</artifactId>
-            <version>${raven-mongodb.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>io.github.raven-source</groupId>
             <artifactId>raven-mongodb-core</artifactId>
-            <version>${raven-mongodb.version}</version>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

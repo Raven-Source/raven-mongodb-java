@@ -8,7 +8,8 @@ import org.raven.commons.data.Entity;
 import org.raven.mongodb.*;
 import org.raven.mongodb.criteria.*;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -16,8 +17,8 @@ import java.util.Objects;
  * @author by yanfeng
  * date 2021/10/30 21:39
  */
-public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult>
-        extends KeyFilter<TKey> {
+public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult, TUpdateBsonResult>
+        extends KeyFilter<TKey>, EntityDefine<TEntity> {
 
     //#region insert
 
@@ -288,6 +289,100 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
         }
 
         return this.updateOne(options);
+    }
+
+
+    /**
+     * 修改单条数据
+     *
+     * @param id           TKey
+     * @param updateEntity TEntity
+     * @return UpdateResult
+     */
+    default TUpdateResult updateOne(TKey id,
+                                    final TEntity updateEntity) {
+
+        final FilterExpression<TEntity> filterExpression = f -> f.add(filterById(id));
+        return this.updateOne(filterExpression, updateEntity, false);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateEntity     TEntity
+     * @return UpdateResult
+     */
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final TEntity updateEntity) {
+
+        return this.updateOne(filterExpression, updateEntity, false);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateEntity     TEntity
+     * @param isUpsert         default false, true if a new document should be inserted if there are no matches to the query filter
+     * @return UpdateResult
+     */
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final TEntity updateEntity,
+                                    final boolean isUpsert) {
+
+        return this.updateOne(filterExpression, updateEntity, isUpsert, null);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateEntity     TEntity
+     * @param isUpsert         default false, true if a new document should be inserted if there are no matches to the query filter
+     * @param hintExpression   {{@link HintBuilder}}
+     * @return UpdateResult
+     */
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final TEntity updateEntity,
+                                    final boolean isUpsert,
+                                    final HintExpression<TEntity> hintExpression) {
+
+        return this.updateOne(filterExpression, updateEntity, isUpsert, hintExpression, null);
+    }
+
+    /**
+     * 修改单条数据
+     *
+     * @param filterExpression {{@link FilterBuilder}}
+     * @param updateEntity     TEntity
+     * @param isUpsert         default false, true if a new document should be inserted if there are no matches to the query filter
+     * @param hintExpression   {{@link HintBuilder}}
+     * @param writeConcern     {{@link WriteConcern}}
+     * @return UpdateResult
+     */
+    default TUpdateResult updateOne(final FilterExpression<TEntity> filterExpression,
+                                    final TEntity updateEntity,
+                                    final boolean isUpsert,
+                                    final HintExpression<TEntity> hintExpression,
+                                    final WriteConcern writeConcern) {
+
+        final UpdateOptions options = new UpdateOptions()
+                .writeConcern(writeConcern)
+                .upsert(isUpsert);
+
+        if (!Objects.isNull(filterExpression)) {
+            options.filter(
+                    filterExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+        if (!Objects.isNull(hintExpression)) {
+            options.hint(
+                    hintExpression.toBson(modifyExecutor().getEntityType())
+            );
+        }
+
+        return this.updateOne(options.filter(), updateEntity, options.upsert(), options.hint(), options.writeConcern());
     }
 
     /**
@@ -993,5 +1088,7 @@ public interface WriteOperation<TEntity extends Entity<TKey>, TKey, TInsertOneRe
     //#endregion
 
     ModifyExecutor<TEntity, TKey, TInsertOneResult, TInsertManyResult, TUpdateResult, TFindOneAndModifyResult, TDeleteResult> modifyExecutor();
+
+    TUpdateBsonResult createUpdateBson(final TEntity updateEntity, final boolean isUpsert);
 
 }

@@ -14,17 +14,17 @@ import org.raven.mongodb.operation.FindExecutor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class ReactiveReadOperationImpl<TEntity extends Entity<TKey>, TKey> implements ReactiveReadOperation<TEntity, TKey> {
 
-    private final AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository;
+    private final AbstractReactiveMongoBaseRepository<TEntity, TKey> baseRepository;
 
     protected final @Nullable ClientSession clientSession;
 
-    public ReactiveReadOperationImpl(AbstractAsyncMongoBaseRepository<TEntity, TKey> baseRepository,
+    public ReactiveReadOperationImpl(AbstractReactiveMongoBaseRepository<TEntity, TKey> baseRepository,
                                      @Nullable ClientSession clientSession) {
         this.baseRepository = baseRepository;
         this.clientSession = clientSession;

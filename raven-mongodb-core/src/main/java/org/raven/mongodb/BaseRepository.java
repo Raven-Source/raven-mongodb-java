@@ -13,7 +13,7 @@ import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.interceptors.EntityInterceptor;
 import org.raven.mongodb.operation.KeyFilter;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -36,6 +36,18 @@ public abstract class BaseRepository<TEntity extends Entity<TKey>, TKey> impleme
         Class<TEntity> entityClazz = (Class<TEntity>) params[0];
         Class<TKey> keyClazz = (Class<TKey>) params[1];
 
+        this.entityInformation = new EntityInformationSupport<>(entityClazz, keyClazz, collectionName);
+        this.operationLogger = new OperationLogger();
+    }
+
+    /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz    entity class
+     * @param keyClazz       key class
+     * @param collectionName collection name
+     */
+    protected BaseRepository(Class<TEntity> entityClazz, Class<TKey> keyClazz, @Nullable final String collectionName) {
         this.entityInformation = new EntityInformationSupport<>(entityClazz, keyClazz, collectionName);
         this.operationLogger = new OperationLogger();
     }

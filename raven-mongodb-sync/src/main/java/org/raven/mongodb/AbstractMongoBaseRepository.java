@@ -25,7 +25,8 @@ import org.raven.mongodb.criteria.*;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,8 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     protected MongoDatabase mongoDatabase;
 
-    protected EntityInformation<TEntity, TKey> getEntityInformation() {
+    @Override
+    public EntityInformation<TEntity, TKey> getEntityInformation() {
         return entityInformation;
     }
 
@@ -59,7 +61,7 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
     //#region constructor
 
-    public AbstractMongoBaseRepository(final MongoSession mongoSession
+    public AbstractMongoBaseRepository(@Nullable final MongoSession mongoSession
             , @Nullable final String collectionName
             , @Nullable final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(collectionName);
@@ -79,6 +81,35 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
                         this::getDatabase);
     }
 
+    /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz         entity class
+     * @param keyClazz            key class
+     * @param mongoSession        MongoSession
+     * @param collectionName      collectionName
+     * @param idGeneratorProvider IdGeneratorProvider
+     */
+    public AbstractMongoBaseRepository(Class<TEntity> entityClazz, Class<TKey> keyClazz
+            , @Nullable final MongoSession mongoSession
+            , @Nullable final String collectionName
+            , @Nullable final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+        super(entityClazz, keyClazz, collectionName);
+
+        this.mongoSession = mongoSession;
+        this.mongoDatabase = mongoSession.getDatabase().withCodecRegistry(entityInformation.getCodecRegistry());
+
+        this.idGenerator = idGeneratorProvider != null ?
+                idGeneratorProvider.build(this.getCollectionName(),
+                        entityInformation.getEntityType(),
+                        entityInformation.getIdType(),
+                        this::getDatabase) :
+                DefaultIdGeneratorProvider.Default.build(
+                        this.getCollectionName(),
+                        entityInformation.getEntityType(),
+                        entityInformation.getIdType(),
+                        this::getDatabase);
+    }
 
     public AbstractMongoBaseRepository(final MongoSession mongoSession) {
         this(mongoSession, null, (IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase>) null);
@@ -298,6 +329,10 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
             throw new IllegalArgumentException("filter can not be null");
         }
 
+        if (options.update() == null) {
+            throw new IllegalArgumentException("update can not be null");
+        }
+
         callGlobalInterceptors(PreUpdate.class, null, options);
 
         com.mongodb.client.model.UpdateOptions updateOptions =
@@ -379,6 +414,10 @@ public abstract class AbstractMongoBaseRepository<TEntity extends Entity<TKey>, 
 
         if (options.filter() == null) {
             throw new IllegalArgumentException("filter can not be null");
+        }
+
+        if (options.update() == null) {
+            throw new IllegalArgumentException("update can not be null");
         }
 
         callGlobalInterceptors(PreUpdate.class, null, options);

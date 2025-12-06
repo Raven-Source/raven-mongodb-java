@@ -17,7 +17,7 @@ import org.raven.mongodb.criteria.UpdateOptions;
 import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.util.BsonUtils;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +42,14 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
     }
 
     @Override
+    public EntityInformation<TEntity, TKey> getEntityInformation() {
+        return baseRepository.getEntityInformation();
+    }
+
+    @Override
     public Long updateOne(Bson filter, TEntity updateEntity, boolean isUpsert, Bson hint, WriteConcern writeConcern) {
 
-        Bson update = baseRepository.createUpdateBson(updateEntity, isUpsert);
+        Bson update = createUpdateBson(updateEntity, isUpsert);
 
         return updateOne(filter, update, isUpsert, hint, writeConcern);
     }
@@ -95,6 +100,11 @@ public class SyncWriteOperationImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public Bson filterById(TKey id) {
         return baseRepository.filterById(id);
+    }
+
+    @Override
+    public Bson createUpdateBson(TEntity updateEntity, boolean isUpsert) {
+        return baseRepository.createUpdateBson(updateEntity, isUpsert);
     }
 
     @Override

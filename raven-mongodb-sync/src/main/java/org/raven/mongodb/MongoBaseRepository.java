@@ -8,7 +8,7 @@ import com.mongodb.client.MongoDatabase;
 /**
  * @author yi.liang
  */
-public interface MongoBaseRepository<TEntity> {
+public interface MongoBaseRepository<TEntity> extends EntityDefine<TEntity> {
 
     /**
      * @return collectionName

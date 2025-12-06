@@ -9,7 +9,7 @@ import org.raven.mongodb.operation.ModifyExecutor;
 import org.raven.mongodb.spi.IdGenerator;
 import org.raven.mongodb.spi.IdGeneratorProvider;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -75,6 +75,23 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     public MongoRepositoryImpl(final MongoSession mongoSession, final String collectionName
             , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
         super(mongoSession, collectionName, idGeneratorProvider);
+
+        operation = new SyncWriteOperationImpl<>(this, null);
+    }
+
+    /**
+     * constructor with explicit entity and key classes
+     *
+     * @param entityClazz         entity class
+     * @param keyClazz            key class
+     * @param mongoSession        mongoSession
+     * @param collectionName      collectionName
+     * @param idGeneratorProvider idGeneratorProvider
+     */
+    public MongoRepositoryImpl(Class<TEntity> entityClazz, Class<TKey> keyClazz
+            , final MongoSession mongoSession, final String collectionName
+            , final IdGeneratorProvider<IdGenerator<TKey>, MongoDatabase> idGeneratorProvider) {
+        super(entityClazz, keyClazz, mongoSession, collectionName, idGeneratorProvider);
 
         operation = new SyncWriteOperationImpl<>(this, null);
     }
@@ -169,6 +186,11 @@ public class MongoRepositoryImpl<TEntity extends Entity<TKey>, TKey>
     @Override
     public ModifyExecutor<TEntity, TKey, TKey, Map<Integer, TKey>, Long, TEntity, Long> modifyExecutor() {
         return operation.modifyExecutor();
+    }
+
+    @Override
+    public Bson createUpdateBson(TEntity updateEntity, boolean isUpsert) {
+        return super.createUpdateBson(updateEntity, isUpsert);
     }
 
 

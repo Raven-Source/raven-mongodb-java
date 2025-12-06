@@ -29,3 +29,10 @@ reports
 # JVM crash logs
 hs_err_pid*.log
 
+# Claude
+*.claude/
+nul
+
+# vscode
+.vscode/
+
