@@ -1,4 +1,4 @@
-package org.raven.mongodb;
+package org.raven.mongodb.test;
 
 
 import org.raven.commons.data.ValueType;

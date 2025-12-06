@@ -5,16 +5,20 @@
     <parent>
         <artifactId>raven-mongodb</artifactId>
         <groupId>io.github.raven-source</groupId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
     </parent>
-    <packaging>pom</packaging>
     <modules>
         <module>raven-mongodb-spring-common</module>
-        <module>raven-mongodb-spring-sync</module>
-        <module>raven-mongodb-spring-reactive</module>
+        <module>raven-mongodb-spring-boot-starter</module>
+        <module>raven-mongodb-spring-boot-starter-reactive</module>
     </modules>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Raven Mongodb Library</description>
+    <url>https://github.com/Raven-Source/raven-mongodb-java</url>
+
+    <packaging>pom</packaging>
     <artifactId>raven-mongodb-spring</artifactId>
 
     <properties>

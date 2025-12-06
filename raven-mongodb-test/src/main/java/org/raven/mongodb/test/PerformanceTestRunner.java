@@ -1,17 +1,17 @@
-package org.raven.mongodb;
+package org.raven.mongodb.test;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import org.raven.mongodb.MongoSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -22,19 +22,22 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class PerformanceTestRunner implements CommandLineRunner {
 
-    private User3RepositoryImpl user3Repos;
+    private final User3Repository user3Repos;
 
-    private UserRepositoryImpl userRepos;
+    private final UserRepository userRepos;
 
-    @Autowired
-    private MongoSession mongoSession;
+    private final MongoSession mongoSession;
+
+    public PerformanceTestRunner(User3Repository user3Repos, UserRepository userRepos, MongoSession mongoSession) {
+        this.user3Repos = user3Repos;
+        this.userRepos = userRepos;
+        this.mongoSession = mongoSession;
+    }
 
 //    ExecutorService executorService = Executors.newFixedThreadPool(100);
 
     @Override
     public void run(String... args) throws Exception {
-
-        userRepos = new UserRepositoryImpl(mongoSession);
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 

@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>raven-mongodb</artifactId>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>raven-mongodb-core</module>
@@ -18,7 +18,7 @@
         <module>raven-mongodb-sync</module>
         <module>raven-mongodb-reactive</module>
         <module>raven-mongodb-spring</module>
-<!--        <module>raven-mongodb-test</module>-->
+        <module>raven-mongodb-test</module>
     </modules>
 
     <properties>
@@ -84,7 +84,7 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Raven Mongodb Library</description>
-    <url>https://raven-source.github.io/</url>
+    <url>https://github.com/Raven-Source/raven-mongodb-java</url>
 
     <scm>
         <url>https://github.com/Raven-Source/raven-mongodb-java</url>
@@ -137,6 +137,81 @@
                     <execution>
                         <goals>
                             <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${encoding}</encoding>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+
+                    <encoding>${encoding}</encoding>
+                    <charset>${encoding}</charset>
+                    <docencoding>${encoding}</docencoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Source -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- GPG -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+                <executions>
+                    <execution>
+                        <!--<id>sign-artifacts</id>-->
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>

@@ -6,8 +6,12 @@
     <parent>
         <groupId>io.github.raven-source</groupId>
         <artifactId>raven-mongodb-spring</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
     </parent>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Raven Mongodb Library</description>
+    <url>https://github.com/Raven-Source/raven-mongodb-java</url>
 
     <artifactId>raven-mongodb-spring-common</artifactId>
 

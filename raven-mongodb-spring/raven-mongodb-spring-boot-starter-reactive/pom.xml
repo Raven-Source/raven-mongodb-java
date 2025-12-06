@@ -6,12 +6,18 @@
     <parent>
         <groupId>io.github.raven-source</groupId>
         <artifactId>raven-mongodb-spring</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
     </parent>
 
-    <artifactId>raven-mongodb-spring-sync</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Raven Mongodb Library</description>
+    <url>https://github.com/Raven-Source/raven-mongodb-java</url>
+
+    <artifactId>raven-mongodb-spring-boot-starter-reactive</artifactId>
 
     <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -23,10 +29,10 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Raven MongoDB Sync -->
+        <!-- Raven MongoDB Reactive -->
         <dependency>
             <groupId>io.github.raven-source</groupId>
-            <artifactId>raven-mongodb-sync</artifactId>
+            <artifactId>raven-mongodb-reactive</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -43,6 +49,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Project Reactor -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+
         <!-- Lombok (provided) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -54,6 +66,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
