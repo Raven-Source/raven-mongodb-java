@@ -9,7 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <description>raven mongodb repository</description>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Raven Mongodb Library</description>
     <url>https://github.com/Raven-Source/raven-mongodb-java</url>
 
     <artifactId>raven-mongodb-sync</artifactId>
