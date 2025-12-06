@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>raven-mongodb</artifactId>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>raven-mongodb-core</module>
@@ -18,7 +18,7 @@
         <module>raven-mongodb-sync</module>
         <module>raven-mongodb-reactive</module>
         <module>raven-mongodb-spring</module>
-<!--        <module>raven-mongodb-test</module>-->
+        <module>raven-mongodb-test</module>
     </modules>
 
     <properties>

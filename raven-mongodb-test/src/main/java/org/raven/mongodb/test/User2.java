@@ -1,4 +1,4 @@
-package org.raven.mongodb;
+package org.raven.mongodb.test;
 
 import lombok.Getter;
 import lombok.Setter;

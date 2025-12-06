@@ -35,18 +35,14 @@
 
 ```xml
 <dependencies>
-    <!-- mongodb start -->
-    <dependency>
-        <groupId>io.github.raven-source</groupId>
-        <artifactId>raven-mongodb-repository-sync</artifactId>
-        <version>3.0.10</version>
-    </dependency>
+    <!-- raven-mongodb start -->
 
     <dependency>
-        <groupId>org.mongodb</groupId>
-        <artifactId>mongodb-driver-sync</artifactId>
-        <version>4.7.2</version>
+        <groupId>io.github.raven-source</groupId>
+        <artifactId>raven-mongodb-spring-boot-starter</artifactId>
+        <version>3.2.1</version>
     </dependency>
+
     <!-- mongodb end -->
 </dependencies>
 ```
@@ -61,24 +57,6 @@ mongodb.options.dbName=TestDB
 ### 3. 例如 `SpringBoot` 项目可以自定义个 `Configuration` 、实体对象、以及对应的 `UserRepository` ：
 
 ```java
-@Configuration
-public class DataSourceConfiguration {
-
-    @Bean
-    public MongoSession mongoSessionMain(MongoProperties mongoProperties) {
-
-        DefaultMongoSession defaultMongoSession = new DefaultMongoSession(
-                mongoProperties.getConnString(),
-                mongoProperties.getDbName(),
-                null,
-                null
-        );
-
-        return defaultMongoSession;
-
-    }
-
-}
 
 @FieldNameConstants
 @Getter
@@ -103,9 +81,18 @@ public class Orders implements AutoIncr<Long> {
 }
 
 @Repository
-public class OrdersRepositoryImpl extends MongoRepositoryImpl<Orders, Long> {
-    public OrdersRepositoryImpl(MongoSession mongoSession) {
-        super(mongoSession);
+public interface OrdersRepository extends MongoRepository<Orders, Long> {
+}
+
+@SpringBootApplication
+@EnableMongoRepositories(basePackages = "org.demo.repository")
+@EnableConfigurationProperties
+public class Application {
+
+    public static void main(String[] args) {
+
+        SpringApplication springApplication = new SpringApplication(Application.class);
+        springApplication.run(args);
 
     }
 }
@@ -115,9 +102,6 @@ public class OrdersRepositoryImpl extends MongoRepositoryImpl<Orders, Long> {
 ### 4. 开始查询
 
 ```java
-import org.raven.mongodb.test.model.Orders;
-import org.raven.mongodb.test.model.Orders.Fields;
-import org.raven.mongodb.test.model.Status;
 
 Orders orders;
 // 根据id查询

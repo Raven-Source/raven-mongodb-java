@@ -1,7 +1,8 @@
-package org.raven.mongodb;
+package org.raven.mongodb.test;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.raven.mongodb.spring.sync.annotation.EnableMongoRepositories;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,7 +12,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * date 2021/11/17 17:09
  */
 @Slf4j
-@SpringBootApplication()
+@SpringBootApplication
+@EnableMongoRepositories(basePackages = "org.raven.mongodb.test")
 @EnableConfigurationProperties
 public class Application {
 
