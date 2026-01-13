@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration tests for sync MongoDB repository Spring integration.
@@ -152,6 +153,9 @@ class MongoRepositoryIntegrationTest {
         assertNotNull(users);
         assertTrue(users.size() >= 1);
         assertTrue(users.stream().allMatch(u -> u.getAge() > 30));
+
+        user1 = userRepository.findOneByName("Henry");
+        assertTrue(user1 != null);
     }
 
     @Test

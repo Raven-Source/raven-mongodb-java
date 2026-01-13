@@ -48,7 +48,7 @@ public class MongoRepositoryFactoryBean<T> extends AbstractRepositoryFactoryBean
     }
 
     @Override
-    protected Object invokeHandler(Object handler, java.lang.reflect.Method method, Object[] args) throws Throwable {
-        return ((InvocationHandler) handler).invoke(null, method, args);
+    protected Object invokeHandler(Object proxy, Object handler, java.lang.reflect.Method method, Object[] args) throws Throwable {
+        return ((InvocationHandler) handler).invoke(proxy, method, args);
     }
 }

@@ -2,6 +2,8 @@ package org.raven.mongodb.spring.common.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -86,12 +88,50 @@ public abstract class AbstractRepositoryInvocationHandler implements InvocationH
         // Lazy initialization of repository implementation
         initializeRepositoryImpl();
 
+        // Handle default methods from interface
+        if (method.isDefault()) {
+            return invokeDefaultMethod(proxy, method, args);
+        }
+
         // Delegate to the actual repository implementation
         try {
             return method.invoke(repositoryImpl, args);
         } catch (Exception e) {
             log.error("Error invoking method {} on repository {}", method.getName(), repositoryInterface.getName(), e);
             throw e.getCause() != null ? e.getCause() : e;
+        }
+    }
+
+    /**
+     * Invokes a default method from the repository interface.
+     * Uses MethodHandles to properly invoke default interface methods.
+     *
+     * @param proxy the proxy instance
+     * @param method the default method to invoke
+     * @param args the method arguments
+     * @return the result of the method invocation
+     * @throws Throwable if the method invocation fails
+     */
+    private Object invokeDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
+        try {
+            Class<?> declaringClass = method.getDeclaringClass();
+
+            // Use MethodHandles.privateLookupIn for Java 9+
+            // Bind to proxy and then invoke with the original arguments
+            MethodHandle methodHandle = MethodHandles.privateLookupIn(declaringClass, MethodHandles.lookup())
+                    .unreflectSpecial(method, declaringClass)
+                    .bindTo(proxy);
+
+            // Invoke with arguments using invokeWithArguments for consistent behavior
+            if (args == null || args.length == 0) {
+                return methodHandle.invokeWithArguments();
+            } else {
+                return methodHandle.invokeWithArguments(args);
+            }
+        } catch (Throwable e) {
+            log.error("Error invoking default method {} on repository {}",
+                    method.getName(), repositoryInterface.getName(), e);
+            throw e;
         }
     }
 

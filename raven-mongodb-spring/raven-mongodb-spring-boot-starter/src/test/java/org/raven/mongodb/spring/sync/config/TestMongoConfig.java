@@ -20,7 +20,7 @@ public class TestMongoConfig {
     public MongoSession mongoSession() {
         // Use test database
         return new DefaultMongoSession(
-            "mongodb://127.0.0.1:27017/",
+            "mongodb://127.0.0.1:27018/",
             "TestDB_Sync_Spring"
         );
     }

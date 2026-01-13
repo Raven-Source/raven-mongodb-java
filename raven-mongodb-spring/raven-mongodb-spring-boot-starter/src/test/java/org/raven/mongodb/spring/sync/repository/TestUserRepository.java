@@ -13,4 +13,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface TestUserRepository extends MongoRepository<TestUser, Long> {
+
+    default TestUser findOneByName(String name) {
+        return findOne(filter -> filter.eq(TestUser.Fields.name, name));
+    }
 }

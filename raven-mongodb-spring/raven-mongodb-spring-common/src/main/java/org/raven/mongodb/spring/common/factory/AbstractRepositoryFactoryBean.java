@@ -63,7 +63,7 @@ public abstract class AbstractRepositoryFactoryBean<T> implements FactoryBean<T>
             new Class<?>[]{repositoryInterface},
             (proxy, method, args) -> {
                 try {
-                    return invokeHandler(handler, method, args);
+                    return invokeHandler(proxy, handler, method, args);
                 } catch (Throwable throwable) {
                     throw throwable;
                 }
@@ -89,11 +89,12 @@ public abstract class AbstractRepositoryFactoryBean<T> implements FactoryBean<T>
      * Invokes the handler method.
      * This is a helper method to bridge the invocation handler interface.
      *
+     * @param proxy the proxy instance
      * @param handler the invocation handler
      * @param method the method being invoked
      * @param args the method arguments
      * @return the result of the invocation
      * @throws Throwable if the invocation fails
      */
-    protected abstract Object invokeHandler(Object handler, java.lang.reflect.Method method, Object[] args) throws Throwable;
+    protected abstract Object invokeHandler(Object proxy, Object handler, java.lang.reflect.Method method, Object[] args) throws Throwable;
 }
