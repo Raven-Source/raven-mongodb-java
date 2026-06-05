@@ -17,7 +17,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <reactor.version>3.6.12</reactor.version>
+        <reactor.version>3.8.5</reactor.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
     </properties>
 
